@@ -1,0 +1,104 @@
+{
+  "index.qmd": {
+    "index.html": "7171f749"
+  },
+  "chapter1.qmd": {
+    "chapter1.html": "e0647dd5"
+  },
+  "chapter2.qmd": {
+    "chapter2.html": "981bbd23"
+  },
+  "chapter3.qmd": {
+    "chapter3.html": "f8c558ff"
+  },
+  "chapter4.qmd": {
+    "chapter4.html": "56ca48a6"
+  },
+  "preface.qmd": {
+    "preface.html": "9dcb25d7"
+  },
+  "chapter5.qmd": {
+    "chapter5.html": "dfce7979"
+  },
+  "chapter6.qmd": {
+    "chapter6.html": "b7080721"
+  },
+  "intro.qmd": {
+    "intro.html": "dda3fc80"
+  },
+  "dist_normal.qmd": {
+    "dist_normal.html": "d7e58ed4"
+  },
+  "dist_bernoulli.qmd": {
+    "dist_bernoulli.html": "81b8902c"
+  },
+  "dist_chisquared.qmd": {
+    "dist_chisquared.html": "2ad2127b"
+  },
+  "sets.qmd": {
+    "sets.html": "060cd996"
+  },
+  "probability.qmd": {
+    "probability.html": "a109bc5b"
+  },
+  "dist_poisson.qmd": {
+    "dist_poisson.html": "ab55e52a"
+  },
+  "dist_negativebinomial.qmd": {
+    "dist_negativebinomial.html": "9fc4e8e7"
+  },
+  "dist_binomial.qmd": {
+    "dist_binomial.html": "e7fadd9a"
+  },
+  "dist_geometric.qmd": {
+    "dist_geometric.html": "3e7a027a"
+  },
+  "dist_f.qmd": {
+    "dist_f.html": "fb55c876"
+  },
+  "dist_t.qmd": {
+    "dist_t.html": "159dd3f1"
+  },
+  "dist_uniform.qmd": {
+    "dist_uniform.html": "d5b2299b"
+  },
+  "dist_exponential.qmd": {
+    "dist_exponential.html": "276b57f8"
+  },
+  "proofs.qmd": {
+    "proofs.html": "19674b5c"
+  },
+  "listofsymbols.qmd": {
+    "listofsymbols.html": "2ee5d433"
+  },
+  "inference.qmd": {
+    "inference.html": "be7e5a9d"
+  },
+  "approximations.qmd": {
+    "approximations.html": "37744f8b"
+  },
+  "olsregression.qmd": {
+    "olsregression.html": "8a5694ff"
+  },
+  "robustness.qmd": {
+    "robustness.html": "3e2ca087"
+  },
+  "features.qmd": {
+    "features.html": "b06244f4"
+  },
+  "modelselection.qmd": {
+    "modelselection.html": "a64dc282"
+  },
+  "glms.qmd": {
+    "glms.html": "143164de"
+  },
+  "binomialregression.qmd": {
+    "binomialregression.html": "02e78904"
+  },
+  "countregression.qmd": {
+    "countregression.html": "f2c8471b"
+  },
+  "multinomialregression.qmd": {
+    "multinomialregression.html": "2b61fa5b"
+  }
+}
