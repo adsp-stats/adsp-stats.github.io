@@ -100,5 +100,95 @@
   },
   "multinomialregression.qmd": {
     "multinomialregression.html": "2b61fa5b"
+  },
+  "identification.qmd": {
+    "identification.html": "8c08e44d"
+  },
+  "likelihood.qmd": {
+    "likelihood.html": "51dda544"
+  },
+  "hypothesistest.qmd": {
+    "hypothesistest.html": "5d5c3bff"
+  },
+  "biasvariance.qmd": {
+    "biasvariance.html": "c2ac1b30"
+  },
+  "confidenceintervals.qmd": {
+    "confidenceintervals.html": "d952976a"
+  },
+  "newton.qmd": {
+    "newton.html": "29f4a9c1"
+  },
+  "gradientdescent.qmd": {
+    "gradientdescent.html": "f3c88831"
+  },
+  "clt.qmd": {
+    "clt.html": "f786585f"
+  },
+  "ttests.qmd": {
+    "ttests.html": "1299d8fd"
+  },
+  "rulesofthumb.qmd": {
+    "rulesofthumb.html": "f979fda5"
+  },
+  "simpleregression.qmd": {
+    "simpleregression.html": "212cf2d6"
+  },
+  "simplels.qmd": {
+    "simplels.html": "a6bccd70"
+  },
+  "simplemle.qmd": {
+    "simplemle.html": "f627899f"
+  },
+  "multiplemle.qmd": {
+    "multiplemle.html": "f3babee2"
+  },
+  "olsproperties.qmd": {
+    "olsproperties.html": "d91367ff"
+  },
+  "variancedecomposition.qmd": {
+    "variancedecomposition.html": "05ade395"
+  },
+  "heteroskedasticity.qmd": {
+    "heteroskedasticity.html": "39f7d682"
+  },
+  "autocorrelation.qmd": {
+    "autocorrelation.html": "6b20ff6a"
+  },
+  "nonnormality.qmd": {
+    "nonnormality.html": "5a4d2c4c"
+  },
+  "outliers.qmd": {
+    "outliers.html": "b93ebccc"
+  },
+  "multicollinearity.qmd": {
+    "multicollinearity.html": "9ea3a923"
+  },
+  "categoricalpredictors.qmd": {
+    "categoricalpredictors.html": "8077337c"
+  },
+  "revisitinganova.qmd": {
+    "revisitinganova.html": "e709590a"
+  },
+  "interactions.qmd": {
+    "interactions.html": "7f0c05e6"
+  },
+  "featureengineering.qmd": {
+    "featureengineering.html": "52b7cc99"
+  },
+  "overfitting.qmd": {
+    "overfitting.html": "8f721478"
+  },
+  "predictorimportance.qmd": {
+    "predictorimportance.html": "7b0cbde3"
+  },
+  "multiplecomparisons.qmd": {
+    "multiplecomparisons.html": "5272db71"
+  },
+  "modelcomparison.qmd": {
+    "modelcomparison.html": "9595df44"
+  },
+  "selectionalgorithms.qmd": {
+    "selectionalgorithms.html": "1b538fb8"
   }
 }

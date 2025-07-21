@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.42">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Estimator bias and variance – Statistical Analysis Using R: Online Notes</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./confidenceintervals.html" rel="next">
+<link href="./hypothesistest.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-2ed9fe205cf6ca358fce3f52e912d798.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<meta name="shinylive:serviceworker_dir" content=".">
+<script src="site_libs/quarto-contrib/shinylive-0.9.1/shinylive/load-shinylive-sw.js" type="module"></script>
+<script src="site_libs/quarto-contrib/shinylive-0.9.1/shinylive/run-python-blocks.js" type="module"></script>
+<link href="site_libs/quarto-contrib/shinylive-0.9.1/shinylive/shinylive.css" rel="stylesheet">
+<link href="site_libs/quarto-contrib/shinylive-quarto-css/shinylive-quarto.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./likelihood.html">1. Univariate Techniques</a></li><li class="breadcrumb-item"><a href="./biasvariance.html"><span class="chapter-title">Estimator bias and variance</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Statistical Analysis Using R: Online Notes</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introduction</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./preface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface: Inference</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">1. Univariate Techniques</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./likelihood.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Univariate likelihood</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./hypothesistest.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Hypothesis tests</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./biasvariance.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Estimator bias and variance</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./confidenceintervals.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Exact confidence intervals</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./identification.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Identifying distributions</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">2. Useful Approximations</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./newton.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">newton.html</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./gradientdescent.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">gradientdescent.html</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./clt.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">clt.html</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ttests.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">ttests.html</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./rulesofthumb.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">rulesofthumb.html</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">3. Linear Regression</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./simpleregression.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">simpleregression.html</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./simplels.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">simplels.html</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./simplemle.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">simplemle.html</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./multiplemle.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">multiplemle.html</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./olsproperties.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">olsproperties.html</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./variancedecomposition.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">variancedecomposition.html</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">4. Regression Robustness</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./heteroskedasticity.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">heteroskedasticity.html</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./autocorrelation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">autocorrelation.html</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./nonnormality.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">nonnormality.html</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./outliers.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">outliers.html</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./multicollinearity.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">multicollinearity.html</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">5. Feature Engineering</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./categoricalpredictors.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">categoricalpredictors.html</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./revisitinganova.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">revisitinganova.html</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./interactions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">interactions.html</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./featureengineering.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">featureengineering.html</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+ <span class="menu-text">6. Model Selection</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./overfitting.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">overfitting.html</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./predictorimportance.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">predictorimportance.html</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./multiplecomparisons.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">multiplecomparisons.html</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./modelcomparison.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">modelcomparison.html</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./selectionalgorithms.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">selectionalgorithms.html</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true">
+ <span class="menu-text">Appendices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false">
+ <span class="menu-text">Distributions</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./dist_bernoulli.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Bernoulli distribution</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./dist_binomial.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Binomial distribution</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./dist_chisquared.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Chi-squared distribution</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./dist_exponential.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Exponential distribution</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./dist_f.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">F distribution</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./dist_geometric.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Geometric distribution</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./dist_negativebinomial.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Negative binomial distribution</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./dist_normal.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Normal distribution</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./dist_poisson.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Poisson distribution</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./dist_t.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">t distribution</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./dist_uniform.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Uniform distribution</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./proofs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Proofs</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./listofsymbols.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">List of Symbols</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#visualizer-normal-estimation" id="toc-visualizer-normal-estimation" class="nav-link active" data-scroll-target="#visualizer-normal-estimation">Visualizer: Normal estimation</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./likelihood.html">1. Univariate Techniques</a></li><li class="breadcrumb-item"><a href="./biasvariance.html"><span class="chapter-title">Estimator bias and variance</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span id="sec-biasvariance" class="quarto-section-identifier"><span class="chapter-title">Estimator bias and variance</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta column-body">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>Not all estimators are created equal. Some estimators are worse than others, and they can be better or worse in different ways. Let’s pretend we have a normally distributed population (such as people’s heights, or stock returns), and we would like to estimate the true mean of the population <span class="math inline">\(\mu\)</span> from a sample of 100 observations, <span class="math inline">\(\boldsymbol{x}\)</span>. We have already learned that the maximum likelihood estimator for the true mean is <span class="math inline">\(\bar{x}\)</span>, the sample mean. What if I forced you to pick one of two alternative estimators:</p>
+<p><span class="math display">\[\begin{array}{ll} \hat{\mu}_1 = &amp; \frac{\min(\boldsymbol{x}) + \max(\boldsymbol{x})}{2} \\ \hat{\mu}_2 = &amp; x_{(52)},\, \textrm{the }52^{nd}\text{ observation (from smallest to largest)}\end{array}\]</span></p>
+<p>You may not yet be an expert statistician, but you can probably guess something about the second estimator: <span class="math inline">\(\hat{\mu}_2\)</span> will generally overestimate the true mean. The 50<sup>th</sup> or 51<sup>st</sup> observation out of 100 would generally be more central.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#bias-variance tradeoff of normal estimators</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2001</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>norm.samp <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(<span class="dv">10000000</span>),<span class="at">ncol=</span><span class="dv">100</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>norm.samp <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">apply</span>(norm.samp,<span class="dv">1</span>,sort))</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>mu.est1 <span class="ot">&lt;-</span> (norm.samp[,<span class="dv">1</span>]<span class="sc">+</span>norm.samp[,<span class="dv">100</span>])<span class="sc">/</span><span class="dv">2</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>mu.est2 <span class="ot">&lt;-</span> norm.samp[,<span class="dv">52</span>]</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(mu.est1,<span class="at">col=</span><span class="st">'#00000080'</span>,<span class="at">density=</span><span class="dv">10</span>,</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>     <span class="at">breaks=</span><span class="fu">seq</span>(<span class="sc">-</span><span class="fl">1.6</span>,<span class="fl">1.6</span>,<span class="fl">0.1</span>),<span class="at">ylim=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">17000</span>),<span class="at">xlim=</span><span class="fu">c</span>(<span class="sc">-</span><span class="fl">1.2</span>,<span class="fl">1.2</span>),</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>     <span class="at">main=</span><span class="fu">expression</span>(<span class="fu">paste</span>(<span class="st">'100,000 Estimates of '</span>,mu,<span class="st">' Using Two Estimators'</span>)),</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab=</span><span class="fu">expression</span>(<span class="fu">paste</span>(<span class="st">'Estimator error ('</span>,<span class="fu">hat</span>(mu)<span class="sc">-</span>mu,<span class="st">')'</span>)))</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(mu.est2,<span class="at">col=</span><span class="st">'#0000ff80'</span>,<span class="at">add=</span><span class="cn">TRUE</span>,<span class="at">breaks=</span><span class="fu">seq</span>(<span class="sc">-</span><span class="fl">1.6</span>,<span class="fl">1.6</span>,<span class="fl">0.05</span>))</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="at">x=</span><span class="st">'topright'</span>,<span class="at">legend=</span><span class="fu">c</span>(<span class="fu">expression</span>(<span class="fu">hat</span>(mu)[<span class="dv">1</span>] <span class="sc">==</span> <span class="fu">frac</span>(<span class="dv">1</span>,<span class="dv">2</span>)(<span class="fu">min</span>(x)<span class="sc">+</span><span class="fu">max</span>(x))),</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">expression</span>(<span class="fu">paste</span>(<span class="fu">hat</span>(mu)[<span class="dv">2</span>] <span class="sc">==</span> <span class="dv">52</span><span class="sc">^</span>nd,<span class="st">' percentile of x'</span>))),</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>       <span class="at">density=</span><span class="fu">c</span>(<span class="dv">20</span>,<span class="sc">-</span><span class="dv">1</span>),<span class="at">fill=</span><span class="fu">c</span>(<span class="st">'#00000080'</span>,<span class="st">'#0000ff80'</span>),<span class="at">bty=</span><span class="st">'n'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-biasvariance" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-biasvariance-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="biasvariance_files/figure-html/fig-biasvariance-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-biasvariance-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.1: The bias and variance of two different estimators
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>In the figure above, I simulated 100,000 different samples of 100 observations each, and plotted a histogram of how far from the true mean these two estimators were each time. You can see that while the 52<sup>nd</sup> ordered observation tends to slightly overestimate the true mean, it usually produces a much closer estimate than the other estimator (the straight average of the sample min and max). In fact, in almost three-quarters of the simulations, <span class="math inline">\(\hat{\mu}_2\)</span> produced a closer estimate of the true mean than <span class="math inline">\(\hat{\mu}_1\)</span>. We call these concepts the bias and the variance of an estimator. Bias measures how much the estimator <em>systematically overestimates or underestimates the true parameter</em>. Variance measures how much its estimates <em>change sample to sample.</em></p>
+<div class="{callout-note}">
+<p>Let <span class="math inline">\(\theta\)</span> be a parameter from a random variable <span class="math inline">\(X\)</span> and let <span class="math inline">\(\hat{\theta}\)</span> be an estimator of that parameter from a sample of data x. If we treat <span class="math inline">\(\hat{\theta}\)</span> as a random variable dependent upon the sample, then we may define <strong>the bias of an estimator</strong> as:</p>
+<p><span class="math display">\[\mathrm{Bias}(\hat{\theta})=\mathbb{E}[\hat{\theta}] - \theta\]</span> And if <span class="math inline">\(\mathbb{E}[\hat{\theta}] = \theta\)</span> for all values of <span class="math inline">\(\theta\)</span>, we say that <span class="math inline">\(\hat{\theta}\)</span> is <strong>unbiased.</strong></p>
+<p>Similarly, we may define <strong>the variance of an estimator</strong> as:</p>
+<p><span class="math display">\[\mathbb{V}[\hat{\theta}] = \mathbb{E}[(\hat{\theta}-\mathbb{E}[\hat{\theta}])^2]\]</span></p>
+<p>Lastly, the square root of the variance of an estimator – which we could call the standard deviation of the estimator – is instead usually called the standard error:</p>
+<p><span class="math display">\[s.\!e.\!(\hat{\theta})=\sqrt{\mathbb{V}[\hat{\theta}]}\]</span></p>
+</div>
+<p>The sport of archery provides a useful analogy for illustrating bias and variance. Imagine different archers (estimators) firing at the target. They are all aiming for the same goal (the true value of the parameter), but they can be off in different ways. One might have a tight grouping of shots that are all off-target in the same way (bias). Another might be hitting every corner of the target but, on average, is neither too high nor too low (variance).</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#bias-variance archery examples</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1138</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>),<span class="at">bty=</span><span class="st">'n'</span>,<span class="at">mar=</span><span class="fu">rep</span>(<span class="dv">1</span>,<span class="dv">4</span>))</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="at">xlim=</span><span class="fu">c</span>(<span class="sc">-</span><span class="dv">9</span>,<span class="dv">9</span>),<span class="at">ylim=</span><span class="fu">c</span>(<span class="sc">-</span><span class="dv">9</span>,<span class="dv">9</span>),<span class="at">axes=</span><span class="cn">FALSE</span>,<span class="at">asp=</span><span class="dv">1</span>,<span class="at">ann=</span><span class="cn">FALSE</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">symbols</span>(<span class="fu">rep</span>(<span class="dv">0</span>,<span class="dv">4</span>),<span class="fu">rep</span>(<span class="dv">0</span>,<span class="dv">4</span>),<span class="at">circles=</span><span class="fu">c</span>(<span class="dv">7</span>,<span class="dv">5</span>,<span class="dv">3</span>,<span class="dv">1</span>),<span class="at">add=</span><span class="cn">TRUE</span>,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">bg=</span><span class="fu">c</span>(<span class="st">'#ffffff'</span>,<span class="st">'#ffffff'</span>,<span class="st">'#ffffff'</span>,<span class="st">'#ff000080'</span>))</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(<span class="fu">runif</span>(<span class="dv">10</span>,<span class="sc">-</span><span class="dv">3</span>,<span class="dv">3</span>),<span class="fu">runif</span>(<span class="dv">10</span>,<span class="sc">-</span><span class="dv">3</span>,<span class="dv">3</span>),<span class="at">pch=</span><span class="dv">4</span>,<span class="at">cex=</span><span class="fl">1.5</span>)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="fu">title</span>(<span class="at">sub=</span><span class="st">'Low bias, low variance'</span>,<span class="at">line=</span><span class="sc">-</span><span class="dv">1</span>,<span class="at">cex.sub=</span><span class="fl">1.3</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="at">xlim=</span><span class="fu">c</span>(<span class="sc">-</span><span class="dv">9</span>,<span class="dv">9</span>),<span class="at">ylim=</span><span class="fu">c</span>(<span class="sc">-</span><span class="dv">9</span>,<span class="dv">9</span>),<span class="at">axes=</span><span class="cn">FALSE</span>,<span class="at">asp=</span><span class="dv">1</span>,<span class="at">ann=</span><span class="cn">FALSE</span>)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="fu">symbols</span>(<span class="fu">rep</span>(<span class="dv">0</span>,<span class="dv">4</span>),<span class="fu">rep</span>(<span class="dv">0</span>,<span class="dv">4</span>),<span class="at">circles=</span><span class="fu">c</span>(<span class="dv">7</span>,<span class="dv">5</span>,<span class="dv">3</span>,<span class="dv">1</span>),<span class="at">add=</span><span class="cn">TRUE</span>,</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">bg=</span><span class="fu">c</span>(<span class="st">'#ffffff'</span>,<span class="st">'#ffffff'</span>,<span class="st">'#ffffff'</span>,<span class="st">'#ff000080'</span>))</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(<span class="fu">runif</span>(<span class="dv">10</span>,<span class="sc">-</span><span class="dv">6</span>,<span class="dv">6</span>),<span class="fu">runif</span>(<span class="dv">10</span>,<span class="sc">-</span><span class="dv">6</span>,<span class="dv">6</span>),<span class="at">pch=</span><span class="dv">4</span>,<span class="at">cex=</span><span class="fl">1.5</span>)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="fu">title</span>(<span class="at">sub=</span><span class="st">'Low bias, high variance'</span>,<span class="at">line=</span><span class="sc">-</span><span class="dv">1</span>,<span class="at">cex.sub=</span><span class="fl">1.3</span>)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="at">xlim=</span><span class="fu">c</span>(<span class="sc">-</span><span class="dv">9</span>,<span class="dv">9</span>),<span class="at">ylim=</span><span class="fu">c</span>(<span class="sc">-</span><span class="dv">9</span>,<span class="dv">9</span>),<span class="at">axes=</span><span class="cn">FALSE</span>,<span class="at">asp=</span><span class="dv">1</span>,<span class="at">ann=</span><span class="cn">FALSE</span>)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="fu">symbols</span>(<span class="fu">rep</span>(<span class="dv">0</span>,<span class="dv">4</span>),<span class="fu">rep</span>(<span class="dv">0</span>,<span class="dv">4</span>),<span class="at">circles=</span><span class="fu">c</span>(<span class="dv">7</span>,<span class="dv">5</span>,<span class="dv">3</span>,<span class="dv">1</span>),<span class="at">add=</span><span class="cn">TRUE</span>,</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>        <span class="at">bg=</span><span class="fu">c</span>(<span class="st">'#ffffff'</span>,<span class="st">'#ffffff'</span>,<span class="st">'#ffffff'</span>,<span class="st">'#ff000080'</span>))</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(<span class="fu">runif</span>(<span class="dv">10</span>,<span class="dv">2</span>,<span class="dv">6</span>),<span class="fu">runif</span>(<span class="dv">10</span>,<span class="dv">2</span>,<span class="dv">6</span>),<span class="at">pch=</span><span class="dv">4</span>,<span class="at">cex=</span><span class="fl">1.5</span>)</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="fu">title</span>(<span class="at">sub=</span><span class="st">'High bias, low variance'</span>,<span class="at">line=</span><span class="sc">-</span><span class="dv">1</span>,<span class="at">cex.sub=</span><span class="fl">1.3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-archerybias" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-archerybias-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="biasvariance_files/figure-html/fig-archerybias-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-archerybias-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.2: Archery analogy for the concepts of bias and variance
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>There are other properties, such as consistency or efficiency, which can make an estimator desirable or undesirable, but the variance and bias of an estimator are generally the two most-discussed properties.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> They relate to a third metric which may be familiar from a machine learning perspective: mean squared error (MSE).</p>
+<p><span class="math display">\[\begin{array}{rl} \mathrm{MSE}(\hat{\theta}) = &amp; \mathbb{E}[(\hat{\theta} - \theta)^2] \\ = &amp; \mathbb{E}[(\hat{\theta} - \mathbb{E}[\hat{\theta}] + \mathbb{E}[\hat{\theta}] - \theta)^2] \\ = &amp; \mathbb{E}[(\hat{\theta} - \mathbb{E}[\hat{\theta}])^2 + 2 (\hat{\theta} - \mathbb{E}[\hat{\theta}]) (\mathbb{E}[\hat{\theta}] - \theta) + (\mathbb{E}[\hat{\theta}] - \theta)^2] \\ = &amp; \mathbb{E}[(\hat{\theta} - \mathbb{E}[\hat{\theta}])]^2 + 2\, \mathbb{E}[(\hat{\theta} - \mathbb{E}[\hat{\theta}]) (\mathbb{E}[\hat{\theta}] - \theta)] + \mathbb{E}[(\mathbb{E}[\hat{\theta}] - \theta)^2] \\ = &amp; \mathbb{V}[\hat{\theta}] + 2\, \mathbb{E}[(\hat{\theta} - \mathbb{E}[\hat{\theta}]) (\mathbb{E}[\hat{\theta}] - \theta)] + \mathrm{Bias}(\hat{\theta})^2 \\ = &amp; \mathbb{V}[\hat{\theta}] + 2\,(\mathbb{E}[\hat{\theta}] - \theta)\, \mathbb{E}[\hat{\theta} - \mathbb{E}[\hat{\theta}]] + \mathrm{Bias}(\hat{\theta})^2 \\ = &amp; \mathbb{V}[\hat{\theta}] + \mathrm{Bias}(\hat{\theta})^2 \end{array}\]</span></p>
+<p>Essentially, the mean squared error of an estimator can always be decomposed into a systematic bias component and an idiosyncratic variance component. Between two models with the same MSE, a lower variance implies a higher bias and <em>vice versa</em>. This property is called the <strong>bias-variance tradeoff</strong> and will affect our modeling work in later sections.</p>
+<section id="visualizer-normal-estimation" class="level2">
+<h2 class="anchored" data-anchor-id="visualizer-normal-estimation">Visualizer: Normal estimation</h2>
+<p>There are times we prefer maximum likelihood estimators (MLEs) and times we do not. Consider estimating the mean <span class="math inline">\((\mu)\)</span> and standard deviation <span class="math inline">\((\sigma^2)\)</span> of a normal distribution from a sample. I will set <em>true</em> values of <span class="math inline">\(\mu = 100\)</span> and <span class="math inline">\(\sigma = 20\)</span>. You can choose a sample size, and I will show you how various estimators perform among 10,000 simulated samples of that size.</p>
+<p>We have many choices for an estimator of the mean, <span class="math inline">\(\mu\)</span>. The MLE is the sample average, <span class="math inline">\(\bar{x}\)</span>, but we could also choose the median of <span class="math inline">\(\boldsymbol{x}\)</span>. Note that both estimators are unbiased, but that the sample average has lower variance, and that the effect grows for large sample sizes.</p>
+<p>We have fewer sensible estimators for the standard deviation, <span class="math inline">\(\sigma\)</span>. The MLE is the ‘uncorrected’ sample standard deviation, <span class="math inline">\(\sqrt{\sum_i (x_i - \bar{x})^2 / n}\)</span>. However, you can see that when sample sizes are small, this estimator is biased; it underestimates the true standard deviation. A slight bias remains even at large sample sizes, but would be hard for the eye to detect. The ‘corrected’ sample standard deviation, <span class="math inline">\(\sqrt{\sum_i (x_i - \bar{x})^2 / (n - 1)}\)</span>, remains unbiased and we usually choose this estimator even though it is <em>not</em> the MLE solution.</p>
+<pre class="shinylive-r" data-engine="r"><code>#| '!! shinylive warning !!': |
+#|   shinylive does not work in self-contained HTML documents.
+#|   Please set `embed-resources: false` in your metadata.
+#| standalone: true
+#| viewerHeight: 900
+
+library(shiny)
+library(bslib)
+
+ui &lt;- page_fluid(
+  tags$head(tags$style(HTML("body {overflow-x: hidden;}"))),
+  title = "Variance and bias of Normal estimators",
+  fluidRow(column(width=3,""),column(width=6,sliderInput("nsamp", "N (sample size)", min=5, max=200, value=25)),column(width=3,"")),
+  fluidRow(column(width=12,plotOutput("distPlot1"))),
+  fluidRow(column(width=12,plotOutput("distPlot2"))))
+
+server &lt;- function(input, output) {
+  x &lt;- reactive({matrix(rnorm(10000*input$nsamp,100,20),nrow=10000)})
+  xbar &lt;- reactive({apply(x(),1,mean)})
+  xmed &lt;- reactive({apply(x(),1,median)})
+  xsd &lt;- reactive({apply(x(),1,sd)})
+  xrmse &lt;- reactive({sqrt(xsd()^2*(input$nsamp-1)/input$nsamp)})
+  output$distPlot1 &lt;- renderPlot({hist(xbar(), breaks=seq(min(xbar(),xmed()),max(xbar(),xmed()),length.out=31), main='10,000 estimates for the mean', xlab='Mu-hat', ylab='Frequency', col='#ff000080'); hist(xmed(), breaks=seq(min(xbar(),xmed()),max(xbar(),xmed()),length.out=31), col='#0000ff80', add=TRUE); legend(x='topright', legend=c('Sample mean','Sample median'), fill=c('#ff000080','#0000ff80'), bty='n')})
+  output$distPlot2 &lt;- renderPlot({hist(xrmse(), breaks=seq(min(xrmse(),xsd()),max(xrmse(),xsd()),length.out=31), main='10,000 estimates for the std dev', xlab='Sigma-hat', ylab='Frequency', col='#ff000080'); hist(xsd(), breaks=seq(min(xrmse(),xsd()),max(xrmse(),xsd()),length.out=31), col='#0000ff80', add=TRUE); legend(x='topright', legend=c('Uncorrected: /(n)','Corrected: /(n-1)'), fill=c('#ff000080','#0000ff80'), bty='n')})
+}
+
+shinyApp(ui = ui, server = server)</code></pre>
+
+
+</section>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1"><p>Briefly, a <em>consistent</em> estimator produces better and better estimates as your sample size increases, while an <em>efficient</em> estimator makes the best possible use of the sample’s information.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation column-body">
+  <div class="nav-page nav-page-previous">
+      <a href="./hypothesistest.html" class="pagination-link" aria-label="Hypothesis tests">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Hypothesis tests</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./confidenceintervals.html" class="pagination-link" aria-label="Exact confidence intervals">
+        <span class="nav-page-text"><span class="chapter-title">Exact confidence intervals</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<script src="site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

@@ -1,0 +1,383 @@
+# Univariate estimation {#sec-univariate}
+
+Let's begin studying statistical inference with the simplest of cases: trying to determine the distribution which generated a single column of numbers. I assume your familiarity with some of the most common probability distributions: the discrete Bernoulli, binomial, geometric, and Poisson distributions, along with the continuous uniform, exponential, and normal distributions. If you need a refresher, the appendices contain more detail about each of these distributions and others we will study in later sections.
+
+When we ask our computers today to model our data with set of parameters (such as the slope and intercept of a simple regression), the computer usually solves for the unknown parameters using *maximum likelihood estimation*, a method which was originally developed by Ronald Fisher over 100 years ago. The basic premise of maximum likelihood is to assume that the data aren't... weird. Of course, the data could be weird: they could be unrepresentative or contain wild outliers. But *usually*, and by definition, our data aren’t *unusual*. So we will suppose that the best guess for the unknown parameters will be the values which make the data seem the most ordinary. There are other estimation methods worth learning, but in this course we will focus heavily on maximum likelihood estimation.
+
+### Motivation and definition
+
+When we conduct statistical inference, we begin with data, and then we proceed to ask what distribution (and which parameters) could have created the data. Notice that this situation reverses the problems you might find in a high school or college class on probability. In those earlier classes, you would often be asked "if the parameters for this distribution are $\theta$, then what is the probability of observing $\boldsymbol{x}$?" For example:
+
+* If a fair coin is flipped 50 times, what is the probability of observing exactly 27 heads and 23 tails?
+
+* If the heights of adult women in the United States are normally distributed with a mean of 162 cm and a standard deviation of 7 cm, what is the probability of drawing a sample of ten women who are all shorter than 152 cm?
+
+Instead, the shoe is now on the other foot:
+
+* We flip a coin 50 times and observe 27 heads and 23 tails. Is it reasonable to believe that the coin is fair, despite these lopsided results?
+
+* We observe the heights of ten women, and we assume they represent a sample from a population which is normally distributed. Based on our sample, what are realistic ranges for the unknown mean $\mu$ and variance $\sigma^2$?
+
+To answer these questions, we will invent a way to "score" each set of possible parameters for a specific dataset. The parameters which seem well fit to the data will receive a higher score. We will consider all parameter choices which score highly as reasonable guesses for the unknown truth, but if we need to make just one guess, then we will choose the parameter or set of parameters with the highest score. We will call this scoring function *likelihood*.
+
+Imagine a univariate sample $\boldsymbol{x} = x_1,x_2,\ldots,x_n$ which we believe came from a discrete probability distribution $X$ with parameters $\theta$, and assume for the moment that the observations are independent of each other. Then we could compute the probability of observing the entire sample simply by multiplying together the probabilities of each individual observation:
+
+$$P(\boldsymbol{x}|\theta) = \prod_{i=1}^n P(X=x_i|\theta)$$
+
+The equation above treats $\theta$ as a fixed assumption and $\boldsymbol{x}$ as the input variable. Now we will repurpose this same function but treat $\boldsymbol{x}$ as the assumption and $\theta$ as the variable. We will also take the opportunity to extend this idea to a continuous case, using densities rather than probability mass functions:
+
+::: {callout-note}
+Let $X$ be a random variable dependent on one or more parameters $\theta$ and $\boldsymbol{x} = x_1,x_2,\ldots,x_n$ be independent sample observations where $x_i \sim X \quad \forall i \in \mathbb{N}: \ 1 \le i \le n.$ Then we write the likelihood of $\theta$ given $\boldsymbol{x}$ as $\mathcal{L}(\theta|\boldsymbol{x})$. If $X$ is discrete, we define:
+
+$$\mathcal{L}(\theta|\boldsymbol{x})=\prod_{i=1}^n P(X=x_i|\theta)$$
+
+And if $X$ is continuous with probability distribution function (PDF) $f_X$, we define:
+
+$$\mathcal{L}(\theta|\boldsymbol{x})=\prod_{i=1}^n f_X(x_i|\theta)$$
+
+If $\theta$ has $k$ parameters, let $\mathcal{S} \in \mathbb{R}^k$ be the set of values $\theta$ can take which are permitted by the distribution of $X$ and the observed values of $\boldsymbol{x}$. Then the choice for $\theta$ which maximizes $\mathcal{L}(\theta|\boldsymbol{x})$ is referred to as the **maximum likelihood estimator (MLE)** for $\theta$:
+
+$$\hat{\theta}_\textit{MLE} = \mathop{\mathrm{argmax}}_{\theta \in \mathcal{S}} \,\mathcal{L}(\theta|\boldsymbol{x})$$
+:::
+
+Notice that likelihood functions are usually products of the individual probabilities/densities of each observation in the sample. It can be difficult to directly maximize a complicated product of many terms. Happily, we can use one or two tricks which greatly simplify maximum likelihood estimation. The first trick is to notice that the log of a function reaches its maximum or minimum at the same input values as the original function (that is, logarithms are a monotonic transformation). Below I plot the likelihood function for the coin data mentioned above: 27 heads and 23 tails. I also will plot the log of the likelihood function:
+
+```{r}
+#| label: fig-coinlikelihood
+#| code-fold: true
+#| fig-cap: "Likelihood and log-likelihood of coin flip data"
+
+#generate coin data
+coins <- c(rep(1,27),rep(0,23))
+
+#compute likelihood and log-likelihood functions
+coin.lik <- function(p) p^sum(coins)*(1-p)^sum(1-coins)
+coin.ll <- function(p) sum(coins)*log(p)+sum(1-coins)*log(1-p)
+
+#plot coin likelihood and log-likelihood
+par(mfrow=c(1,2),bty='n',cex=0.8)
+plot((1:99)/100, coin.lik((1:99)/100),type='l',lwd=2,
+     main="Likelihood of Coin Parameter 'p'",
+     xlab='p (Prob. of Heads)',ylab='Likelihood')
+abline(v=mean(coins),lwd=2,lty=2,col='grey50')
+text(x=mean(coins),y=0,pos=4,col='grey50',
+     labels=paste0('x=',round(mean(coins),2)))
+
+plot((1:99)/100, coin.ll((1:99)/100),type='l',lwd=2,
+     main="Log-likelihood of Coin Parameter 'p'",
+     xlab='p (Prob. of Heads)',ylab='Log-likelihood')
+abline(v=mean(coins),lwd=2,lty=2,col='grey50')
+text(x=mean(coins),y=-120,pos=4,col='grey50',
+     labels=paste0('x=',round(mean(coins),2)))
+```
+
+Since the log of a product is simply the sum of logs of each term in the product, we often find log-likelihood proves easier to maximize than the original likelihood function.
+
+::: {callout-note}
+Let $\mathcal{L}(\theta|\boldsymbol{x})$ be the likelihood of a parameter $\theta$ given a sample $\boldsymbol{x}$ and a distributional assumption about the random variable $X$ from which the sample was drawn. Then we denote the log-likelihood of $\theta$ given $\boldsymbol{x}$ as $\ell(\theta|\boldsymbol{x})$ and define it as
+
+$$\ell(\theta│\boldsymbol{x})=\log{\mathcal{L}(\theta│\boldsymbol{x})}$$
+:::
+
+The second trick which we use to more easily maximize likelihood is calculus. When a likelihood function is continuously differentiable and has a local maximum (as the two graphs do above), then the same parameter value which maximizes the likelihood and log-likelihood will be a root of the first derivative of the log-likelihood:
+
+```{r}
+#| label: fig-coindll
+#| code-fold: true
+#| fig-cap: "First derivative of the log-likelihood of coin flip data"
+
+# create first derivative of coin log-likelihood function
+coin.dll <- function(p) sum(coins)/p-sum(1-coins)/(1-p)
+
+# graph first derivative of coin log-likelihood function
+par(mfrow=c(1,1),bty='n',cex=0.8)
+plot((1:99)/100, coin.dll((1:99)/100),type='l',lwd=2,
+     main="Derivative of LL of Coin Parameter 'p'",
+     xlab='p (Prob. of Heads)',ylab='dLL/dp')
+abline(h=0)
+abline(v=sum(coins)/length(coins),lwd=2,lty=2,col='grey50')
+text(x=sum(coins)/length(coins),y=-2000,pos=4,col='grey50',
+     labels=paste0('x=',round(sum(coins)/length(coins),2)))
+
+```
+
+### Example 1: Coin flips
+
+Suppose that we were given a coin and told it was fixed to land on one side more than the other. We flip the coin 50 times and record each 'heads' as 1 and each 'tails' as 0. The results below show that the coin landed 'heads' 27 times and 'tails' 23 times.
+
+$$\boldsymbol{x}=\left\{\begin{array}{l}{0,0,1,1,0,1,1,1,1,1,1,1,0,0,1,0,0,1,0,0,0,0,1,1,0,\\ 0,1,1,1,0,0,1,1,1,0,1,1,1,0,1,1,0,1,1,1,1,1,1,0,0}\end{array}\right\}$$ 
+
+Let us make a distributional assumption: the coin data can be modeled by a Bernoulli distribution. We cannot know whether this is correct or not, but it seems reasonable: Bernoulli trials require exactly two outcomes, a fixed probability of success, and independence between trials. While it’s possible that the coin could land on its edge, or that it deforms over time, or that it shows serial correlation, modeling the coin flips as Bernoulli trials seems true enough to be useful.^[You may recall the statistician George Box's maxim: all models are wrong, some are useful.]
+
+What is the probability of observing the data if the coin truly lands heads 60% of the time? You should be able to answer this from your past lessons in probability and statistics. Since we assume trials to be independent, we can write:
+
+$$P(\boldsymbol{x} | p = 0.6) = \prod_{i = 1}^{50} P(x_i | p = 0.6) = 0.4 \cdot 0.4 \cdot 0.6 \cdot \ldots \cdot 0.4 = 0.6^{27} \cdot 0.4^{23} \approx 7.2×10^{-16}$$ 
+
+A very small number... although these results are actually quite unextraordinary, there are simply so many ways that 50 coin flips can occur (1.13 quadrillion ways) that even the most common sequences each have a very, very low probability.
+
+What is the likelihood for any given parameter $p$, given our dataset of 27 heads in 50 flips?
+
+$$\mathcal{L}(p|\boldsymbol{x}) = \prod_{i=1}^{50} P(x_i|p) = p^{27} (1-p)^{23}$$
+
+What is the value of $p$ which maximizes this likelihood? It’s not immediately evident from the equation above, but perhaps the log-likelihood will help us to solve for $p$:
+
+$$\ell(p|\boldsymbol{x}) = \log{\mathcal{L}(p|\boldsymbol{x})} = 27\log{⁡p}+23\log⁡(1-p)$$
+
+This is still difficult to solve by hand, so let's bring in the final trick, and instead try to find the root of the first derivative of the log-likelihood:
+
+$$\frac{d}{dp} \ell(p│\boldsymbol{x}) = \frac{27}{p}-\frac{23}{1-p}$$
+
+Setting the above equal to zero and solving for p,
+
+$$\frac{27}{p}-\frac{23}{1-p} = 0 \Longrightarrow \frac{27}{p} = \frac{23}{1-p} \Longrightarrow 27-27p = 23p \Longrightarrow 50p=27 \Longrightarrow \hat{p}_\textit{MLE} = \frac{27}{50}=0.54$$
+
+In fact, we could abstract a little further here to find the MLE for any Bernoulli-distributed sample. Let $k$ be the number of successes and $n$ be the total number of trials. Using the same math as above, you will find that:
+
+$$\hat{p}_\mathit{MLE} = k/n = \frac{\sum_i x_i}{n} = \bar{x}$$ This is a tidy little result. When our data are Bernoulli distributed, then the maximum likelihood estimator for the parameter $p$ is simply the sample average, *i.e.* the proportion of observations that were successes. I like findings such as these which conform with our intuition: when we have data on a Bernoulli process, our best guess as to how often successes truly happen will simply be how often successes occurred in our data.
+
+### Example 2: Heights
+
+The above example used a very simple discrete distribution with a single parameter. Let's try again with a more complicated continuous distribution, which uses two parameters. Across the entire world population, heights are not exactly distributed according to any known distribution. However, among otherwise homogeneous populations, we do observe that heights are roughly normally distributed. Let’s pretend that we sampled 10 adult women in the United States and measured their heights. Rounded to the nearest tenth of a centimeter, their heights are listed below:^[For the stubborn imperial-unit diehards among us, these heights range from five feet (60") to five feet nine inches (69").]
+
+$$\boldsymbol{x}=\{170.1,161.6,175.2,166.3,165.6,165.8,152.0,155.8,168.6,154.3\}$$ Let us assume that these heights are drawn from a normal distribution. What then would be the best guess for the parameters $\mu$ and $\sigma^2$, which are the mean and variance of the distribution? We will start by finding the likelihood function. Recall that if $X$ is normal,
+
+$$f_X(x|\mu,\sigma^2)=\frac{1}{\sqrt{2\pi\sigma^2}} e^{-\frac{1}{2\sigma^2}(x-\mu)^2}$$ From this, we can compute the likelihood of any pair of normal parameters for any dataset:
+
+$$\mathcal{L}(\mu,\sigma^2|\boldsymbol{x}) = (2\pi\sigma^2)^{-n/2}\cdot e^{-\frac{1}{2\sigma^2}\sum_{i}(x_i-\mu)^2}$$ Then, we can find the log-likelihood:
+
+$$\ell(\mu,\sigma^2|\boldsymbol{x}) = \log{\mathcal{L}(\mu,\sigma^2|\boldsymbol{x})} = -\frac{n}{2}\log{2\pi\sigma^2} - \frac{1}{2\sigma^2} \sum_{i}(x_i-\mu)^2$$
+
+Next, we will take the derivative with respect to $\mu$:
+
+$$\frac{\partial\ell}{\partial\mu} = \frac{1}{\sigma^2} \sum_{i}(x_i-μ) $$ From here we will solve for the root of the derivative, which will be the value of $\mu$ that maximizes the original likelihood function:
+
+$$\frac{\partial\ell}{\partial\mu} = 0 \Longrightarrow \sum_i (x_i-\mu) = 0 \Longrightarrow \sum_i x_i - n\mu = 0 \Longrightarrow n\mu=\sum_i x_i \Longrightarrow \hat{\mu}_\textit{MLE} = \bar{x}$$
+
+What a fantastic bit of luck. The best guess for the true mean of a normal distribution is the sample mean of our data! Let's finish up by repeating for variance: first we take the partial derivative of the log-likelihood with respect to $\sigma^2$:
+
+$$\frac{\partial\ell}{\partial\sigma^2} = -\frac{n}{2\sigma^2} + \frac{1}{2\sigma^4}\sum_i (x_i-\mu)^2$$ Then we will solve for the root of the derivative, which will be the value of $\sigma^2$ which maximizes the original likelihood function:
+
+$$\frac{\partial\ell}{\partial\sigma^2} =0 \Longrightarrow \frac{1}{2\sigma^4} \sum_i (x_i-\mu)^2 = \frac{n}{2\sigma^2} \Longrightarrow \frac{1}{\sigma^2} \sum_i (x_i-\mu)^2 = n \Longrightarrow \hat{\sigma}^2_\textit{MLE} = \frac{1}{n} \sum_i (x_i-\mu)^2$$
+
+You may recognize this quantity as the biased (uncorrected) sample variance. Although this calculation seems very sensible, we will later show that it systematically underestimates the true variance $\sigma^2$, which provides our first hint that maximum likelihood estimation is not the final answer for every problem we will encounter.
+
+With these results in hand, we can produce the MLEs for our normal parameters given our height data. We would say that the best guess for the true mean height of adult women in the United States is 163.5 cm and the best guess for their variance would be 50.4 cm${}^2$ (implying a standard deviation of 7.1 cm).^[Or for provincial bumpkins like myself: 64 in, 20 in${}^2$, and 3 in.]
+
+```{r}
+#| label: fig-heightcontour
+#| code-fold: true
+#| fig-cap: "Contour plot of height data log-likelihoods"
+
+#generate height data
+heights <- c(170.1,161.6,175.2,166.3,165.6,165.8,152.0,155.8,168.6,154.3)
+
+#generate height parameter ll contour plot
+height.ll <- function(parms) {-1*length(heights)*log(2*pi*parms[2])/2-sum((heights-parms[1])^2)/(2*parms[2])}
+xgrid <- seq(140,180,0.1)
+ygrid <- seq(25,80,0.1)
+zgrid <- matrix(apply(cbind(rep(xgrid,times=length(ygrid)),rep(ygrid,each=length(xgrid))),
+                      1,height.ll),ncol=length(ygrid))
+filled.contour(xgrid,ygrid,zgrid,levels=c(-120,-100,-80,-70,-60,-50,-40,-35,-34,-33.8,-33.7),
+               col=paste0('#000000',c('00','20','40','60','80','9f','af','cf','ef','ff')),
+               main='Log-Lik of Parameters for Height Data',
+               xlab='Mu (mean height, in cm)',ylab='Sigma^2 (variance)')
+
+```
+
+We can confirm that these solutions are reasonable by plotting the log-likelihood of various combinations of mean and variance, seen above. Notice that a broad range of possible means and variances have log-likelihoods *close* to the maximum value of -33.8. Any of these combinations could easily have generated our data. But if we have to make one guess, then the MLE values of (163.5, 50.4) would be our best choice.
+
+## Finding reasonable guesses for a parameter {#sec-reasonableguess}
+
+Maximum likelihood estimation is one way (not the only way!) to arrive at the best guess for the true location of an unknown parameter, but unfortunately these guesses are almost never correct, and usually fluctuate by small amounts from sample to sample. Put another way, each sample usually misleads us by a little bit, even carefully gathered samples which meet all our assumptions. Therefore, we should not only learn methods of identifying the *best* estimate for a parameter, but methods for identifying whether a specific estimate is *reasonable*, or indeed, methods which help us to identify *all reasonable estimates* for the parameter. This section reviews some of these methods.
+
+### Hypothesis tests
+
+Consider again the coin data from before: 27 heads and 23 tails from 50 trials. Maximum likelihood estimation would say that the best guess for the true probability of heads would be the sample average, 54%. But I believe that if you had a real coin in your hands, and you flipped it 50 times and observed 27 heads, you would not say to yourself, "Surely, this coin must slightly favor heads." Before you flipped the coin, you probably assumed it was a fair 50-50 coin, and after you observed the data, you may not have changed your mind. Intuitively, we know that even fair coins produce unfair sample averages.^[If you disagree, I wonder what you think would happen if we flipped a fair coin five times...] Yes, it’s true that an unfair coin might often produce 27 heads from 50 trials. But *so would a fair 50-50 coin*, and so our data do not rule out the possibility of a fair coin.
+
+We can even compute the exact probability that a fair 50-50 coin would create results like our data. When I say "like our data", I will include all results that are as far-from-fair as our data, or even farther-from-fair. I want to show you that fair coins can not only produce our exact data, but can sometimes produce even stranger results.^[This reasoning is very important for continuous distributions, where we may never observe the same data twice. But it also applies to discrete distributions: when we have many observations, the probability of any specific sequence of data can be very, very small.] These extreme results would include 27 heads (like our data), but also 28, 29, ..., up to 50 heads. They also include 23 heads, since 23 heads (and 27 tails) from 50 flips of a fair coin would be just as unusual as 23 tails (and 27 heads). Likewise, 22 heads, 21, ..., down to 0 heads. If we assume that the number of heads is binomially distributed, we can write:
+
+$$P(X \le 23 \textit{ or } X \ge 27) = 2 \cdot P(X \le 23) = 2 \cdot \sum_{i=0}^{23} \left( \begin{array}{c} 50 \\ i \end{array} \right) 0.5^{50} \approx 0.672$$ So you can see that perfectly fair coins will behave at least as "unfairly" as our data more than two times out of three!
+
+```{r}
+#| label: fig-cointwotails
+#| code-fold: true
+#| fig-cap: "Two-tailed hypothesis test on the coin data, assuming a fair coin"
+
+#coin hypothesis test
+plot(0:50,dbinom(0:50,50,0.5),type='h',lwd=4,xlim=c(10,40),
+     main='PMF of Fair Coin Flipped 50 Times',col='blue',
+     xlab='Number of heads',ylab='Probability')
+points(24:26,dbinom(24:26,50,0.5),type='h',lwd=4)
+text(27,dbinom(27,50,0.5),'x',pos=3)
+2*pbinom(23,50,0.5)
+legend(x='topright',legend=expression('Total Mass'%~~%0.672),
+       fill='blue')
+```
+
+The chain of reasoning we just followed is known as a hypothesis test. Above, you can see a figure which illustrates the same logic through a graph: the probability mass function (PMF) of a binomial variable where $N=50$ and $p=0.5$. This corresponds to our calculation of how the heads and tails will be distributed, under our assumption that the coin is fair. The maroon-colored lines are the probabilities for every outcome as extreme as our data (27 heads, marked ‘x’), or more extreme than our data. They sum to 0.672. 
+
+In truth, I did not strictly follow the steps of a formal hypothesis test, which I present below: 
+
+::: {callout-note}
+Let $X$ be a random variable from a distribution but with one or more unknown parameters $\theta$, and let $\boldsymbol{x}$ be data sampled from $X$. To perform a two-tailed hypothesis test, perform the following steps: 
+
+1. Define **the null hypothesis**, $H_0: \theta = \theta_0$ 
+
+2. Define **the alternative hypothesis**, $H_1: \theta \ne \theta_0$
+
+3. Determine a **significance threshold** $\alpha$ which represents the maximum acceptable risk of falsely rejecting the null hypothesis in cases where it was actually true
+
+4. Derive a **test statistic** $T=f(\cdot | \theta_0)$, a function of the sample which has a known probability distribution when the null hypothesis is true, and calculate $t_\boldsymbol{x}=f(\boldsymbol{x}|\theta_0)$ 
+
+5. Compute the ***p***-**value of the test**, which is the probability of observing a test statistic at least as extreme as observed in $\boldsymbol{x}$ --- typically, $P(T \gt t_\boldsymbol{x})$ or $P(T \lt t_\boldsymbol{x})$ 
+
+6. If the *p*-value is less than or equal to $\alpha$ then reject $H_0$, since the data make it too unlikely; otherwise, we do not have enough evidence to reject $H_0$ 
+:::
+
+Each of these steps involve many nuanced considerations, more than can be easily expressed in this short document. For the moment, I might simply say that hypothesis testing is incredibly misunderstood and misused throughout not just the broader scientific community (including data science), but even within the statistical community, which you might presume to know better. What I have presented here is a woefully incomplete tale, but we all must start somewhere. With those caveats, allow me a few further remarks: 
+
+* Sometimes we choose a null hypothesis $H_0$ which we genuinely wish to evaluate as a possible truth about the world. Other times we choose a "straw man" null hypothesis which we do not seriously believe, in order to establish a more realistic alternative. These two cases are both legitimate avenues for scientific inquiry. 
+
+* Notice that the alternative hypothesis will frequently be a *composite hypothesis*, containing an infinitude of possibilities. Therefore, we only say that we "reject the null hypothesis", never that we "accept the alternative hypothesis" --- there are *many* alternative hypotheses, and some of them are even less likely to be true than our null hypothesis. We have done nothing to identify the 'right' alternative hypothesis, we have only ruled out the null hypothesis. 
+
+* The significance threshold should be chosen *before* calculating your *p*-value, or else all this scientific rigor evaporates, leaving us with nothing more than a gut check. The most common significance threshold is $\alpha = 0.05$, but it's best practice to choose a threshold that is actually appropriate to the context of your problem. I have often used thresholds as low as $\alpha = 0.001$ and as high as $\alpha = 0.2$ in my career. 
+
+* Consider the costs of wrongly rejecting the null hypothesis very carefully, and weigh them against the costs of wrongly *failing* to reject the null hypothesis. For example, a diagnostic test for cancer creates very different problems from a false positive *versus* a false negative.
+
+The steps listed above document a two-sided hypothesis test, but sometimes we have an asymmetric problem to consider which suggests a one-tailed hypothesis test. As an example, let’s re-use the same coin data (27 heads, 23 tails), but invent a different story: Pretend that you have bought a "trick" coin from a magician, who promises that it lands tails much more often than heads. The magician isn't sure of the precise probabilities, but guarantees that the coin lands heads no more than 40% of the time. Skeptical of the magician’s claims, you flip the coin 50 times and observe 27 heads. Could the magician be telling the truth? Let’s test this hypothesis through the following steps: 
+
+1. We define the null hypothesis, $H_0:p \le 0.4$. Notice that unlike the two-sided test, our null hypothesis is now composite, including many different possible truths. 
+
+2. We define the alternative hypothesis, $H_a:p \gt 0.4$. Just like the two-sided test, our null and alternative hypotheses are exhaustive and mutually exclusive: exactly one of them will always be true. 
+
+3. We set a significance threshold; here I will use the classic $\alpha=0.05$ since this example is made up and there are no real consequences to being wrong. 
+
+4. We derive a test statistic under the null hypothesis --- here, simply the number of heads, which follows the binomial distribution. Our null contains multiple candidates for $p$, but as the data suggest $p \gt 0.4$, we will assume $p=0.4$, since every other parameter choice within the null hypothesis will result in even lower $p$-values. 
+
+5. We compute a $p$-value, that is, the probability of observing a test statistic at least as extreme as our data:
+
+  $$P(x \ge 27 | p=0.4) = \sum_{i=27}^{50} \left(\begin{array}{c} 50 \\ i \end{array} \right) 0.4^i\ 0.6^{50-i} \approx 0.031$$ 
+
+6. Since our *p*-value of 0.031 is less than our significance threshold of 0.05, we reject the null hypothesis and conclude that we were swindled by the magician. We cannot be certain, but we know that "trick" coins like the one described create datasets like our own only 3% of the time. 
+
+The figure below illustrates this test, and shows why the two variants are called "two-tailed" and "one-tailed". Two-tailed test evaluates all possible data samples which are at least as extreme as our actual data --– these samples might support parameters less than or greater than $\theta_0$, and they fall in both the left and right "tails" of the test distribution. One-tailed tests evaluate only one side of those extreme samples:
+
+```{r}
+#| label: fig-coinonetail
+#| code-fold: true
+#| fig-cap: "One-tailed hypothesis test of the coin data, assuming a trick coin"
+
+#coin hypothesis test
+plot(0:50,dbinom(0:50,50,0.4),type='h',lwd=4,xlim=c(10,40),
+     main='PMF of True p=0.4 Coin Flipped 50 Times',col='blue',
+     xlab='Number of heads',ylab='Probability')
+points(0:26,dbinom(0:26,50,0.4),type='h',lwd=4)
+text(27,dbinom(27,50,0.4),'x',pos=3)
+1-pbinom(26,50,0.4)
+legend(x='topright',legend=expression('Total Mass'%~~%0.031),
+       fill='blue')
+```
+
+### Estimator bias and estimator variance 
+
+Not all estimators are created equal. Some estimators are worse than others, and they can be better or worse in different ways. Let's pretend we have a normally distributed population (such as people's heights, or stock returns), and we would like to estimate the true mean of the population $\mu$ from a sample of 100 observations, $\boldsymbol{x}$. We have already learned that the maximum likelihood estimator for the true mean is $\bar{x}$, the sample mean. What if I forced you to pick one of two alternative estimators: 
+$$\begin{array}{ll} \hat{\mu}_1 = & \frac{\min(\boldsymbol{x}) + \max(\boldsymbol{x})}{2} \\ \hat{\mu}_2 = & x_{(52)},\, \textrm{the }52^{nd}\textrm{ observation (from smallest to largest)}\end{array}$$
+
+You may not yet be an expert statistician, but you can probably guess something about the second estimator: $\hat{\mu}_2$ will generally overestimate the true mean.  The 50^th^ or 51^st^ observation out of 100 would generally be more central.
+
+```{r}
+#| label: fig-biasvariance
+#| code-fold: true
+#| fig-cap: "The bias and variance of two different estimators"
+
+#bias-variance tradeoff of normal estimators
+set.seed(2001)
+norm.samp <- matrix(rnorm(10000000),ncol=100)
+norm.samp <- t(apply(norm.samp,1,sort))
+dim(norm.samp)
+mu.est1 <- (norm.samp[,1]+norm.samp[,100])/2
+mu.est2 <- norm.samp[,52]
+
+hist(mu.est1,col='#00000080',density=10,
+     breaks=seq(-1.6,1.6,0.1),ylim=c(0,17000),xlim=c(-1.2,1.2),
+     main=expression(paste('100,000 Estimates of ',mu,' Using Two Estimators')),
+     xlab=expression(paste('Estimator error (',hat(mu)-mu,')')))
+hist(mu.est2,col='#0000ff80',add=TRUE,breaks=seq(-1.6,1.6,0.05))
+legend(x='topright',legend=c(expression(hat(mu)[1] == frac(1,2)(min(x)+max(x))),
+                             expression(paste(hat(mu)[2] == 52^nd,' percentile of x'))),
+       density=c(20,-1),fill=c('#00000080','#0000ff80'),bty='n')
+```
+
+In the figure above, I simulated 100,000 different samples of 100 observations each, and plotted a histogram of how far from the true mean these two estimators were each time. You can see that while the 52^nd^ ordered observation tends to slightly overestimate the true mean, it usually produces a much closer estimate than the other estimator (the straight average of the sample min and max). In fact, in almost three-quarters of the simulations, $\hat{\mu}_2$ produced a closer estimate of the true mean than $\hat{\mu}_1$. We call these concepts the bias and the variance of an estimator. Bias measures how much the estimator *systematically overestimates or underestimates the true parameter*. Variance measures how much its estimates *change sample to sample.*
+
+:::{callout-note}
+Let $\theta$ be a parameter from a random variable $X$ and let $\hat{\theta}$ be an estimator of that parameter from a sample of data x. If we treat $\hat{\theta}$ as a random variable dependent upon the sample, then we may define **the bias of an estimator** as:
+
+$$\mathrm{Bias}(\hat{\theta},\theta)=\mathbb{E}[\hat{\theta}] - \theta$$ 
+And if $\mathbb{E}[\hat{\theta}] = \theta$ for all values of $\theta$, we say that $\hat{\theta}$ is **unbiased.** 
+
+Similarly, we may define **the variance of an estimator** as: 
+
+$$\mathbb{V}[\hat{\theta}] = \mathbb{E}[(\hat{\theta}-\mathbb{E}[\hat{\theta}])^2]$$
+
+Lastly, the square root of the variance of an estimator – which we could call the standard deviation of the estimator – is instead usually called the standard error: 
+
+$$s.\!e.\!(\hat{\theta})=\sqrt{\mathbb{V}[\hat{\theta}]}$$ 
+
+:::
+
+The sport of archery provides a useful analogy for illustrating bias and variance. Imagine different archers (estimators) firing at the target. They are all aiming for the same goal (the true value of the parameter), but they can be off in different ways. One might have a tight grouping of shots that are all off-target in the same way (bias). Another might be hitting every corner of the target but, on average, is neither too high nor too low (variance).
+
+```{r}
+#| label: fig-archerybias
+#| code-fold: true
+#| fig-cap: "Archery analogy for the concepts of bias and variance"
+
+#bias-variance archery examples
+set.seed(1138)
+par(mfrow=c(1,3),bty='n',mar=rep(1,4))
+plot(0,0,xlim=c(-9,9),ylim=c(-9,9),axes=FALSE,asp=1,ann=FALSE)
+symbols(rep(0,4),rep(0,4),circles=c(7,5,3,1),add=TRUE,
+        bg=c('#ffffff','#ffffff','#ffffff','#ff000080'))
+points(runif(10,-3,3),runif(10,-3,3),pch=4,cex=1.5)
+title(sub='Low bias, low variance',line=-1,cex.sub=1.3)
+plot(0,0,xlim=c(-9,9),ylim=c(-9,9),axes=FALSE,asp=1,ann=FALSE)
+symbols(rep(0,4),rep(0,4),circles=c(7,5,3,1),add=TRUE,
+        bg=c('#ffffff','#ffffff','#ffffff','#ff000080'))
+points(runif(10,-6,6),runif(10,-6,6),pch=4,cex=1.5)
+title(sub='Low bias, high variance',line=-1,cex.sub=1.3)
+plot(0,0,xlim=c(-9,9),ylim=c(-9,9),axes=FALSE,asp=1,ann=FALSE)
+symbols(rep(0,4),rep(0,4),circles=c(7,5,3,1),add=TRUE,
+        bg=c('#ffffff','#ffffff','#ffffff','#ff000080'))
+points(runif(10,2,6),runif(10,2,6),pch=4,cex=1.5)
+title(sub='High bias, low variance',line=-1,cex.sub=1.3)
+```
+
+There are other properties, such as consistency or efficiency, which can make an estimator desirable or undesirable, but the variance and bias of an estimator are generally the two most-discussed properties.^[Briefly, a *consistent* estimator produces better and better estimates as your sample size increases, while an *efficient* estimator makes the best possible use of the sample’s information.] They relate to a third metric which may be familiar from a machine learning perspective: mean squared error (MSE). 
+
+$$\begin{array}{rl} \mathrm{MSE}(\hat{\theta}) = & \mathbb{E}[(\hat{\theta} - \theta)^2] \\ = & \mathbb{E}[(\hat{\theta} - \mathbb{E}[\hat{\theta}] + \mathbb{E}[\hat{\theta}] - \theta)^2] \\ = & \mathbb{E}[(\hat{\theta} - \mathbb{E}[\hat{\theta}])^2 + 2 (\hat{\theta} - \mathbb{E}[\hat{\theta}]) (\mathbb{E}[\hat{\theta}] - \theta) + (\mathbb{E}[\hat{\theta}] - \theta)^2] \\ = & \mathbb{E}[(\hat{\theta} - \mathbb{E}[\hat{\theta}])]^2 + 2\, \mathbb{E}[(\hat{\theta} - \mathbb{E}[\hat{\theta}]) (\mathbb{E}[\hat{\theta}] - \theta)] + \mathbb{E}[(\mathbb{E}[\hat{\theta}] - \theta)^2] \\ = & \mathbb{V}[\hat{\theta}] + 2\, \mathbb{E}[(\hat{\theta} - \mathbb{E}[\hat{\theta}]) (\mathbb{E}[\hat{\theta}] - \theta)] + \mathrm{Bias}(\hat{\theta})^2 \\ = & \mathbb{V}[\hat{\theta}] + \mathrm{Bias}(\hat{\theta})^2 \end{array}$$
+
+Essentially, the mean squared error of an estimator can always be decomposed into a systematic bias component and an idiosyncratic variance component. Between two models with the same MSE, a lower variance implies a higher bias and *vice versa*. This property is called the **bias-variance tradeoff** and will affect our modeling work in later sections. 
+
+### Exact confidence intervals 
+
+We have learned how to identify the best guess for an unknown parameter from the data. We have also learned how to check if a specific alternative is a reasonable guess, or if the data make it too unlikely to be true. Now we shall learn how to find the range of all reasonable guesses for an unknown parameter. This range is called a confidence interval, because the size of the range depends on how confident we are that it will contain the true parameter: If we pick wide ranges, we can be confident that they will actually include the true parameter, but the range might be so wide as to not provide us useful information. If we pick narrow ranges, we seem much more precise in our estimates, but we run a greater risk of being wrong about where the true parameter is located. You are the one who decides how confident to be. Combining your own risk tolerance with the precise nature of the problem at hand, you choose a confidence level, usually a number close to 100%. Then you find the upper and lower bounds for your interval.\
+I wish I could now show you how to construct a confidence interval. Many other textbooks do, at this point. But the truth is, confidence intervals are very poorly defined and statisticians do not agree on how best to build them. For the moment, I will leave you with an unsatisfying half-answer: how to recognize one: Let θ∈S be a parameter from a random variable X and let x be an as-yet unobserved sample from X. Suppose that a(x) and b(x) are also random variables that are functions of the sample (that is, their values will vary sample to sample). If P(a(x)≤θ≤b(x))=1-α for all samples x and all parameter values θ∈S, then \[a(x),b(x)\] is a 1-α confidence interval for the true value of the parameter θ. I will show you one example of an exact confidence interval below, but in the next chapter I will show you a method for constructing approximate confidence intervals that are much easier to calculate and which are very accurate for large sample sizes. Let’s return to the coin data: 27 heads from 50 trials. We’ve already shown that a fair 50-50 coin could reasonably have produced this data. We’ve also shown that an unfair 40-60 coin would not likely have produced this data. Using a computer’s help and the CDF of the binomial distribution, I can find the exact lower and upper bounds p\_(l,0.05)\^\* and p\_(u,0.05)\^\* such that: If p were any lower than p\_(l,0.05)\^*, then observing so many heads (27 or more) would happen less than 5% of the time If p were any higher than p\_(u,0.05)\^*, then observing so few heads (27 or fewer) would happen less than 5% of the time When I use this method to build a confidence interval, I know that 5% of the time my data is going to have many more heads than expected, and will “trick” me into believing the parameter is in the interval when in reality p\< p\_(l,0.05)\^*. And likewise, 5% of the time my data is going to have many fewer heads than expected, and will “trick” me into believing the parameter is in the interval when in reality p\> p\_(u,0.05)\^*. But 90% of the time I will be right that the true parameter is inside the interval. Therefore we say that this method produces an exact 90% confidence interval for p.
+
+Figure 8: Construction of an exact binomial confidence interval We will learn more about confidence intervals soon. But while we are discussing theory, I want to emphasize a few common misunderstandings about their concept and purpose. Let’s say for the sake of argument that you have a calculated a 95% confidence interval: FALSE: “95% of the values of the distribution are inside the interval” We are not trying to define or bound the overall distribution. We are only talking about a property of the distribution: a parameter like its mean, or its endpoints, or the slope in a regression. FALSE: “The true parameter has a distribution described by our interval.” The true parameter isn’t randomly distributed, it’s just unknown. If our data is only misleading us a little, it will be inside our interval. If our data is misleading us a lot, the true parameter will be outside the interval. We don’t know how much our data is misleading us. FALSE: “There’s a 95% chance that this interval contains the true parameter.” Again, we are not talking about a probabilistic event. Once the interval has been calculated, there are no varying components. Our endpoints are fixed. The truth of where the parameter is was fixed before we woke up this morning, possibly before we were born. We are either right or wrong, and we don’t know which. TRUE: “The process which created this interval successfully covers the true parameter in 95% of its applications.” We don’t know if this specific interval is right or wrong, but we know the process usually results in success.
+
+## 2.3 Confirming that we have the right distribution {#sec-distributionchoice}
+
+The sections above have all assumed that our data comes to us from a certain distribution, such as the normal or the binomial, and that all we need to do is find the specific parameters of the distribution. But in the real world, datasets are rarely labeled with their distribution name. Many datasets don’t even come from a named distribution at all. How can we be sure that we have chosen the right distribution with which to model our data? 
+
+###2.3.1 Using what you and others know about the data 
+
+The first step is to narrow down your list of candidate distributions. Ideally you will be in one of two scenarios: The data you’re examining has been studied before, and other researchers have described it as being distributed a certain way. For example, daily stock returns are often modeled as being normal or lognormal. Lightbulb lifetimes are often modeled as exponentially distributed. Stay cautious: there may be important differences between the earlier research and the data in front of you. The data you’re examining comes from a generating process with known physical properties suggesting certain distributions. For example, even if we are not familiar with astronomical literature, we can reason for ourselves that large meteors (\>1km diameter) might strike the Earth according to a Poisson process. But the world is not an ideal place, and sometimes we will choose a distribution not because it is “correct” but because it is “good enough” for our data. Remember also that your data may not be distributed neatly. Your data may include different subsamples, each with their own distribution. Your data might also be distributed a certain way only after accounting for other variables, which we will consider in future chapters. Do ask yourself the following, if you are unsure of where to start: Does your data only take integer values (or is it easily transformed to take only integer values)? If so, consider a discrete distribution. But what if the integers are all very large, like stadium attendance figures? Depending on your task, continuous distributions might work just as well. What if the general scale for the integers is different in each observation, such as smoking deaths by state? Perhaps it would be better to model the rate as a continuous distribution, rather than modeling the count as discrete. Can the integers be negative? If so, you might need to transform the data before using a discrete distribution, since most don’t permit negative values. Are the data naturally bounded above and/or below? Some distributions like the uniform or exponential assume these bounds, others like the normal do not have theoretical bounds, just practical limits where it would be rare to see any data. Are your data spread out over many degrees of magnitude? If so, a logarithmic transformation or the lognormal distribution might be useful, or again finding a way to express these figures relative to some baseline which varies by observation. 
+
+### Empirical distribution functions and the Kolmogorov-Smirnov test
+
+Probability distributions are often plotted with very precise and elegant curves, brimming with mathematical truths and delicate nuances. And then there is your data: shaped like a mess, coarsely finite, and probably full of unhelpful outliers and misleading observations. But we can still plot the data as though it were a probability distribution, and learn from it: Let x be a sample of n observations. Define the indicator function 1{x_i≤t} as 1 when an observation from x is less than or equal to some threshold value t, and 0 otherwise. Then the empirical cumulative distribution function of x on a support of all t∈R is: F ̂(t)=1/n ∑\_(i=1)\^n▒1{x_i≤t} This definition provides us with a sample-based analog to the theoretical CDF of a probability distribution – which is why I define it with the term F ̂(t), to emphasize that it might be estimating some unknown cumulative distribution F(t). In essence, the empirical distribution function simply plots the ranks of data, or the quantiles of the data if you prefer. Below, I plot the empirical distribution function for 50 simulated heights next to a theoretical normal distribution which may or may not have generated the sample:
+
+Figure 9: Empirical and Theoretical CDFs You can see these two graphs resemble each other. We may be tempted to say that the sample came from the normal distribution, or at least that it could have come from the normal distribution. But we need not settle for visual approximations: we can use a hypothesis test specifically developed for this situation, which will more precisely compare these two graphs. The Kolmogorov-Smirnov test, or K-S test, was developed to help statisticians answer two similar questions: Could a sample x have been generated according to a theoretical distribution X? Could two samples, x and y, be generated by the same unknown distribution? It works by comparing the ECDF of one sample against either the theoretical CDF of a known distribution or against the ECDF of the second sample, and finding the maximum vertical difference between the two functions. Andrey Kolmogorov showed that under the null hypothesis that the two distributions are equal, this maximum discrepancy follows a novel probability distribution.
+
+Figure 10: Graphical illustration of a Kolmogorov-Smirnov test In the figure above, we see that while the empirical CDF of our 50 heights does not always perfectly match the theoretical CDF of the normal distribution with mean 162 and variance 49, that same theoretical distribution would generate samples of 50 observations that look even stranger over 52% of the time, more than half of all samples. So we cannot rule out that the height data were generated from that theoretical distribution. In practice, we can use maximum likelihood estimation and the Kolmogorov-Smirnov test as an effective “toggle” to help rapidly propose and confirm possible distributions for our data. Consider using this set of steps whenever you are faced with new univariate data: Identify a candidate distribution type, such as normal or binomial Use maximum likelihood to find the best possible parameters for the data, given your guess of the distribution type Use a K-S test to determine whether that distribution and those parameters are actually a good fit to the data (the best fit is not necessarily a good fit) If so, proceed under the assumption that your data could be distributed that way. If not, go back to step 1, identify a new distribution type, and repeat.

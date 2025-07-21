@@ -1,0 +1,77 @@
+# Preface: Inference {#sec-inference .unnumbered}
+
+All of the methods and theory presented in these notes are examples of parametric inference. If you aren’t already familiar with that term, it's worth exploring now.
+
+## Inferential statistics {#sec-inferentialstatistics}
+
+When I was young, I first heard the term "statistics" used to summarize or highlight the values of a dataset:
+
+* Among Major League Baseball pitchers, Nolan Ryan holds the career strikeout record with a total of 5714.
+
+* Japan has a greater proportion of centenarians (people who are over 100 years of age) than any other country, at 43 per 100,000 residents.
+
+* Roughly 24% of the bullet chess players on <www.chess.com> have an Elo score better than my own.
+
+These figures are correctly called statistics, but statisticians label them as **descriptive statistics**. They are incontrovertible facts. They are properties of a fixed sample which we can all agree upon. They do not require theory, just a calculation. Once I explain to you how to compute a median, you know that the median of the numbers $\{1,1,2,3,5,8,13\}$ is 3, without having to argue over assumptions.
+
+By contrast, the field of **inferential statistics** concerns itself with a shadowy world we cannot see and which might not exist. Inferential statistics starts from the assumption that the numbers in our world come to us from generating processes which are unknown --- but *systematic* and *guessable*. The data we observe are realizations of random variables, and the random variables are defined by formulae, and the formulae are controlled by parameters. Once we know those parameters, we can usually answer more detailed questions about the generating process, even questions for which we have no direct observational evidence.
+
+For example, our study of the Earth and the broader solar system suggests that meteors with a diameter of more than 1 km strike the Earth roughly every 500,000 years. We believe that such meteor strikes are closely approximated by a Poisson process, and that therefore the time between large meteor strikes could be represented by an exponential distribution with the parameter $\lambda=0.000002$ (here $\lambda$, or lambda, represents the long-term rate of meteor strikes per year).
+
+If all this is true, then I can use the exponential distribution to calculate that the probability of a large meteor strike in my lifetime (or equivalently, in the next 50 years) is only about 0.01%:^[Somehow this proved less comforting than I had hoped.]
+
+$$P(X \le 50) = 1 - e^{-\lambda \cdot 50} = 1 - e^{-0.0001} \approx 0.00009995$$
+
+Of course, I cannot prove my calculation is right or wrong. If the next large meteor struck tomorrow, or just as I died, or two thousand years from now, none of these would validate or invalidate my estimate. But the estimate might still be flawed for several reasons. Further research might change our estimate of how often such meteors strike the Earth --- perhaps it’s roughly once every 400,000 years, or every 600,000 years. We may even be wrong about meteor strikes being Poisson processes, and if they are not, then I would need a completely new set of assumptions.
+
+Yet consider my approach:
+
+* I started from a dataset (the geologic record of how many large meteors have struck the Earth during the Cenozoic period)
+
+* I assumed that the data came from a specific probability distribution
+
+* I used the data to make a guess as to which parameters controlled that distribution
+
+* With my guess for the parameters, I was able to answer questions that the data by itself could not answer
+
+These are the central concepts of inferential statistics. We make assumptions about how the world works, and then use data to estimate various unknown parameters. We are always wrong in our guesses –-- and we don't even know how wrong we are. We are sometimes even wrong about our distributional assumptions. I wouldn't say we are taking guesses in the dark, but the room can be very dim indeed. However, our reward is to be able to describe things we have not seen, to predict the future, and to better understand the past.
+
+## How all parametric estimation is performed {#sec-parameters}
+
+I described the steps above in generalities. We have not yet discussed *how* to make a guess about the parameters of a distribution. Nor have we discussed what makes one guessing method better or worse than other guessing methods. Before I can talk about these subjects, we need to introduce a few definitions.
+
+We will start with some data. Perhaps we have a univariate vector of $n$ observations: $\boldsymbol{x} = \{x_1,x_2,\ldots,x_n\}$.^[Later on in these notes, we will extend our methods to data which form a matrix of values, where each component $x_i$ is a vector of its own: $\mathbf{X}={\boldsymbol{x_1},\boldsymbol{x_2},\ldots,\boldsymbol{x_k}}$.] I will frequently describe $\boldsymbol{x}$ as our **sample**, even if it was collected by non-sampling methods.
+
+Next, let’s introduce a distributional assumption. The data $\boldsymbol{x}$ are realizations of a random variable $X$ with a cumulative distribution function $F_X$ controlled by one or more parameters $\theta$ (theta). The probability or density of each observation $x_i$ depends not only on its value but also on the parameters $\theta$. We could write,
+
+$$P(X \le x_i) = F_X(x_i;\theta) \qquad \forall i \in \mathbb{N}:\ 1 \le i \le n$$
+
+Statistics textbooks sometimes refer to $\theta$ as the *estimand*. In my experience, very few real-world professionals use this term. From now on, we will simply refer to $\theta$ as the **parameters** or often the *unknown parameters*, which emphasizes the fact that we rarely know their true value.
+
+Now, let's make a guess as the value(s) of $\theta$. There are several methods we could use to make this guess, general systems for guessing that work well for many distributions and many datasets. Right now, the specific method we use is unimportant. What is important is that our guess should be some function of the data in front of us. That is, our data $\boldsymbol{x}$ should inform our guess for the parameters $\theta$. The calculation which transforms our data into a guess of the parameter is called the **estimator** and written $\hat{\theta}$ (theta-hat):
+
+$$\hat{\theta} = g(\boldsymbol{x})$$
+
+Written this way, $\hat{\theta}$ is a calculation, a function $g$ that we apply to each new sample $\boldsymbol{x}$, producing a different result for different samples. Anytime we use our estimator $\hat{\theta}$ on a specific sample, the result of this calculation is called the **estimate** of $\theta$. The estimator is the function, and the estimate is its value for a specific sample.
+
+Allow me a metaphor to sum this all up. Inferential statistics is like baking chocolate chip cookies. We each have an idea of what chocolate chip cookies should taste like (please take a moment to imagine your own perfect cookie). This theoretical goal is the *unknown parameter*. We want to make the best real-world version of this unattainable perfection. We can choose from many recipes, or even make a new recipe of our own. Some recipes lean toward one texture or another, or accentuate some flavors more than others. Each different recipe is a different *estimator*. We may think one recipe is better than another, but that doesn't mean that it always produces a perfect batch of cookies. Depending on the materials at hand --- the freshness of the ingredients, the specific brand of chocolate, the shape and reliability of the oven, our altitude --- even our favorite recipe might produce a bad batch of cookies, or an unloved recipe might produce a surprisingly good batch of cookies. Each individual batch is a different *estimate*, and those conditions which vary batch-to-batch are the *data*.
+
+## Statistical models and machine learning models {#sec-statsvsml}
+
+Now that we've reviewed the aims of parametric inference, you might wonder how it differs from any other type of data analysis. After all, don't all quantitative methods use the information in a dataset to answer questions about the world around us?
+
+A **statistical model** makes a strong assumption that the data has a functional form, *i.e.* that the data are realizations of a random variable with a known distribution type. The only unknowns are the specific values of the parameters which created the data. Finding estimates for these parameters is typically the "finish line" for the analysis: most of the useful findings flow directly from the estimated theoretical distribution.
+
+Statistical models are high-risk and high-reward. Very few datasets are perfectly distributed according to known probability distributions. Even if the generating process is well understood, the parameters which govern the data might change over time, and the dataset we use may give us outdated information. The extremes of the distribution will typically be the least observed, and we may produce catastrophically bad predictions when we naively fit the wrong distributions to these unobserved regions.^[This was a major driver of the 2007--08 financial crisis, for example.]
+
+At first, we accepted these risks because we had no other choice. There were few alternative methods, and practitioners were limited by the data and technology of their day: dozens or hundreds of observations, studied without electronic help or with relatively primitive computing resources.
+
+All these drawbacks are also the *strengths* of statistical modeling. Statistical models can give a wide range of answers about how a generating process will behave in conditions never seen in the data. Statistical models are often very resource-light, and some can even be computed by hand. Statistical models will work with almost any amount of data and can give useful results with very small sample sizes. The parameters that we estimate from statistical models often give us powerful insight into how and why the world works.
+
+A **machine learning (ML) model**, by contrast, does not believe or require that the data were generated by a probability distribution. ML models are generally uninterested in the idea of a single generating process which created all the data. They explore clusters and breakpoints within the data, seeking to find useful rulesets or "views" of the data which preserve as much of the original information as possible.
+
+An ML model might use parametric components which are iteratively tuned in order to minimize an error function. For example, the bins created by a decision tree or the hyperplane classifiers of support vector machines are both defined by parameters. But these parameters are generally not associated with probability distributions.
+
+ML models typically offer less interpretability than statistical models. They are less eager to find hidden "truths" in the world around us, less able to explain how changes in the inputs result in changes to the outputs. They can also be very resource-intensive, requiring both large amounts of data as well as large amounts of computing power.
+
+In return, ML models offer flexibility and robustness in situations which would defy statistical modeling. ML models usually perform better than statistical models on very large datasets, which are more likely the result of many different generating processes rather than a single generating process. ML models thrive on heterogeneity and local differences in behavior, which often confound or mislead statistical models. You will learn about them in other courses. For now, we will focus on statistical models.

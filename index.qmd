@@ -19,30 +19,28 @@ So I want to teach probability and statistics "for data scientists". Data scienc
 I will try to stay focused on that mission in these notes, which should not be confused for a true textbook: they more closely resemble a detailed set of lecture slides, paired with ready-to-use code and interactive workshops. The layout of these notes echoes the syllabus for my class: a fast-paced survey of inferential statistics and parametric modeling methods, using likelihood estimation theory as a throughline for three main sections:
 
 * First, we'll review some topics in **univariate analysis** which may already be familiar to many readers.
-
 * Second, we'll examine **ordinary least squares (OLS) regression** in more detail than readers may have seen at the college level.
-
 * Third, we'll abstract from OLS regression to the family of models called **generalized linear models**, which describe non-linear trends among non-normally distributed datasets.
 
 ## Recommended textbooks {#sec-referencetexts}
 
 Despite the sentiments above, I retain both fondness and respect for true textbooks, and I highly suggest that readers of these notes pair them with one or more proper reference tomes.  A few recommendations follow:
 
-* *Introduction to Probability 2nd edition*, by Joseph Blitzstein and Jessica Hwang
-  
-  This book is [freely available](probabilitybook.net) and would help readers prepare for these notes if they feel they need to spend more time with foundational topics. The authors cover probability and random variables in depth, but they do not cover inference/estimation or regression topics.
+ *  *Introduction to Probability 2nd edition*, by Joseph Blitzstein and Jessica Hwang
 
-* *Practical Statistics for Data Scientists* 2nd edition, by Peter Bruce, Andrew Bruce, and Peter Gedeck
-  
-  This might be the most comprehensive of the books in this list. It covers many of our topics, and contains extra sections on experimental design, classification models, and machine learning models which might be useful to readers of these notes.
+    This book is [freely available](http://www.probabilitybook.net) and would help you prepare if you need to spend more time with the foundational topics which precede this course. The authors cover probability and random variables in depth, but they do not cover inference/estimation or regression topics.
+    
+ *  *Practical Statistics for Data Scientists* 2nd edition, by Peter Bruce, Andrew Bruce, and Peter Gedeck
 
-* *Foundations and Applications of Statistics: An Introduction using R* 2nd edition, by Randall Pruim
-  
-  This book covers most of our material, but skimps a little on generalized linear models.  It focuses mostly on univariate analysis and linear regression, with some basic probability as well as a brief section on logistic regression.  It also contains a lot of R code.
+    This might be the most comprehensive of the books in this list. It covers many of our topics, and contains extra sections on experimental design, classification models, and machine learning models which might be useful to readers of these notes.
+    
+ *  *Foundations and Applications of Statistics: An Introduction using R* 2nd edition, by Randall Pruim
 
-* *Foundations of Linear and Generalized Linear Models*, by Alan Agresti
-  
-  This book aligns well with the second and third sections of these notes (linear regression and GLMs), but does not cover basic probability or univariate inference.
+    This book covers most of our material, but skimps a little on generalized linear models.  It focuses mostly on univariate analysis and linear regression, with some basic probability as well as a brief section on logistic regression.  It also contains a lot of R code.
+    
+ *  *Foundations of Linear and Generalized Linear Models*, by Alan Agresti
+
+    This book aligns well with the second and third sections of these notes (linear regression and GLMs), but does not cover basic probability or univariate inference.
 
 ## How these notes were made
 

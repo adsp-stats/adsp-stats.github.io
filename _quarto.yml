@@ -6,16 +6,49 @@ book:
   title: "Statistical Analysis Using R: Online Notes"
   chapters:
     - index.qmd
-    - inference.qmd
-    - approximations.qmd
-    - olsregression.qmd
-    - robustness.qmd
-    - features.qmd
-    - modelselection.qmd
-    - glms.qmd
-    - binomialregression.qmd
-    - countregression.qmd
-    - multinomialregression.qmd
+    - preface.qmd
+    - part: "1. Univariate Techniques"
+      chapters:
+        - likelihood.qmd
+        - hypothesistest.qmd
+        - biasvariance.qmd
+        - confidenceintervals.qmd
+        - identification.qmd
+    - part: "2. Useful Approximations"
+      chapters:
+        - newton.qmd
+        - gradientdescent.qmd
+        - clt.qmd
+        - ttests.qmd
+        - rulesofthumb.qmd
+    - part: "3. Linear Regression"
+      chapters:
+        - simpleregression.qmd
+        - simplels.qmd
+        - simplemle.qmd
+        - multiplemle.qmd
+        - olsproperties.qmd
+        - variancedecomposition.qmd
+    - part: "4. Regression Robustness"
+      chapters:
+        - heteroskedasticity.qmd
+        - autocorrelation.qmd
+        - nonnormality.qmd
+        - outliers.qmd
+        - multicollinearity.qmd
+    - part: "5. Feature Engineering"
+      chapters:
+        - categoricalpredictors.qmd
+        - revisitinganova.qmd
+        - interactions.qmd
+        - featureengineering.qmd
+    - part: "6. Model Selection"
+      chapters:
+        - overfitting.qmd
+        - predictorimportance.qmd
+        - multiplecomparisons.qmd
+        - modelcomparison.qmd
+        - selectionalgorithms.qmd
   appendices:
     - part: "Distributions"
       chapters: 
@@ -34,9 +67,10 @@ book:
     - listofsymbols.qmd
  
 format:
-  bookup-html:
+  html:
     toc: true
     toc-depth: 3
+    number-sections: false
     code-copy: true
     code-overflow: wrap
     page-layout: full
