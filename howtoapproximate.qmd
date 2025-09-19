@@ -1,0 +1,184 @@
+# Coding it up in R {#sec-howtoapproximate}
+
+## How to iteratively optimize a likelihood function
+
+### Using automated routines
+
+We have already examined R's MLE-fitting procedures in @sec-howtounivariate, specifically the functions `MASS::fitdistr` and `fitdistrplus::fitdist`, along with the more general workhorse function `stats::optim`. These functions replicate (or even improve upon) the gradient descent method described previously.
+
+You can also use the function `stats::uniroot` to find a one-dimensional root of an equation, as opposed to hand-coding a Newton-Raphson algorithm. As we know from @sec-likelihood, the parameter which maximizes the likelihood function usually is a root of the derivative of the log-likelihood function.
+
+For example, let's imagine that we are loosing arrows at a target and counting the number of misses until we score a bullseye.  After five trials the five counts for the *missed* shots are: $\boldsymbol{x}=\{4,6,10,5,5\}$. If we assume these are drawn from a geometric distribution with unknown probability $p$, we can use `uniroot()` to find the zero of the log-likelihood:
+
+The geometric PMF is: $P(X=k\;|p) = (1-p)^kp$
+
+The likelihood function would be: $\mathcal{L}(p|\boldsymbol{x}) = p^n \prod_i(1-p)^{x_i}$
+
+The log-likelihood would be $n \log p + \sum_i x_i \log (1-p)$
+
+Its partial derivative with respect to $p$ would be $\frac{n}{p}-\frac{\sum_i x_i}{1-p}$
+
+Switching from equations to R, we solve for the MLE of $p$:
+```{r}
+X <- c(4,6,10,5,5)
+dll.geom <- function(p) length(X)/p - sum(X)/(1-p)
+uniroot(dll.geom,c(0.01,0.99))[[1]]
+1/7
+```
+Which should seem intuitively correct: if on average we miss six times $(\bar{x}=6)$ before making a bullseye on the seventh shot, then our probability of making bullseyes should be 1/7. 
+
+### 'Manual' iterative optimization routines
+
+I do not really recommend this strategy *in an industry or production context.* The automated routines found in R (or any other language) converge faster, better, and more surely than what you are likely to buil on your own. Optimization algorithms are an art and science of their own, and take years of training to perform at an enterprise-grade level. However, it can be quite helpful to prove to yourself that you know what you're doing. The sections @sec-newton and @sec-gradient contain illustrations of simple manual routines you can implement.
+
+For example, we can use the Newton-Raphson method instead of `optim()` to find the root of the derivative of the log-likelihood function in the archery example above:
+
+```{r}
+# helper function to approximate derivatives
+ddx <- function(value, func, delta=1e-6){
+  (func(value+delta)-func(value-delta))/(2*delta)}      
+
+# core newton-raphson algorithm, plus some output
+newton <- function(f, x0, tol=1e-6, max.iter=20){         
+  x <- x0
+  i <- 0
+  results <- data.frame(iter=i,x=x,fx=f(x))              
+  while (abs(f(x))>tol & i<max.iter) {                    
+    i <- i + 1
+    x <- x - f(x)/ddx(x,f)
+    results <- rbind(results,data.frame(iter=i,x=x,fx=f(x)))}
+  return(results)}
+
+newton(f=dll.geom,x0=0.05,tol=1e-10)
+```
+
+Or we could use gradient descent to maximize the likelihood function more directly:
+
+```{r}
+# gradient descent function with backtracking line search
+graddesc <- function(f, g, x0, b=0.8, tol=1e-2, max.iter=40){
+  i <- 0
+  x <- x0
+  results <- t(c(0,x,-f(x)))
+  while (sqrt(g(x)%*%g(x))>tol & i<max.iter) {  
+    i <- i + 1
+    t <- 0.01
+    while ((f(x+t*g(x))<f(x)) & t>tol) {  
+      t <- t*b}  
+    x <- x + t*g(x)                                           
+    results <- rbind(results,t(c(i,x,-f(x))))} 
+  colnames(results) <- c('iter',paste0('x',1:length(x)),'f') 
+  return(results)}
+
+ll.geom <- function(p) length(X)*log(p) + sum(X)*log(1-p)
+
+graddesc(f=ll.geom, g=dll.geom, x0=0.1, tol=1e-10)
+```
+
+Notice that the Newton-Raphson algorithm converged to the eighth decimal place in seven iterations, while the gradient descent method had only found the first four decimal places after 40 iterations. Better programmers with more experience could wring much more power from gradient descent than I did.
+
+## How to perform univariate hypothesis tests and confidence intervals using the CLT and the *t*-distribution
+
+### *t*-tests for means and differences of means
+
+The `MASS::anorexia` dataset will help to illustrate some basic *t*-testing use cases. This dataset describes an experimental trial in which 72 anorexic young women were assigned to three groups: a control group receiving no treatment ("Cont"), a group receiving cognitive behavioral therapy ("CBT") and a a group receiving family therapy ("FT").
+
+```{r}
+library(MASS)
+head(anorexia)
+```
+
+ 1. 90% confidence interval for the mean weight of incoming patients (automated and manual solutions):
+
+    ```{r}
+t.test(x=anorexia$Prewt,conf.level=0.90)$conf.int
+n.pre <- length(anorexia$Prewt)
+muhat.pre <- mean(anorexia$Prewt)
+se.pre <- sd(anorexia$Prewt)/sqrt(n.pre)
+muhat.pre + c(-1,1)*qt(p=0.95,df=n.pre-1)*se.pre
+    ```
+    
+ 2. One-sided test of whether the mean weight of the incoming patients could be as high as 84 pounds:
+ 
+    ```{r}
+t.test(x=anorexia$Prewt,alternative='less',mu=84)$p.value
+pt(q=(muhat.pre - 84)/se.pre,df=n.pre-1)
+    ```
+    
+ 3. Two-sample test of whether the mean post-treatment weight of the CBT group was different than the post-treatment weight of the control group (assuming equal variances):
+ 
+    ```{r}
+t.test(x=anorexia$Postwt[anorexia$Treat=='CBT'],
+       y=anorexia$Postwt[anorexia$Treat=='Cont'],
+       alternative='two.sided',var.equal=TRUE)$p.value
+n.cont <- sum(anorexia$Treat=='Cont')
+muhat.cont <- mean(anorexia$Postwt[anorexia$Treat=='Cont'])
+n.cbt <- sum(anorexia$Treat=='CBT')
+muhat.cbt <- mean(anorexia$Postwt[anorexia$Treat=='CBT'])
+var.pooled <- (var(anorexia$Postwt[anorexia$Treat=='Cont'])*(n.cont-1) +
+               var(anorexia$Postwt[anorexia$Treat=='CBT'])*(n.cbt-1)) /
+              (n.cont + n.cbt - 2)
+se.pooled <- sqrt(var.pooled/n.cont + var.pooled/n.cbt)
+2*(1-pt(q=(muhat.cbt - muhat.cont)/se.pooled,df=n.cont + n.cbt - 2))
+    ```
+ 
+ 4. Two-sample 90% confidence interval for how much more the CBT group weighed after treatment than then control group (assuming equal variances):
+ 
+    ```{r}
+t.test(x=anorexia$Postwt[anorexia$Treat=='CBT'],
+       y=anorexia$Postwt[anorexia$Treat=='Cont'],
+       conf.level=0.90,var.equal=TRUE)$conf.int
+(muhat.cbt - muhat.cont) + c(-1,1)*qt(p=0.95,df=n.cbt+n.cont-2)*se.pooled
+    ```
+
+ 5. Matched-pairs 90% confidence interal measuring how much the CBT group gained during the treatment process. Note that this test requires each observation in the first group to be matched to a corresponding observation in the second group (as is true in a before-and-after study):
+ 
+    ```{r}
+t.test(x=anorexia$Postwt[anorexia$Treat=='CBT'],
+       y=anorexia$Prewt[anorexia$Treat=='CBT'],
+       paired=TRUE,conf.level=0.90,var.equal=TRUE)$conf.int
+muhat.paired <- mean(anorexia$Postwt[anorexia$Treat=='CBT'] -
+                     anorexia$Prewt[anorexia$Treat=='CBT'])
+se.paired <- sd(anorexia$Postwt[anorexia$Treat=='CBT'] - 
+                anorexia$Prewt[anorexia$Treat=='CBT'])/sqrt(n.cbt)
+muhat.paired + c(-1,1)*qt(p=0.95,df=n.cbt-1)*se.paired
+    ```
+    
+### *z*-tests for proportions and differences of proportions
+
+Sticking with the `MASS::anorexia` dataset, let's define a "success" as a patient who weighed more post-treatment than pre-treatment.^[This is a low bar; we might normally want to set a minimum threshold for weight gain.]
+
+```{r}
+anorexia$Success <- 1*(anorexia$Postwt > anorexia$Prewt)
+```
+
+Now we can examine the proportions of success within and between the different treatment groups. For example:
+
+ 1. Two-sided 80% confidence interval for the one-sample proportion of successes in the family therapy group.
+ 
+    ```{r}
+x.ft <- sum(anorexia$Success[anorexia$Treat=='FT'])
+n.ft <- length(anorexia$Success[anorexia$Treat=='FT'])
+prop.test(x=x.ft,n=n.ft,conf.level=0.80)$conf.int
+    ```
+    
+ 2. One-sided, one-sample proportion test of whether the family therapy grpoup achieved at least a 60% success rate. Note that R by default uses a "continuity correction" which improves upon the CLT approximation for small sample sizes. By disabling this continuity correction we can manually match R's results using the CLT:
+ 
+    ```{r}
+prop.test(x=x.ft,n=n.ft,p=0.60,alternative='greater')$p.value
+prop.test(x=x.ft,n=n.ft,p=0.60,alternative='greater',correct=FALSE)$p.value
+1-pnorm((x.ft/n.ft - 0.6)/sqrt(0.6*0.4/n.ft))
+    ```
+    
+ 3. Two-sided, two-proportion test of whether the family therapy group and the CBT group have different success rates:
+ 
+    ```{r}
+x.cbt <- sum(anorexia$Success[anorexia$Treat=='CBT'])
+prop.test(x=c(x.ft,x.cbt),n=c(n.ft,n.cbt),
+          alternative='two.sided')$p.value
+prop.test(x=c(x.ft,x.cbt),n=c(n.ft,n.cbt),
+          alternative='two.sided',correct=FALSE)$p.value
+p.combined <- (x.ft + x.cbt)/(n.ft + n.cbt)
+se.combined <- sqrt(p.combined*(1-p.combined)*(1/n.ft+1/n.cbt))
+2*(1-pnorm((x.ft/n.ft - x.cbt/n.cbt)/se.combined))
+    ```

@@ -75,6 +75,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="site_libs/bootstrap/bootstrap-2ed9fe205cf6ca358fce3f52e912d798.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<meta name="shinylive:serviceworker_dir" content=".">
+<script src="site_libs/quarto-contrib/shinylive-0.9.1/shinylive/load-shinylive-sw.js" type="module"></script>
+<script src="site_libs/quarto-contrib/shinylive-0.9.1/shinylive/run-python-blocks.js" type="module"></script>
+<link href="site_libs/quarto-contrib/shinylive-0.9.1/shinylive/shinylive.css" rel="stylesheet">
+<link href="site_libs/quarto-contrib/shinylive-quarto-css/shinylive-quarto.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -203,7 +208,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./biasvariance.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Estimator bias and variance</span></a>
+  <a href="./biasvariance.html" class="sidebar-item-text sidebar-link"><span class="chapter-title"><em>Estimator bias and variance</em></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -214,6 +219,11 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./identification.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Identifying distributions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./howtounivariate.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Coding it up in R</span></a>
   </div>
 </li>
       </ul>
@@ -229,27 +239,27 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./newton.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">newton.html</span></a>
+  <a href="./newton.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The Newton-Raphson method</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./gradientdescent.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">gradientdescent.html</span></a>
+  <a href="./gradientdescent.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Gradient descent</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./clt.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">clt.html</span></a>
+  <a href="./clt.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The Central Limit Theorem</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./ttests.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">ttests.html</span></a>
+  <a href="./ttests.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The Student’s <em>t</em> distribution</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./rulesofthumb.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">rulesofthumb.html</span></a>
+  <a href="./rulesofthumb.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Handy rules of thumb</span></a>
   </div>
 </li>
       </ul>
@@ -265,32 +275,17 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./simpleregression.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">simpleregression.html</span></a>
+  <a href="./simpleregression.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Simple regression</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./simplels.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">simplels.html</span></a>
+  <a href="./multiplemle.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Multiple regression</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./simplemle.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">simplemle.html</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./multiplemle.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">multiplemle.html</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./olsproperties.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">olsproperties.html</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./variancedecomposition.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">variancedecomposition.html</span></a>
+  <a href="./variancedecomposition.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The ANOVA ‘Triangle’</span></a>
   </div>
 </li>
       </ul>
@@ -503,11 +498,27 @@ window.Quarto = {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#motivation" id="toc-motivation" class="nav-link active" data-scroll-target="#motivation">Motivation</a></li>
+  <li><a href="#definition-well-more-or-less" id="toc-definition-well-more-or-less" class="nav-link" data-scroll-target="#definition-well-more-or-less">Definition… well, more or less</a></li>
+  <li><a href="#example-1-exact-binomial-confidence-interval" id="toc-example-1-exact-binomial-confidence-interval" class="nav-link" data-scroll-target="#example-1-exact-binomial-confidence-interval">Example 1: Exact binomial confidence interval</a></li>
+  <li><a href="#exact-normal-confidence-intervals-two-sided" id="toc-exact-normal-confidence-intervals-two-sided" class="nav-link" data-scroll-target="#exact-normal-confidence-intervals-two-sided">Exact normal confidence intervals (two-sided)</a>
+  <ul class="collapse">
+  <li><a href="#lower-bound" id="toc-lower-bound" class="nav-link" data-scroll-target="#lower-bound">Lower bound</a></li>
+  <li><a href="#upper-bound" id="toc-upper-bound" class="nav-link" data-scroll-target="#upper-bound">Upper bound</a></li>
+  </ul></li>
+  <li><a href="#example-2-pulsar-distances" id="toc-example-2-pulsar-distances" class="nav-link" data-scroll-target="#example-2-pulsar-distances">Example 2: Pulsar distances</a></li>
+  <li><a href="#misconceptions-about-confidence-intervals" id="toc-misconceptions-about-confidence-intervals" class="nav-link" data-scroll-target="#misconceptions-about-confidence-intervals">Misconceptions about confidence intervals</a></li>
+  <li><a href="#visualizer-confidence-interval-success-and-failure" id="toc-visualizer-confidence-interval-success-and-failure" class="nav-link" data-scroll-target="#visualizer-confidence-interval-success-and-failure">Visualizer: Confidence interval success and failure</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
-<main class="content column-page-right" id="quarto-document-content">
+<main class="content column-body" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./likelihood.html">1. Univariate Techniques</a></li><li class="breadcrumb-item"><a href="./confidenceintervals.html"><span class="chapter-title">Exact confidence intervals</span></a></li></ol></nav>
 <div class="quarto-title">
@@ -516,7 +527,7 @@ window.Quarto = {
 
 
 
-<div class="quarto-title-meta column-page-right">
+<div class="quarto-title-meta column-body">
 
     
   
@@ -528,13 +539,18 @@ window.Quarto = {
 </header>
 
 
+<section id="motivation" class="level2">
+<h2 class="anchored" data-anchor-id="motivation">Motivation</h2>
 <p>We have learned how to identify the <em>best</em> guess for an unknown parameter from the data. We have also learned how to check if a specific alternative is a <em>reasonable</em> guess, or if the data make it too unlikely to be true. Now we shall learn how to find the range of <em>all reasonable guesses</em> for an unknown parameter. This range is called a confidence interval, because the size of the range depends on how confident we are that it will contain the true parameter:</p>
 <ul>
 <li><p>If we pick wide ranges, we can be confident that they will actually include the true parameter, but the range might be so wide that we don’t gain useful or actionable information.</p></li>
 <li><p>If we pick narrow ranges, we seem much more precise in our estimates, but we run a greater risk of being wrong about where the true parameter is located.</p></li>
 </ul>
 <p><em>You</em> are the one who decides how confident to be. Combining your own risk tolerance with the precise nature of the problem at hand, you choose a confidence level, usually a number close to 100%. Then you find the upper and lower bounds for your interval.</p>
-<p>I wish I could now <em>show</em> you how to construct a confidence interval. Many other textbooks do, at this point. But the truth is, confidence intervals are very poorly defined and statisticians do not agree on how best to build them. For the moment, I will leave you with an unsatisfying half-answer: what a confidence interval should <em>do</em>.</p>
+</section>
+<section id="definition-well-more-or-less" class="level2">
+<h2 class="anchored" data-anchor-id="definition-well-more-or-less">Definition… well, more or less</h2>
+<p>I wish I could now <em>show</em> you how to construct a confidence interval. Many other textbooks do, at this point. But the truth is, confidence intervals are very poorly defined(?!) and statisticians do not agree on how best to build them(!!). For the moment, I will leave you with an unsatisfying half-answer: what a confidence interval should <em>do</em>.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -550,6 +566,9 @@ Note
 <p>for all samples and all parameter values $, then <span class="math inline">\([a(\boldsymbol{x}),b(\boldsymbol{x})]\)</span> is a <span class="math inline">\(1 - \alpha\)</span> <strong>confidence interval</strong> for the true value of the parameter <span class="math inline">\(\theta\)</span>.</p>
 </div>
 </div>
+</section>
+<section id="example-1-exact-binomial-confidence-interval" class="level2">
+<h2 class="anchored" data-anchor-id="example-1-exact-binomial-confidence-interval">Example 1: Exact binomial confidence interval</h2>
 <p>I will show you one example of an <em>exact</em> confidence interval below, and in the next chapter I will show you a method for constructing <em>approximate</em> confidence intervals which are much easier to calculate and which are very accurate for large sample sizes.</p>
 <p>Let’s return to the coin data: 27 heads from 50 trials. We’ve already shown that a fair 50-50 coin could reasonably have produced this sample. We’ve also shown that an unfair 40-60 coin would not likely have produced this sample. Using a computer’s help and the CDF of the binomial distribution, I can find the exact lower and upper bounds <span class="math inline">\(p^*_{l,0.05}\)</span> and <span class="math inline">\(p^*_{u,0.05}\)</span> such that:</p>
 <ul>
@@ -588,6 +607,51 @@ Figure&nbsp;4.1: Construction of an exact binomial confidence interval
 </div>
 </div>
 </div>
+</section>
+<section id="exact-normal-confidence-intervals-two-sided" class="level2">
+<h2 class="anchored" data-anchor-id="exact-normal-confidence-intervals-two-sided">Exact normal confidence intervals (two-sided)</h2>
+<p>Discrete and asymmetric distributions both pose particular challenges for defining an exact confidence interval. The normal distribution provides a somewhat more convenient case. Let us consider the most general case first, so that we can try to find a method which will work for all normally-distributed samples.</p>
+<p>Assume that we have a sample <span class="math inline">\(\boldsymbol{x} = \{x_1, \ldots, x_n\}\)</span> which observes a normally-distributed random variable <span class="math inline">\(X\)</span> with unknown mean <span class="math inline">\(\mu_X\)</span> and known variance <span class="math inline">\(\sigma^2_X\)</span>.<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> How might we compute a <span class="math inline">\((1-\alpha)\)</span> confidence interval for the mean of <span class="math inline">\(X\)</span>?<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a></p>
+<section id="lower-bound" class="level3">
+<h3 class="anchored" data-anchor-id="lower-bound">Lower bound</h3>
+<p>The lower bound would be a potential true mean <span class="math inline">\(x^*_{l,\alpha/2}\)</span> for which these observations would be unusually large; in fact, if <span class="math inline">\(\mu = x^*_{l,\alpha/2}\)</span> then samples as large as <span class="math inline">\(\boldsymbol{x}\)</span> would be seen with probability <span class="math inline">\(\alpha/2\)</span>].<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a></p>
+<p>Since we our sample has many observations, what precisely does it mean to be “unusually large”? Recall that the average of independent and identically-distributed normal variates is also normally distributed:</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>If <span class="math inline">\(X_1, \ldots, X_n\)</span> are each normally distributed random variables with mean <span class="math inline">\(\mu_X\)</span> and variance <span class="math inline">\(\sigma_X^2\)</span>, then:</p>
+<p><span class="math display">\[ \bar{X} = \frac{1}{n}\sum_{i=1}^n X_i \sim \mathrm{Normal}(\mu_X,\frac{\sigma_X^2}{n})\]</span></p>
+</div>
+</div>
+<p>From this handy result, we can define a more “extreme” or “unusual” sample as one with a sample average further from the mean.</p>
+<p>Now we can back out the critical value of <span class="math inline">\(\mu^*_{l,0.05}\)</span>. Let <span class="math inline">\(\bar{X}\)</span> be our normally distributed sample mean, centered on our unknown <span class="math inline">\(x^*_{l,\alpha/2}\)</span> and with standard deviation <span class="math inline">\(\sigma_X/\sqrt{n}\)</span>. Notice that we can standardize this normal variable without losing any information: if we define <span class="math inline">\(Z = (X - x^*_{l,\alpha/2})/(\sigma_X/\sqrt{n})\)</span>, then <span class="math inline">\(Z \sim \mathrm{Normal}(0,1)\)</span>.</p>
+<p><span class="math display">\[\begin{aligned} P(\bar{X} \ge \bar{x}) = \frac{\alpha}{2} &amp; \Longrightarrow P(\bar{X} \le \bar{x}) = 1 - \frac{\alpha}{2} \\ &amp; \Longrightarrow P(Z \le \frac{\bar{x} - x^*_{l,\alpha/2}}{\sigma_X/\sqrt{n}}) = 1 - \frac{\alpha}{2} \\ &amp; \Longrightarrow \frac{\bar{x} - x^*_{l,\alpha/2}}{\sigma_X/\sqrt{n}} = \Phi^{-1}\left(1 - \frac{\alpha}{2}\right) = z^*_{1 - \alpha/2} \\ &amp; \Longrightarrow x^*_{l,\alpha/2} = \bar{x} - z^*_{1 - \alpha/2} \cdot \sigma_X/\sqrt{n} \end{aligned}\]</span></p>
+</section>
+<section id="upper-bound" class="level3">
+<h3 class="anchored" data-anchor-id="upper-bound">Upper bound</h3>
+<p>With complete symmetry, we define the upper bound of our interval as the hypothetical mean for which our data seem unusually and improbably small; in fact, that such “small” samples would only occur with probability <span class="math inline">\(\alpha/2\)</span>. Using the same methods shown above, we conclude,</p>
+<p><span class="math display">\[x^*_{u,\alpha/2} = \bar{x} + z^*_{1 - \alpha/2} \cdot \sigma_X/\sqrt{n}\]</span></p>
+<p>With the general solution now in hand, let’s try computing a specific example.</p>
+</section>
+</section>
+<section id="example-2-pulsar-distances" class="level2">
+<h2 class="anchored" data-anchor-id="example-2-pulsar-distances">Example 2: Pulsar distances</h2>
+<p>Imagine that astronomers discover a new pulsar in deep space.<a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a> To use the new pulsar’s data effectively, we need to know how far away it is, but our measurements of deep-space distance are very imprecise. We believe each measurement is normally distributed around the true distance with standard deviation of 7.5 light years. Astronomers take ten measurements:</p>
+<p><span class="math display">\[\boldsymbol{x} = \{412.7, 419.4, 420.6, 414.0, 399.5, 417.6, 421.4, 407.5, 408.2, 407.5\}\]</span></p>
+<p>What would be a 90% confidence interval for the true distance of the pulsar?</p>
+<p><span class="math display">\[\begin{aligned} \bar{x} &amp;= 412.84 \\ n &amp;= 10 \\ \sigma_X &amp;= 7.5 \\ z^*_{1 - \alpha/2} &amp;= \Phi^{-1}(0.95) \approx 1.645 \end{aligned}\]</span></p>
+<p><span class="math display">\[\begin{aligned} \mathrm{CI}_{\mu_X,95\%} &amp;= \bar{x} \pm z^*_{1 - \alpha/2} \cdot \sigma_X / \sqrt{n} \\ &amp;\approx 412.84 \pm 1.645 \cdot 7.5 / \sqrt{10} \\ &amp;\approx (408.9, 416.7)\end{aligned}\]</span></p>
+<p>From which we may conclude that the pulsar is truly between 408.9 and 416.7 light years away. Of course, we could be wrong! We have no guarantee of this conclusion. But the method we used is right 95% of the time, at least when we are correct in our assumptions about the data being independent and identically normally distributed with a known standard deviation.</p>
+</section>
+<section id="misconceptions-about-confidence-intervals" class="level2">
+<h2 class="anchored" data-anchor-id="misconceptions-about-confidence-intervals">Misconceptions about confidence intervals</h2>
 <p>We will learn more about confidence intervals soon. But while we are discussing theory, I want to emphasize a few common misunderstandings about their concept and purpose. For the sake of argument, let’s say that you have a calculated a 95% confidence interval.</p>
 <ul>
 <li><p><strong>FALSE:</strong> “95% of the values of the distribution are inside the interval”</p>
@@ -607,12 +671,54 @@ Figure&nbsp;4.1: Construction of an exact binomial confidence interval
 <li>We don’t know if this specific interval is right or wrong, but we know the process usually results in success.</li>
 </ul></li>
 </ul>
+</section>
+<section id="visualizer-confidence-interval-success-and-failure" class="level2">
+<h2 class="anchored" data-anchor-id="visualizer-confidence-interval-success-and-failure">Visualizer: Confidence interval success and failure</h2>
+<p>The visualizer below allows you to construct many confidence intervals for normally-distributed data with variance 1. The true data is <em>standard normal</em>, that is, <span class="math inline">\(\mathrm{Normal}(0,1)\)</span>. However, individual samples may mislead us — if the sample average is much higher or lower than zero, we may not believe that 0 could be the true mean. Intervals containing the true mean of zero are colored blue, intervals which wrongly exclude the true mean will be colored red.</p>
+<pre class="shinylive-r" data-engine="r"><code>#| '!! shinylive warning !!': |
+#|   shinylive does not work in self-contained HTML documents.
+#|   Please set `embed-resources: false` in your metadata.
+#| standalone: true
+#| viewerHeight: 500
+
+library(shiny)
+library(bslib)
+
+ui &lt;- page_fluid(
+  tags$head(tags$style(HTML("body {overflow-x: hidden;}"))),
+  title = "Confidence interval builder for normal data",
+  fluidRow(column(width=5,sliderInput("nsamp", "N (sample size)", min=5, max=200, value=25)),
+           column(width=5,sliderInput("conf", "Confidence", min=80, max=99, post='%', value=95)),
+           column(width=2,actionButton("go","Generate!"))),
+  fluidRow(column(width=12,plotOutput("distPlot1"))))
+
+server &lt;- function(input, output) {
+  output$distPlot1 &lt;- renderPlot({
+    input$go
+    x &lt;- isolate(rnorm(input$nsamp))
+    p &lt;- isolate(1-(100-input$conf)/200)
+    xlo &lt;- mean(x) - qnorm(p)/sqrt(length(x))
+    xhi &lt;- mean(x) + qnorm(p)/sqrt(length(x))
+    good &lt;- (xlo &lt; 0) &amp; (xhi &gt; 0)
+    plot(x=x,y=rep(-1,length(x)),pch=4,cex=2,xlim=c(-3.5,3.5),ylim=c(-2,2),axes=FALSE,ylab=NA,xlab='Values of X')
+    axis(1,-3:3,-3:3,pos=0)
+    lines(x=c(xlo,xhi),y=c(1,1),lwd=5,type='b',col=c('red','blue')[1*good+1])
+    text(x=c(xlo,xhi),y=c(1,1),pos=c(2,4),labels=round(c(xlo,xhi),2))
+    abline(v=mean(x),lty=2)})
+}
+
+shinyApp(ui = ui, server = server)</code></pre>
 
 
+</section>
 <section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
 <hr>
 <ol>
 <li id="fn1"><p>This particular method is known as <a href="https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval#Clopper–Pearson_interval">the Clopper-Pearson interval</a>. But as if to illustrate the confusion on this topic, it is neither the only “exact” calculation nor the one with the best performance!<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>In practice it’s incredibly rare to know the variance without knowing the mean. This will be addressed in <a href="ttests.html" class="quarto-xref"><span>The Student’s t distribution</span></a>.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p><em>E.g.</em> if we wanted a 95% confidence interval, then we would set <span class="math inline">\(\alpha = 0.05\)</span>.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4"><p><em>E.g</em>. if we are computing a 95% confidence interval, samples so large would only be seen 2.5% of the time.<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn5"><p>Pulsars are star-like objects which emit energy at extremely regular intervals, making them very valuable for mapping the universe, terrestrial timekeeping, and interstellar navigation.<a href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 
@@ -975,25 +1081,64 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         }
       };
     }
-      // Attach click handler to the DT
-      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
-      for (const annoteDlNode of annoteDls) {
-        annoteDlNode.addEventListener('click', (event) => {
-          const clickedEl = event.target;
-          if (clickedEl !== selectedAnnoteEl) {
-            unselectCodeLines();
-            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
-            if (activeEl) {
-              activeEl.classList.remove('code-annotation-active');
-            }
-            selectCodeLines(clickedEl);
-            clickedEl.classList.add('code-annotation-active');
-          } else {
-            // Unselect the line
-            unselectCodeLines();
-            clickedEl.classList.remove('code-annotation-active');
+      const annoteTargets = window.document.querySelectorAll('.code-annotation-anchor');
+      for (let i=0; i<annoteTargets.length; i++) {
+        const annoteTarget = annoteTargets[i];
+        const targetCell = annoteTarget.getAttribute("data-target-cell");
+        const targetAnnotation = annoteTarget.getAttribute("data-target-annotation");
+        const contentFn = () => {
+          const content = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          if (content) {
+            const tipContent = content.cloneNode(true);
+            tipContent.classList.add("code-annotation-tip-content");
+            return tipContent.outerHTML;
           }
-        });
+        }
+        const config = {
+          allowHTML: true,
+          content: contentFn,
+          onShow: (instance) => {
+            selectCodeLines(instance.reference);
+            instance.reference.classList.add('code-annotation-active');
+            window.tippy.hideAll();
+          },
+          onHide: (instance) => {
+            unselectCodeLines();
+            instance.reference.classList.remove('code-annotation-active');
+          },
+          maxWidth: 300,
+          delay: [50, 0],
+          duration: [200, 0],
+          offset: [5, 10],
+          arrow: true,
+          appendTo: function(el) {
+            return el.parentElement.parentElement.parentElement;
+          },
+          interactive: true,
+          interactiveBorder: 10,
+          theme: 'quarto',
+          placement: 'right',
+          popperOptions: {
+            modifiers: [
+            {
+              name: 'flip',
+              options: {
+                flipVariations: false, // true by default
+                allowedAutoPlacements: ['right'],
+                fallbackPlacements: ['right', 'top', 'top-start', 'top-end', 'bottom', 'bottom-start', 'bottom-end', 'left'],
+              },
+            },
+            {
+              name: 'preventOverflow',
+              options: {
+                mainAxis: false,
+                altAxis: false
+              }
+            }
+            ]        
+          }      
+        };
+        window.tippy(annoteTarget, config); 
       }
   const findCites = (el) => {
     const parentEl = el.parentElement;
@@ -1034,10 +1179,10 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script>
-<nav class="page-navigation column-page-right">
+<nav class="page-navigation column-body">
   <div class="nav-page nav-page-previous">
-      <a href="./biasvariance.html" class="pagination-link" aria-label="Estimator bias and variance">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Estimator bias and variance</span></span>
+      <a href="./biasvariance.html" class="pagination-link" aria-label="*Estimator bias and variance*">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title"><em>Estimator bias and variance</em></span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">

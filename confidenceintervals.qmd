@@ -1,4 +1,4 @@
-# Exact confidence intervals {#sec-confidence intervals} 
+# Exact confidence intervals {#sec-confidence} 
 
 ## Motivation
 
@@ -55,26 +55,54 @@ legend(x='topleft',legend=c('P(X >= 27 | p)','P(X <= 27 | p)'),
 text(x=c(pl+0.02,pu-0.02),y=c(0.05,0.05),pos=1,labels=round(c(pl,pu),3))
 ```
 
-## Example 2: Exact normal confidence interval
+## Exact normal confidence intervals (two-sided)
 
-Discrete and asymmetric distributions both pose particular challenges for defining an exact confidence interval. The normal distribution provides a somewhat more convenient case.
+Discrete and asymmetric distributions both pose particular challenges for defining an exact confidence interval. The normal distribution provides a somewhat more convenient case. Let us consider the most general case first, so that we can try to find a method which will work for all normally-distributed samples.
 
-Imagine that astronomers discover a new pulsar in deep space.^[Pulsars are star-like objects which emit energy at extremely regular intervals, making them very valuable for mapping the universe, terrestrial timekeeping, and interstellar navigation.] To use the new pulsar's data effectively, we need to know how far away it is, but our measurements are imprecise. We believe each measurement is normally distributed around the true distance with standard deviation of 7.5 light years. Astronomers take ten measurements:
+Assume that we have a sample $\boldsymbol{x} = \{x_1, \ldots, x_n\}$ which observes a normally-distributed random variable $X$ with unknown mean $\mu_X$ and known variance $\sigma^2_X$.^[In practice it's incredibly rare to know the variance without knowing the mean. This will be addressed in @sec-ttests.] How might we compute a $(1-\alpha)$ confidence interval for the mean of $X$?^[*E.g.* if we wanted a 95% confidence interval, then we would set $\alpha = 0.05$.]
+
+### Lower bound
+
+The lower bound would be a potential true mean $x^*_{l,\alpha/2}$ for which these observations would be unusually large; in fact, if $\mu = x^*_{l,\alpha/2}$ then samples as large as $\boldsymbol{x}$ would be seen with probability $\alpha/2$].^[*E.g*. if we are computing a 95% confidence interval, samples so large would only be seen 2.5% of the time.]
+
+Since we our sample has many observations, what precisely does it mean to be "unusually large"? Recall that the average of independent and identically-distributed normal variates is also normally distributed: 
+
+:::{.callout-note}
+If $X_1, \ldots, X_n$ are each normally distributed random variables with mean $\mu_X$ and variance $\sigma_X^2$, then:
+
+$$ \bar{X} = \frac{1}{n}\sum_{i=1}^n X_i \sim \mathrm{Normal}(\mu_X,\frac{\sigma_X^2}{n})$$
+
+:::
+
+From this handy result, we can define a more "extreme" or "unusual" sample as one with a sample average further from the mean.
+
+Now we can back out the critical value of $\mu^*_{l,0.05}$. Let $\bar{X}$ be our normally distributed sample mean, centered on our unknown $x^*_{l,\alpha/2}$ and with standard deviation $\sigma_X/\sqrt{n}$. Notice that we can standardize this normal variable without losing any information: if we define $Z = (X - x^*_{l,\alpha/2})/(\sigma_X/\sqrt{n})$, then $Z \sim \mathrm{Normal}(0,1)$.
+
+$$\begin{aligned} P(\bar{X} \ge \bar{x}) = \frac{\alpha}{2} & \Longrightarrow P(\bar{X} \le \bar{x}) = 1 - \frac{\alpha}{2} \\ & \Longrightarrow P(Z \le \frac{\bar{x} - x^*_{l,\alpha/2}}{\sigma_X/\sqrt{n}}) = 1 - \frac{\alpha}{2} \\ & \Longrightarrow \frac{\bar{x} - x^*_{l,\alpha/2}}{\sigma_X/\sqrt{n}} = \Phi^{-1}\left(1 - \frac{\alpha}{2}\right) = z^*_{1 - \alpha/2} \\ & \Longrightarrow x^*_{l,\alpha/2} = \bar{x} - z^*_{1 - \alpha/2} \cdot \sigma_X/\sqrt{n} \end{aligned}$$ 
+
+### Upper bound
+
+With complete symmetry, we define the upper bound of our interval as the hypothetical mean for which our data seem unusually and improbably small; in fact, that such "small" samples would only occur with probability $\alpha/2$. Using the same methods shown above, we conclude,
+
+$$x^*_{u,\alpha/2} = \bar{x} + z^*_{1 - \alpha/2} \cdot \sigma_X/\sqrt{n}$$
+
+With the general solution now in hand, let's try computing a specific example.
+
+## Example 2: Pulsar distances
+
+Imagine that astronomers discover a new pulsar in deep space.^[Pulsars are star-like objects which emit energy at extremely regular intervals, making them very valuable for mapping the universe, terrestrial timekeeping, and interstellar navigation.] To use the new pulsar's data effectively, we need to know how far away it is, but our measurements of deep-space distance are very imprecise. We believe each measurement is normally distributed around the true distance with standard deviation of 7.5 light years. Astronomers take ten measurements:
 
 $$\boldsymbol{x} = \{412.7, 419.4, 420.6, 414.0, 399.5, 417.6, 421.4, 407.5, 408.2, 407.5\}$$
 
 What would be a 90% confidence interval for the true distance of the pulsar?
 
-### Lower bound
+$$\begin{aligned} \bar{x} &= 412.84 \\ n &= 10 \\ \sigma_X &= 7.5 \\ z^*_{1 - \alpha/2} &= \Phi^{-1}(0.95) \approx 1.645 \end{aligned}$$
 
-The lower bound would be a potential true distance $\mu^*_{l,0.05}$ for which these observations would be unusually large; in fact, if $\mu = \mu^*_{l,0.05}$ then distances this large or larger would be seen only 5% of the time.
+$$\begin{aligned} \mathrm{CI}_{\mu_X,95\%} &= \bar{x} \pm z^*_{1 - \alpha/2} \cdot \sigma_X / \sqrt{n} \\ &\approx 412.84 \pm 1.645 \cdot 7.5 / \sqrt{10} \\ &\approx (408.9, 416.7)\end{aligned}$$
 
-Since we took ten different measurements, what does it mean to see "distances this large or larger"? Notice that since each observation is identically normally distributed, *i.e.* $x_i \sim \mathrm{Normal}(\mu,7.5^2)$, their sum and their average are both normally distributed as well: $\bar{x} \sim \mathrm{Normal}(\mu,7.5^2/10)$.
+From which we may conclude that the pulsar is truly between 408.9 and 416.7 light years away. Of course, we could be wrong! We have no guarantee of this conclusion. But the method we used is right 95% of the time, at least when we are correct in our assumptions about the data being independent and identically normally distributed with a known standard deviation.
 
-From here we can back out the critical value of $\mu^*_{l,0.05}$:
-
-$$P(\bar{x} \ge \mu^*_{l,0.05}
-
+## Misconceptions about confidence intervals
 
 We will learn more about confidence intervals soon. But while we are discussing theory, I want to emphasize a few common misunderstandings about their concept and purpose. For the sake of argument, let's say that you have a calculated a 95% confidence interval.
 
@@ -93,3 +121,40 @@ We will learn more about confidence intervals soon. But while we are discussing 
 * **TRUE:** "The process which created this interval successfully covers the true parameter in 95% of its applications."
 
   + We don’t know if this specific interval is right or wrong, but we know the process usually results in success.
+  
+## Visualizer: Confidence interval success and failure
+
+The visualizer below allows you to construct many confidence intervals for normally-distributed data with variance 1. The true data is *standard normal*, that is, $\mathrm{Normal}(0,1)$. However, individual samples may mislead us --- if the sample average is much higher or lower than zero, we may not believe that 0 could be the true mean. Intervals containing the true mean of zero are colored blue, intervals which wrongly exclude the true mean will be colored red.
+
+```{shinylive-r}
+#| standalone: true
+#| viewerHeight: 500
+
+library(shiny)
+library(bslib)
+
+ui <- page_fluid(
+  tags$head(tags$style(HTML("body {overflow-x: hidden;}"))),
+  title = "Confidence interval builder for normal data",
+  fluidRow(column(width=5,sliderInput("nsamp", "N (sample size)", min=5, max=200, value=25)),
+           column(width=5,sliderInput("conf", "Confidence", min=80, max=99, post='%', value=95)),
+           column(width=2,actionButton("go","Generate!"))),
+  fluidRow(column(width=12,plotOutput("distPlot1"))))
+
+server <- function(input, output) {
+  output$distPlot1 <- renderPlot({
+    input$go
+    x <- isolate(rnorm(input$nsamp))
+    p <- isolate(1-(100-input$conf)/200)
+    xlo <- mean(x) - qnorm(p)/sqrt(length(x))
+    xhi <- mean(x) + qnorm(p)/sqrt(length(x))
+    good <- (xlo < 0) & (xhi > 0)
+    plot(x=x,y=rep(-1,length(x)),pch=4,cex=2,xlim=c(-3.5,3.5),ylim=c(-2,2),axes=FALSE,ylab=NA,xlab='Values of X')
+    axis(1,-3:3,-3:3,pos=0)
+    lines(x=c(xlo,xhi),y=c(1,1),lwd=5,type='b',col=c('red','blue')[1*good+1])
+    text(x=c(xlo,xhi),y=c(1,1),pos=c(2,4),labels=round(c(xlo,xhi),2))
+    abline(v=mean(x),lty=2)})
+}
+
+shinyApp(ui = ui, server = server)
+```

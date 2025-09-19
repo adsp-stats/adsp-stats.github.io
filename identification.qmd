@@ -8,18 +8,19 @@ The first step is to narrow down your list of candidate distributions. Ideally y
 
 * The data you're examining has been studied before, and other researchers have described it as being distributed a certain way. For example, daily stock returns are often modeled as being normal or lognormal. Lightbulb lifetimes are often modeled as exponentially distributed. (Stay cautious: there may be important differences between the earlier research and the data in front of you.) 
 
-* The data you're examining comes from a generating process with known physical properties suggesting certain distributions. For example, even if we are not familiar with astronomical literature, we can reason for ourselves that large meteors ($\gt 1\,$km diameter) might strike the Earth according to a Poisson process. 
+* The data you're examining comes from a generating process with known physical properties suggesting certain distributions. For example, even if we are not familiar with astronomical literature, we can reason for ourselves that large meteors ($\gt$ 1 km diameter) might strike the Earth according to a Poisson process. 
 
 However the world is not an ideal place, and so sometimes we will choose a distribution not because it is "correct" but because it is "good enough" for our data. Remember also that your data may not be distributed neatly. Your data may include different subsamples, each with their own distribution. Your data might also be distributed a certain way *only after accounting for other variables*, which we will consider in future chapters. 
-Do ask yourself the following, if you are unsure of where to start: 
+
+If you are unsure of where to start, try asking the following questions:
 
 * Does your data only take integer values (or is it easily transformed to take only integer values)? If so, consider a discrete distribution. 
 
   + But what if the integers are all very large, like stadium attendance figures? Depending on your task, continuous distributions might work just as well. 
   
-  + What if the general scale for the integers is different in each observation, such as smoking deaths by state? Perhaps it would be better to model the *rate* (*e.g.* deaths per 100,000 residents) as a continuous distribution, rather than modeling the *count* as discrete. 
+  + What if the general scale for the integers is different in each observation, such as smoking deaths by state?^[Keep in mind that California has 80x more residents than Wyoming.] Perhaps it would be better to model the *rate* (*e.g.* deaths per 100,000 residents) as a continuous distribution, rather than modeling the *count* as a discrete distribution. 
   
-  + Can the integers be negative? If so, you might need to transform the data, since most discrete distributions don't permit negative values. 
+  + Can the integers be negative? If so, you might need to transform the data, since many discrete distributions don't permit negative values. 
   
 * Are the data naturally bounded above and/or below? Some distributions like the uniform or exponential might have matching bounds, others like the normal distribution do not have theoretical bounds, just practical limits where it would be rare to see any data. 
 
@@ -93,3 +94,103 @@ In practice, we can use maximum likelihood estimation and the Kolmogorov-Smirnov
 3. Use a K-S test to determine whether that distribution and those parameters are actually a good fit to the data (the best fit is not necessarily a good fit) 
 
 4. If so, proceed under the assumption that your data could be distributed that way. If not, go back to step 1, identify a new distribution type, and repeat.
+
+## Example: Car stopping distances
+
+Let's say that we are brake systems engineers and our job is to evaluate the safety of a new car model. We wish to know the real-life distribution of stopping times (in seconds) when the car is traveling at 50 kph ($\sim$30 mph) under ideal road conditions. We gather 20 test drivers, put them on a safe course, and observe the following stopping times:
+
+$$\boldsymbol{x}=\left\{ \begin{aligned} 3.68, 2.86, 3.40, 3.82, 4.32, 3.40, 3.82, 3.73, 4.33, 3.56, \\ 3.27, 3.41, 3.25, 4.04, 3.34, 3.88, 3.85, 3.07, 3.58, 3.88 \; \end{aligned} \right\}$$ 
+Consulting our company's research library, we find that prior experiments have modeled stopping times as normally distributed, but we believe that the log-normal distribution might be a better choice. Can we test these ideas?
+
+First, we fit the best normal distribution we can, retrieving the best maximum-likelihood estimates for $\mu$ and $\sigma$:
+
+```{r}
+library(MASS)
+stoptimes <- c(3.68, 2.86, 3.40, 3.82, 4.32, 3.40, 3.82, 3.73, 4.33, 3.56, 3.27, 3.41, 3.25, 4.04, 3.34, 3.88, 3.85, 3.07, 3.58, 3.88)
+(norm.ests <- fitdistr(stoptimes,'normal')$estimate)
+```
+
+Then we use the K-S test to see if these 'best' estimates are any good:
+
+```{r}
+suppressWarnings(ks.test(stoptimes,pnorm,mean=norm.ests[1],sd=norm.ests[2]))
+```
+
+We see no reason to reject the earlier guidance that stopping times are normally distributed. There is a normal distribution out there which generates data as non-normal as our own 95% of the time! That's almost all of the time!
+
+However, we can still see if the log-normal distribution is a good fit as well. Just like before, we find the best parameters for $\mu'$ and $\sigma'$:^[I am adding the 'prime' mark next to them to distinguish these log-normal parameters from the normal parameters above.]
+
+```{r}
+(lognorm.ests <- fitdistr(stoptimes,'log-normal')$estimate)
+```
+
+Then we use the K-S test to see if these 'best' estimates are any good:
+
+```{r}
+suppressWarnings(ks.test(stoptimes,plnorm,meanlog=lognorm.ests[1],sdlog=lognorm.ests[2]))
+```
+
+As it turns out, this sample of stopping times also supports the idea that they are log-normally distributed. We can find a log-normal distribution that generates data similar to this (or more extreme) *97% of the time.*
+
+We do not have enough evidence to reject the earlier literature's assumption that stopping times are normal. However, we also find a close fit to the log-normal distribution. We might choose to use either, or both, in our research, or collect more data, or make an argument for one or the other that does not depend on relative likelihood.^[*E.g.* interpretability, ease of communication, simplicity in cumulating stopping distance with other braking factors, etc.]
+
+## Visualizer: Confidence interval success and failure
+
+When sample sizes are small, it can be difficult to tell one distribution from another. I will generate some data from a *triangular distribution*, which looks exactly as you might expect: a continuous distribution bounded by its minimum $a$ and maximum $b$, where the density at either endpoint scales linearly to a modal maximum of $c: a \le c \le b$.
+
+```{r}
+#| label: fig-triangular
+#| code-fold: true
+#| fig-cap: "Triangular(55,145,100) distribution"
+
+#theoretical pdf
+par(mfrow=c(1,2))
+plot(x=c(45,55,100,145,155),y=c(0,0,1/45,0,0),type='l',lwd=2,xlab='x',ylab='Density',
+     main='Triangular PDF',xlim=c(45,155))
+xseq <- seq(45,155,0.1)
+yseq <- c(rep(0,101),(seq(55.1,100,0.1)-55)^2/(90*45),
+          1-(145-seq(100.1,145,0.1))^2/(90*45),rep(1,100))
+plot(x=xseq,y=yseq,type='l',lwd=2,xlab='x',ylab='Cumul. Prob.',
+     main='Triangular CDF',xlim=c(45,155))
+```
+
+The tool below simulates data from this exact distribution, and then tests whether that data could have come from a uniform distribution (specifically, the uniform distribution which best fits each new sample). Notice that our ability to rule out the uniform distribution is closely tied to sample size: at small sample sizes, we rarely reject the null.
+
+```{shinylive-r}
+#| standalone: true
+#| viewerHeight: 600
+
+library(shiny)
+library(bslib)
+
+ui <- page_fluid(
+  tags$head(tags$style(HTML("body {overflow-x: hidden;}"))),
+  title = "Univariate estimation from a triangular sample",
+  fluidRow(column(width=12,sliderInput("nsamp", "N (sample size)", min=20, max=200, value=50))),
+  fluidRow(column(width=6,plotOutput("distPlot1")),
+           column(width=6,plotOutput("distPlot2"))),
+  fluidRow(textOutput("testText1")))
+
+qtri <- function(p){
+  x <- vector(mode='numeric',length=length(p))
+  x[p<0.5] <- 55 + sqrt(p[p<0.5]*90*45)
+  x[p>=0.5] <- 145 - sqrt((1-p)[p>=0.5]*90*45)
+  return(x)}
+
+server <- function(input, output){
+  x <- reactive({qtri(p=runif(input$nsamp))})
+  yseq <- c((seq(55,100,0.5)-55)^2/(90*45),
+            1-(145-seq(100.5,145,0.5))^2/(90*45))
+  pval <- reactive({ks.test(x(),punif,min=min(x()),max=max(x()))$p.value})
+  output$distPlot1 <- renderPlot({
+    hist(x(),xlab='Values',ylab='Frequency',main='Histogram of Sample')})
+  output$distPlot2 <- renderPlot({
+    plot(ecdf(x()),xlab='x',ylab='F(x)',main='ECDF of Sample',pch=NA)
+    lines(x=seq(55,145,0.5),y=punif(seq(55,145,0.5),min(x()),max(x())),col='#0000ff')
+    lines(x=seq(55,145,0.5),y=yseq,col='green')
+    legend(x='topleft',legend=c('Best Uniform fit','Actual distribution'),lty=1,col=c('blue','green'))})
+  output$testText1 <- renderText({c('Could sample be Uniform?',ifelse(pval()>0.05,'Likely so: p = ','Likely not: p = '),round(pval(),4))})
+  }
+
+shinyApp(ui = ui, server = server)
+```

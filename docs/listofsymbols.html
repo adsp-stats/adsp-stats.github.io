@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>List of Symbols – Statistical Analysis Using R: Online Notes</title>
+<title>Appendix D — List of Symbols – Statistical Analysis Using R: Online Notes</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -69,6 +69,35 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -81,7 +110,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Appendices</li><li class="breadcrumb-item"><a href="./listofsymbols.html">List of Symbols</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Appendices</li><li class="breadcrumb-item"><a href="./listofsymbols.html"><span class="chapter-title">List of Symbols</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -139,7 +168,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./biasvariance.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Estimator bias and variance</span></a>
+  <a href="./biasvariance.html" class="sidebar-item-text sidebar-link"><span class="chapter-title"><em>Estimator bias and variance</em></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -150,6 +179,11 @@ ul.task-list li input[type="checkbox"] {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./identification.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Identifying distributions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./howtounivariate.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Coding it up in R</span></a>
   </div>
 </li>
       </ul>
@@ -165,27 +199,32 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./newton.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">newton.html</span></a>
+  <a href="./newton.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The Newton-Raphson method</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./gradientdescent.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">gradientdescent.html</span></a>
+  <a href="./gradientdescent.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Gradient descent</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./clt.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">clt.html</span></a>
+  <a href="./clt.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The Central Limit Theorem</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./ttests.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">ttests.html</span></a>
+  <a href="./ttests.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The Student’s <em>t</em> distribution</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./rulesofthumb.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">rulesofthumb.html</span></a>
+  <a href="./rulesofthumb.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Handy rules of thumb</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./howtoapproximate.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Coding it up in R</span></a>
   </div>
 </li>
       </ul>
@@ -201,32 +240,22 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./simpleregression.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">simpleregression.html</span></a>
+  <a href="./simpleregression.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Simple regression</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./simplels.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">simplels.html</span></a>
+  <a href="./multiplemle.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Multiple regression</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./simplemle.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">simplemle.html</span></a>
+  <a href="./variancedecomposition.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Variance decomposition</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./multiplemle.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">multiplemle.html</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./olsproperties.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">olsproperties.html</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./variancedecomposition.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">variancedecomposition.html</span></a>
+  <a href="./howtoregress.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Coding it up in R</span></a>
   </div>
 </li>
       </ul>
@@ -242,7 +271,12 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./heteroskedasticity.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">heteroskedasticity.html</span></a>
+  <a href="./robustness.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Regression robustness</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./heteroskedasticity.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Heteroskedasticity</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -354,8 +388,7 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dist_bernoulli.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Bernoulli distribution</span></a>
+  <a href="./dist_bernoulli.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Bernoulli distribution</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -396,8 +429,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dist_normal.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Normal distribution</span></a>
+  <a href="./dist_normal.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Normal distribution</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -422,14 +454,12 @@ ul.task-list li input[type="checkbox"] {
   </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./proofs.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Proofs</span></a>
+  <a href="./proofs.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Proofs</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./listofsymbols.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">List of Symbols</span></a>
+  <a href="./listofsymbols.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">List of Symbols</span></a>
   </div>
 </li>
       </ul>
@@ -439,20 +469,29 @@ ul.task-list li input[type="checkbox"] {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#lowercase-greek-letters" id="toc-lowercase-greek-letters" class="nav-link active" data-scroll-target="#lowercase-greek-letters">Lowercase Greek letters</a></li>
+  <li><a href="#uppercase-greek-letters" id="toc-uppercase-greek-letters" class="nav-link" data-scroll-target="#uppercase-greek-letters">Uppercase Greek letters</a></li>
+  <li><a href="#set-theory" id="toc-set-theory" class="nav-link" data-scroll-target="#set-theory">Set theory</a></li>
+  <li><a href="#other-mathematical-symbols" id="toc-other-mathematical-symbols" class="nav-link" data-scroll-target="#other-mathematical-symbols">Other mathematical symbols</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
-<main class="content column-page-right" id="quarto-document-content">
+<main class="content column-body" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Appendices</li><li class="breadcrumb-item"><a href="./listofsymbols.html">List of Symbols</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Appendices</li><li class="breadcrumb-item"><a href="./listofsymbols.html"><span class="chapter-title">List of Symbols</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">List of Symbols</h1>
+<h1 class="title"><span id="sec-listofsymbols" class="quarto-section-identifier">Appendix D — List of Symbols</span></h1>
 </div>
 
 
 
-<div class="quarto-title-meta column-page-right">
+<div class="quarto-title-meta column-body">
 
     
   
@@ -464,8 +503,294 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<section id="lowercase-greek-letters" class="level2">
+<h2 class="anchored" data-anchor-id="lowercase-greek-letters">Lowercase Greek letters</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Letter</th>
+<th style="text-align: left;">Symbol</th>
+<th style="text-align: left;">Uses</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">alpha</td>
+<td style="text-align: left;"><span class="math inline">\(\alpha\)</span></td>
+<td style="text-align: left;">A generic constant, or a significance threshold</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">beta</td>
+<td style="text-align: left;"><span class="math inline">\(\beta\)</span></td>
+<td style="text-align: left;">An intercept, slope, or other model coefficient</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">gamma</td>
+<td style="text-align: left;"><span class="math inline">\(\gamma\)</span></td>
+<td style="text-align: left;">A step size</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">delta</td>
+<td style="text-align: left;"><span class="math inline">\(\delta\)</span></td>
+<td style="text-align: left;">A partial derivative, or a tiny amount</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">epsilon</td>
+<td style="text-align: left;"><span class="math inline">\(\varepsilon\)</span></td>
+<td style="text-align: left;">An error term, or a tolerance factor</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">eta</td>
+<td style="text-align: left;"><span class="math inline">\(\eta\)</span></td>
+<td style="text-align: left;">The linear predictor for a GLM</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">theta</td>
+<td style="text-align: left;"><span class="math inline">\(\theta\)</span></td>
+<td style="text-align: left;">A generic parameter or set of parameters</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">lambda</td>
+<td style="text-align: left;"><span class="math inline">\(\beta\)</span></td>
+<td style="text-align: left;">The rate of a Poisson or exponential distribution</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">mu</td>
+<td style="text-align: left;"><span class="math inline">\(\mu\)</span></td>
+<td style="text-align: left;">The mean of a random variable</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">pi</td>
+<td style="text-align: left;"><span class="math inline">\(\pi\)</span></td>
+<td style="text-align: left;">The constant 3.14159…, or a probability</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">rho</td>
+<td style="text-align: left;"><span class="math inline">\(\rho\)</span></td>
+<td style="text-align: left;">Correlation</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">sigma</td>
+<td style="text-align: left;"><span class="math inline">\(\sigma\)</span></td>
+<td style="text-align: left;">The standard deviation of a random variable</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="math inline">\(\sigma^2\)</span></td>
+<td style="text-align: left;">The variance of a random variable</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">phi</td>
+<td style="text-align: left;"><span class="math inline">\(\phi\)</span></td>
+<td style="text-align: left;">Dispersion parameter for quasi-likelihood models</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">chi</td>
+<td style="text-align: left;"><span class="math inline">\(\chi\)</span></td>
+<td style="text-align: left;">Symbol used to name the chi-squared distribution</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="uppercase-greek-letters" class="level2">
+<h2 class="anchored" data-anchor-id="uppercase-greek-letters">Uppercase Greek letters</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Letter</th>
+<th style="text-align: left;">Symbol</th>
+<th style="text-align: left;">Uses</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Delta</td>
+<td style="text-align: left;"><span class="math inline">\(\Delta\)</span></td>
+<td style="text-align: left;">Change</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Pi</td>
+<td style="text-align: left;"><span class="math inline">\(\Pi\)</span></td>
+<td style="text-align: left;">Product</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Sigma</td>
+<td style="text-align: left;"><span class="math inline">\(\Sigma\)</span></td>
+<td style="text-align: left;">Sum</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Phi</td>
+<td style="text-align: left;"><span class="math inline">\(\Phi\)</span></td>
+<td style="text-align: left;">CDF of the standard normal distribution</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Omega</td>
+<td style="text-align: left;"><span class="math inline">\(\Omega\)</span></td>
+<td style="text-align: left;">Universal set (all possible outcomes)</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="set-theory" class="level2">
+<h2 class="anchored" data-anchor-id="set-theory">Set theory</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Symbol</th>
+<th style="text-align: left;">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="math inline">\(\in\)</span></td>
+<td style="text-align: left;">Is an element of</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="math inline">\(\subseteq\)</span></td>
+<td style="text-align: left;">Is a subset of (and can be equal to)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="math inline">\(\cup\)</span></td>
+<td style="text-align: left;">Union (“or”)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="math inline">\(\cap\)</span></td>
+<td style="text-align: left;">Intersection (“and”)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="math inline">\(\mathcal{A}^c\)</span></td>
+<td style="text-align: left;">A-complement (“everything <em>but</em> A”)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">null</td>
+<td style="text-align: left;"><span class="math inline">\(\emptyset\)</span></td>
+<td style="text-align: left;">The empty set (or null set)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Omega</td>
+<td style="text-align: left;"><span class="math inline">\(\Omega\)</span></td>
+<td style="text-align: left;">Universal set (all possible outcomes)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="math inline">\(\mathbb{R}\)</span></td>
+<td style="text-align: left;">The real numbers</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="math inline">\(\mathbb{Z}\)</span></td>
+<td style="text-align: left;">The integers</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="math inline">\(\mathbb{Z}^+,\mathbb{Z}^-\)</span></td>
+<td style="text-align: left;">The positive or negative integers</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="math inline">\(\mathbb{N}\)</span></td>
+<td style="text-align: left;">The natural numbers (0, 1, 2, …)</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="other-mathematical-symbols" class="level2">
+<h2 class="anchored" data-anchor-id="other-mathematical-symbols">Other mathematical symbols</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Symbol</th>
+<th style="text-align: left;">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">nabla</td>
+<td style="text-align: left;"><span class="math inline">\(\nabla\)</span></td>
+<td style="text-align: left;">Gradient (vector of first derivatives)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">factorial</td>
+<td style="text-align: left;"><span class="math inline">\(!\)</span></td>
+<td style="text-align: left;">Factorial operator, e.g.&nbsp;5! = 5 x 4 x 3 x 2 x 1 = 120</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="math inline">\(\lfloor\;\rfloor\)</span></td>
+<td style="text-align: left;">Floor operator, e.g.&nbsp;<span class="math inline">\(\lfloor3.14159\rfloor=3\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="math inline">\(\sim\)</span></td>
+<td style="text-align: left;">Is distributed according to, or depends upon</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="math inline">\(\approx\)</span></td>
+<td style="text-align: left;">Is approximately equal to</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="math inline">\(\ll,\gg\)</span></td>
+<td style="text-align: left;">Is much less than, is much greater than</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="math inline">\(\perp\)</span></td>
+<td style="text-align: left;">Perpendicular or orthogonal to, independent of</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dot</td>
+<td style="text-align: left;"><span class="math inline">\(\circ\)</span></td>
+<td style="text-align: left;">Dot product (a vector operator)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="math inline">\(|x|\)</span></td>
+<td style="text-align: left;">Absolute value of a scalar x</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="math inline">\(||\boldsymbol{x}||\)</span></td>
+<td style="text-align: left;">Magnitude (length) of a vector x</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="math inline">\(F^{-1},\mathbf{A}^{-1}\)</span></td>
+<td style="text-align: left;">Inverse of a function F or matrix A</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="math inline">\(\boldsymbol{x}^T,\mathbf{A}^T\)</span></td>
+<td style="text-align: left;">Transpose of a vector x or matrix A</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="math inline">\(1\!\!1\)</span></td>
+<td style="text-align: left;">Indicator function, or a vector of ones</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="math inline">\(\mathcal{L}\)</span></td>
+<td style="text-align: left;">Likelihood</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="math inline">\(\mathcal{l}\)</span></td>
+<td style="text-align: left;">Log-likelihood</td>
+</tr>
+</tbody>
+</table>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -826,25 +1151,64 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         }
       };
     }
-      // Attach click handler to the DT
-      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
-      for (const annoteDlNode of annoteDls) {
-        annoteDlNode.addEventListener('click', (event) => {
-          const clickedEl = event.target;
-          if (clickedEl !== selectedAnnoteEl) {
-            unselectCodeLines();
-            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
-            if (activeEl) {
-              activeEl.classList.remove('code-annotation-active');
-            }
-            selectCodeLines(clickedEl);
-            clickedEl.classList.add('code-annotation-active');
-          } else {
-            // Unselect the line
-            unselectCodeLines();
-            clickedEl.classList.remove('code-annotation-active');
+      const annoteTargets = window.document.querySelectorAll('.code-annotation-anchor');
+      for (let i=0; i<annoteTargets.length; i++) {
+        const annoteTarget = annoteTargets[i];
+        const targetCell = annoteTarget.getAttribute("data-target-cell");
+        const targetAnnotation = annoteTarget.getAttribute("data-target-annotation");
+        const contentFn = () => {
+          const content = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          if (content) {
+            const tipContent = content.cloneNode(true);
+            tipContent.classList.add("code-annotation-tip-content");
+            return tipContent.outerHTML;
           }
-        });
+        }
+        const config = {
+          allowHTML: true,
+          content: contentFn,
+          onShow: (instance) => {
+            selectCodeLines(instance.reference);
+            instance.reference.classList.add('code-annotation-active');
+            window.tippy.hideAll();
+          },
+          onHide: (instance) => {
+            unselectCodeLines();
+            instance.reference.classList.remove('code-annotation-active');
+          },
+          maxWidth: 300,
+          delay: [50, 0],
+          duration: [200, 0],
+          offset: [5, 10],
+          arrow: true,
+          appendTo: function(el) {
+            return el.parentElement.parentElement.parentElement;
+          },
+          interactive: true,
+          interactiveBorder: 10,
+          theme: 'quarto',
+          placement: 'right',
+          popperOptions: {
+            modifiers: [
+            {
+              name: 'flip',
+              options: {
+                flipVariations: false, // true by default
+                allowedAutoPlacements: ['right'],
+                fallbackPlacements: ['right', 'top', 'top-start', 'top-end', 'bottom', 'bottom-start', 'bottom-end', 'left'],
+              },
+            },
+            {
+              name: 'preventOverflow',
+              options: {
+                mainAxis: false,
+                altAxis: false
+              }
+            }
+            ]        
+          }      
+        };
+        window.tippy(annoteTarget, config); 
       }
   const findCites = (el) => {
     const parentEl = el.parentElement;
@@ -885,10 +1249,10 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script>
-<nav class="page-navigation column-page-right">
+<nav class="page-navigation column-body">
   <div class="nav-page nav-page-previous">
       <a href="./proofs.html" class="pagination-link" aria-label="Proofs">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Proofs</span>
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Proofs</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">

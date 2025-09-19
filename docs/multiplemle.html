@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>multiplemle – Statistical Analysis Using R: Online Notes</title>
+<title>Multiple regression – Statistical Analysis Using R: Online Notes</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -30,8 +64,8 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./olsproperties.html" rel="next">
-<link href="./simplemle.html" rel="prev">
+<link href="./variancedecomposition.html" rel="next">
+<link href="./simpleregression.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -70,6 +104,35 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -82,7 +145,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./simpleregression.html">3. Linear Regression</a></li><li class="breadcrumb-item"><a href="./multiplemle.html"><span class="chapter-title">multiplemle.html</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./simpleregression.html">3. Linear Regression</a></li><li class="breadcrumb-item"><a href="./multiplemle.html"><span class="chapter-title">Multiple regression</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -140,7 +203,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./biasvariance.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Estimator bias and variance</span></a>
+  <a href="./biasvariance.html" class="sidebar-item-text sidebar-link"><span class="chapter-title"><em>Estimator bias and variance</em></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -151,6 +214,11 @@ ul.task-list li input[type="checkbox"] {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./identification.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Identifying distributions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./howtounivariate.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Coding it up in R</span></a>
   </div>
 </li>
       </ul>
@@ -166,27 +234,32 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./newton.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">newton.html</span></a>
+  <a href="./newton.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The Newton-Raphson method</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./gradientdescent.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">gradientdescent.html</span></a>
+  <a href="./gradientdescent.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Gradient descent</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./clt.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">clt.html</span></a>
+  <a href="./clt.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The Central Limit Theorem</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./ttests.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">ttests.html</span></a>
+  <a href="./ttests.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The Student’s <em>t</em> distribution</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./rulesofthumb.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">rulesofthumb.html</span></a>
+  <a href="./rulesofthumb.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Handy rules of thumb</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./howtoapproximate.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Coding it up in R</span></a>
   </div>
 </li>
       </ul>
@@ -202,32 +275,22 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./simpleregression.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">simpleregression.html</span></a>
+  <a href="./simpleregression.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Simple regression</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./simplels.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">simplels.html</span></a>
+  <a href="./multiplemle.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Multiple regression</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./simplemle.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">simplemle.html</span></a>
+  <a href="./variancedecomposition.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Variance decomposition</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./multiplemle.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">multiplemle.html</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./olsproperties.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">olsproperties.html</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./variancedecomposition.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">variancedecomposition.html</span></a>
+  <a href="./howtoregress.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Coding it up in R</span></a>
   </div>
 </li>
       </ul>
@@ -243,7 +306,7 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./heteroskedasticity.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">heteroskedasticity.html</span></a>
+  <a href="./heteroskedasticity.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Heteroskedasticity</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -423,14 +486,12 @@ ul.task-list li input[type="checkbox"] {
   </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./proofs.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Proofs</span></a>
+  <a href="./proofs.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Proofs</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./listofsymbols.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">List of Symbols</span></a>
+  <a href="./listofsymbols.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">List of Symbols</span></a>
   </div>
 </li>
       </ul>
@@ -440,17 +501,229 @@ ul.task-list li input[type="checkbox"] {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#terminology-and-solution" id="toc-terminology-and-solution" class="nav-link active" data-scroll-target="#terminology-and-solution">Terminology and solution</a></li>
+  <li><a href="#bias-in-the-estimator-for-error-variance" id="toc-bias-in-the-estimator-for-error-variance" class="nav-link" data-scroll-target="#bias-in-the-estimator-for-error-variance">Bias in the estimator for error variance</a></li>
+  <li><a href="#new-capabilities-made-possible-by-distributional-assumptions" id="toc-new-capabilities-made-possible-by-distributional-assumptions" class="nav-link" data-scroll-target="#new-capabilities-made-possible-by-distributional-assumptions">New capabilities made possible by distributional assumptions</a></li>
+  <li><a href="#confidence-intervals-and-tests-for-the-locations-of-the-betas" id="toc-confidence-intervals-and-tests-for-the-locations-of-the-betas" class="nav-link" data-scroll-target="#confidence-intervals-and-tests-for-the-locations-of-the-betas">Confidence intervals and tests for the locations of the betas</a></li>
+  <li><a href="#distributions-for-a-predicted-value-and-for-a-predicted-mean-response" id="toc-distributions-for-a-predicted-value-and-for-a-predicted-mean-response" class="nav-link" data-scroll-target="#distributions-for-a-predicted-value-and-for-a-predicted-mean-response">Distributions for a predicted value and for a predicted mean response</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
-<main class="content column-page-right" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./simpleregression.html">3. Linear Regression</a></li><li class="breadcrumb-item"><a href="./multiplemle.html"><span class="chapter-title">multiplemle.html</span></a></li></ol></nav></header>
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./simpleregression.html">3. Linear Regression</a></li><li class="breadcrumb-item"><a href="./multiplemle.html"><span class="chapter-title">Multiple regression</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span id="sec-multiplereg" class="quarto-section-identifier"><span class="chapter-title">Multiple regression</span></span></h1>
+</div>
 
 
 
+<div class="quarto-title-meta column-body">
+
+    
+  
+    
+  </div>
+  
 
 
+</header>
 
+
+<p>So far, we have dealt with <em>simple regression</em>, which uses only a single predictor variable <span class="math inline">\(X\)</span>. The math of this model is easier to present and also easier to illustrate, but this perspective limits the theory we can present and the types of problems we can solve. Now we will consider the more general form of <em>multiple regression</em>.</p>
+<section id="terminology-and-solution" class="level2">
+<h2 class="anchored" data-anchor-id="terminology-and-solution">Terminology and solution</h2>
+<p>Consider, as before, a random variable <span class="math inline">\(Y\)</span> distributed according to a Normal distribution with a fixed variance <span class="math inline">\(\sigma^2\)</span> and a mean dependent on the values of one or more random variables <span class="math inline">\(X_1,\ldots,X_k\)</span>. In this notation, <span class="math inline">\(k\)</span> represents the number of predictors, and for each <span class="math inline">\(j,\; 1 \le j \le k,\; X_j\)</span> is a <em>different random variable</em>.</p>
+<p>Now suppose that we have samples from these random variables: some vector of our response variable <span class="math inline">\(\boldsymbol{y}\)</span> along with predictor vectors <span class="math inline">\(\boldsymbol{x}_1,\ldots,\boldsymbol{x}_k\)</span>. Each vector contains <span class="math inline">\(n\)</span> observations. We <em>could</em> write out a relationship arithmetically, observation by observation:</p>
+<p><span class="math display">\[y_i = \beta_0 + \beta_1 x_{1,i} + \cdots + \beta_k x_{k,i}+\varepsilon_i,\quad \varepsilon_i \sim \textrm{Normal} (0,\sigma^2)\]</span></p>
+<p>However, we can save space and afford ourselves new analytical tools by using a linear algebraic notation. First, note that <span class="math inline">\(\beta_0 = \beta_0 \cdot 1\)</span>, so that we may write</p>
+<p><span class="math display">\[\begin{aligned} y_1 &amp;= \beta_0 1 + \beta_1 x_{1,1} + \cdots + \beta_k x_{k,1}+ \varepsilon_1 \\ y_2 &amp;= \beta_0 1 + \beta_1 x_{1,2} + \cdots + \beta_k x_{k,2}+ \varepsilon_2 \\ \vdots \\ y_n &amp;= \beta_0 1 + \beta_1 x_{1,n} + \cdots + \beta_k x_{k,n}+ \varepsilon_n \end{aligned}\]</span> Next, we collect these equations together by collapsing them vertically. Define the vector of ones <span class="math inline">\(1\!\!1 = (1,1,\ldots,1)\)</span> with total length <span class="math inline">\(n\)</span>. Then we can consider this vector of ones as a predictor in the model, multiplied by a beta just like all the other predictors. This creates a matrix of predictors formed by combining each predictor vector, including <span class="math inline">\(1\!\!1\)</span>:</p>
+<p><span class="math display">\[\mathbf{X} = [1\!\!1,\boldsymbol{x}_1,\boldsymbol{x}_2,\ldots,\boldsymbol{x}_k]= \left[ \begin{array}{cccc} 1 &amp; x_{1,1} &amp; \cdots &amp; x_{k,1} \\ 1 &amp; x_{1,2} &amp; \cdots &amp; x_{k,2} \\ \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\ 1 &amp; x_{1,n} &amp; \cdots &amp; x_{k,n} \end{array}\right]\]</span></p>
+<p>Now we can collapse the entirety of the model into a few symbols. The response vector will be the matrix-product of the predictor matrix and a vector of unknown betas, plus a set of Normally distributed errors:</p>
+<p><span class="math display">\[\boldsymbol{y} = \mathbf{X}\boldsymbol{\beta} + \boldsymbol{\varepsilon}, \quad \varepsilon_i \sim \textrm{Normal}(0,\sigma^2)\]</span></p>
+<p>We could also write this as:<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<p><span class="math display">\[\boldsymbol{y} \sim \textrm{MVNormal}(\mathbf{X}\boldsymbol{\beta},σ^21\!\!1 )\]</span> Notice in either case that <span class="math inline">\(1\!\!1\)</span>, the column of ones, is being treated just like any other predictor, and that <span class="math inline">\(\beta_0\)</span>, the intercept, is being treated just like any other beta/slope.</p>
+<p>Now we wish to find the data-based estimators for <span class="math inline">\(\boldsymbol{\beta}\)</span>, that is, the intercept and slope(s) of the line-of-best-fit for our data.<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> As before, it can be shown that the least squares and maximum likelihood methods both find exactly the same solutions, since they end up minimizing the same sum. A sketch of the proof can be found in the appendix, but the basic result is found below:</p>
+<p><span class="math display">\[\hat{\boldsymbol{\beta}}_{ML} = \hat{\boldsymbol{\beta}}_{LS} = (\mathbf{X}^T \mathbf{X})^{-1} \mathbf{X}^T \boldsymbol{y}\]</span></p>
+<p>In plainer terms, maximum likelihood and least squares agree on a solution for the betas which can be computed directly (and in one pass) from your data. Compared to machine learning models which often require a huge amount of storage space and processing power, this is an extremely lightweight method which produces exact, replicable solutions from almost any environment that can read the data.</p>
+</section>
+<section id="bias-in-the-estimator-for-error-variance" class="level2">
+<h2 class="anchored" data-anchor-id="bias-in-the-estimator-for-error-variance">Bias in the estimator for error variance</h2>
+<p>We now have a solid way of estimating the intercept and slopes of a multiple regression line, <em>i.e.</em> the betas. Both maximum likelihood and least squares techniques arrive at the same set of betas. However, least squares techniques offer no way for us to estimate the error variance <span class="math inline">\(\sigma^2\)</span>, because the least squares solution does not place any distributional assumption on these errors. We can estimate <span class="math inline">\(\sigma^2\)</span> using maximum likelihood, but its estimator for the error variance is provably biased; specifically, it <em>underestimates</em> the true variance. The proof of this must be left for an appendix, as the general case involves a good deal of vector calculus and linear algebra, but I can supply the intuition:</p>
+<ul>
+<li><p>First, recall that our uncertainty in an estimate shrinks as we gain more data. That’s why calculations for variance typically divide by <span class="math inline">\(n\)</span> (the sample size). As <span class="math inline">\(n\)</span> increases, our uncertainty decreases.</p></li>
+<li><p>However, our estimator for the <span class="math inline">\(\sigma^2\)</span> is necessarily a function of the <em>estimated</em> betas, <span class="math inline">\(\hat{\boldsymbol{\beta}}\)</span> and not the true betas, <span class="math inline">\(\boldsymbol{\beta}\)</span>. These estimated betas are <em>also</em> a function of the data (<span class="math inline">\(\boldsymbol{y}\)</span> and <span class="math inline">\(\mathbf{X}\)</span>).</p></li>
+<li><p>Therefore, we don’t really have <span class="math inline">\(n\)</span> fully independent sets of observations from which to estimate <span class="math inline">\(\sigma^2\)</span>. The values of some of those observations are constrained by our choices for <span class="math inline">\(\hat{\boldsymbol{\beta}}\)</span>, which is an input for our estimator <span class="math inline">\(\hat{\sigma}^2\)</span>.</p></li>
+<li><p>This interdependence between estimators means that a variance estimated using <span class="math inline">\(\hat{\boldsymbol{\beta}}\)</span> provides us with less certainty than we would expect from <span class="math inline">\(n\)</span> observations; effectively, only the same certainty as <span class="math inline">\(n-k-1\)</span> fully independent observations would provide us.<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a></p></li>
+</ul>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Assume a Normally-distributed variable <span class="math inline">\(Y\)</span> whose mean is determined by a vector of ones <span class="math inline">\(1\!\!1\)</span> and one or more other random variables <span class="math inline">\(\mathbf{X} = X_1,\ldots,X_k\)</span> such that <span class="math inline">\(\mathbf{X} = [1\!\!1,\boldsymbol{x}_1,\boldsymbol{x}_2,\ldots,\boldsymbol{x}_k]\)</span> and:</p>
+<p><span class="math display">\[\boldsymbol{y} \sim \mathrm{MVNormal}(\mathbf{X}\boldsymbol{\beta},\sigma^21\!\!1)\]</span></p>
+<p>Furthermore, assume that the parameters <span class="math inline">\(\boldsymbol{\beta}\)</span> are estimated as <span class="math inline">\(\hat{\boldsymbol{\beta}} = (\mathbf{X}^T \mathbf{X})^{-1} \mathbf{X}^T \boldsymbol{y}\)</span>, that <span class="math inline">\(\boldsymbol{y}\)</span> is estimated as <span class="math inline">\(\hat{\boldsymbol{y}} = \mathbf{X}\hat{\boldsymbol{\beta}}\)</span> and that RSS takes its usual meaning, <em>i.e.</em> <span class="math inline">\(\sum_i (y_i - \hat{y}_i)^2\)</span>. Then we may say that the following estimator for <span class="math inline">\(\sigma^2\)</span> is unbiased:</p>
+<p><span class="math display">\[\hat{\sigma}^2 = \frac{\mathrm{RSS}}{n-k-1}\]</span></p>
+</div>
+</div>
+<p>From here on, we will abandon the biased maximum likelihood estimator <span class="math inline">\(\hat{\sigma}^2_{\mathrm{ML}} = \mathrm{RSS}/n\)</span> and instead use the unbiased estimator <span class="math inline">\(\hat{\sigma}^2 = \mathrm{RSS}/(n - k - 1)\)</span>.</p>
+</section>
+<section id="new-capabilities-made-possible-by-distributional-assumptions" class="level2">
+<h2 class="anchored" data-anchor-id="new-capabilities-made-possible-by-distributional-assumptions">New capabilities made possible by distributional assumptions</h2>
+<p>Moving from a least squares approach to a maximum likelihood approach requires us to introduce strong assumptions about the data, including that <span class="math inline">\(Y\)</span> is conditionally Normal and that its mean varies linearly with the values of one or more predictors <span class="math inline">\(X\)</span>. Assumptions such as these are limiting, because the model may no longer fit certain use cases that could still be approached through a least-squares perspective. However, the tradeoff for these limitations is that we can assess and interpret our models in new ways, and solve new types of problems that we couldn’t before. This section focuses on how we use the distributional assumptions to gain new capabilities.</p>
+<p>We will cover the distributional assumptions of linear regression in more detail in the next chapter, but for now let me summarize some of the most important assumptions:</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Assume a relationship between a response variable <span class="math inline">\(Y\)</span> and one or more predictor variables <span class="math inline">\(\boldsymbol{X}\)</span> (typically but not necessarily including the vector of ones, <span class="math inline">\(X_0=1\!\!1\)</span>). We say that the relationship between the response and the predictors satisfies the assumptions of ordinary least squares (OLS) regression if:</p>
+<ol type="1">
+<li><p><span class="math inline">\(Y\)</span> <strong>varies linearly with</strong> <span class="math inline">\(\boldsymbol{X}\)</span>. Specifically, we assume that the mean of <span class="math inline">\(Y\)</span> can be expressed as a linear combination of the predictors:</p>
+<p><span class="math display">\[\mathbb{E}[Y|\boldsymbol{X}] = \hat{Y} = \hat{\mu}_{Y|\boldsymbol{X}} = \sum_{j=0}^k \beta_j X_j\]</span></p></li>
+<li><p><strong>Conditioned on</strong> <span class="math inline">\(\boldsymbol{X}\)</span>, <span class="math inline">\(Y\)</span> <strong>is distributed Normally.</strong> We can write this in several ways:</p>
+<p><span class="math display">\[P(Y \le y|\boldsymbol{X} = \boldsymbol{x}) = \Phi\left(\frac{y - \hat{\mu}_{Y|\boldsymbol{x}}}{\sigma}\right)\]</span></p>
+<p><span class="math display">\[Y \sim \mathrm{Normal}(\boldsymbol{X} \circ \boldsymbol{\beta},\sigma^2)\]</span></p>
+<p><span class="math display">\[y_i = \beta_0 + \beta_1 x_{1,i} + \cdots + \beta_k x_{k,i}  + \varepsilon_i, \quad \varepsilon_i \sim \mathrm{Normal}(0,\sigma^2 )\]</span></p>
+<p>Each of these equations are consistent with each other, and reinforce the abstraction which lurks behind our data. The sample <span class="math inline">\(\boldsymbol{y}\)</span> which we are studying was generated by a random variable <span class="math inline">\(Y\)</span> according to an unknown (but estimable) probability distribution.</p></li>
+<li><p><strong>The error variance displays homoskedasticity.</strong> The variance of <span class="math inline">\(Y\)</span> around its mean is exactly the same size for all predictor choices. This does not mean that the errors are all the same size, simply that they are all drawn from the same distribution. Rather than saying that each observation has a unique error variance, <span class="math inline">\(\sigma_i^2\)</span>, we say they all share the same error variance: <span class="math inline">\(\sigma^2\)</span>.</p></li>
+<li><p><strong>The errors are independent of each other and of the predictors.</strong> Mathematically we could write that,</p>
+<p><span class="math display">\[P(\varepsilon_a \le e_1,\varepsilon_b \le e_b) = P(\varepsilon_a\le e_1) P(\varepsilon_b \le e_b) \;\forall a \ne b\]</span></p>
+<p><span class="math display">\[\boldsymbol{\varepsilon} \bot X_j\; \forall k, 1 \le j \le k\]</span></p>
+<p>But here is a case where I think plain language (bolded, above) is the most straightforward. As an aside, many of the results which follow will still be true under the slightly weaker condition that the errors are <em>uncorrelated</em> with each other rather than truly <em>independent.</em></p></li>
+</ol>
+</div>
+</div>
+<p>Assumptions 2–4 above are sometimes known as the <strong>IID assumptions for linear regression</strong> because the errors are required to be (i)dentically and (i)ndependently (d)istributed normally. With these assumptions, the linear regression model gains some new analytical features.</p>
+</section>
+<section id="confidence-intervals-and-tests-for-the-locations-of-the-betas" class="level2">
+<h2 class="anchored" data-anchor-id="confidence-intervals-and-tests-for-the-locations-of-the-betas">Confidence intervals and tests for the locations of the betas</h2>
+<p>Previously, we used Least Squares to find point estimates for the beta parameters (the intercept and slopes). We identified the line of <em>best fit</em>, but could not measure which lines were also <em>reasonably well-fit</em> to the data, or which lines could <em>plausibly</em> be the real relationship between the response and the predictors. Now, with a distributional assumption for <span class="math inline">\(Y\)</span>, we can.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Assume a relationship between a response variable <span class="math inline">\(Y\)</span> and <span class="math inline">\(k\)</span> predictor variables <span class="math inline">\(X_1,\ldots,X_k\)</span> which meet the assumptions of ordinary least squares (OLS) regression, and use all the usual notation so far for its parameters, distributional form, and samples</p>
+<ol type="1">
+<li><p>Each estimated intercept or slope _j is Normally distributed around its true value <span class="math inline">\(\beta_j\)</span>, with a standard error of <span class="math inline">\(\mathrm{s.\!e.}(\hat{\beta}_j)= \hat{\sigma}\sqrt{(\mathbf{X}^T \mathbf{X})^{-1}_{j,j}}\)</span></p></li>
+<li><p>A hypothesis test for whether the true parameter <span class="math inline">\(\beta_j\)</span> might equal some candidate value <span class="math inline">\(b_j\)</span> can be performed as follows:</p>
+<p><span class="math display">\[t_j = \frac{\hat{\beta}_j-b_j}{\mathrm{s.\!e.}(\hat{\beta}_j)},\qquad t_j \sim T_{n-k-1}\]</span></p></li>
+<li><p>The bounds for a symmetric, two-sided <span class="math inline">\(1-\alpha\)</span> confidence interval for the true location of the parameter <span class="math inline">\(\beta_j\)</span> can be approximated as follows:</p>
+<p><span class="math display">\[\mathrm{CI}_{\beta_j,1-\alpha} \approx \hat{\beta}_j \pm t_{n-k-1,\alpha⁄2}^*\cdot \mathrm{s.\!e.}(\hat{\beta}_j)\]</span></p></li>
+</ol>
+</div>
+</div>
+<p>These last two results allow us to test whether one of the true slopes <span class="math inline">\(\beta_j\)</span> might be different than the best guess afforded by our data, <span class="math inline">\(\hat{\beta}_j\)</span>, and indeed allows us to find the whole <em>range</em> of likely values for <span class="math inline">\(\beta_j\)</span>. In practice, these calculations are rarely done by hand, but easily computed from any statistical software output.</p>
+</section>
+<section id="distributions-for-a-predicted-value-and-for-a-predicted-mean-response" class="level2">
+<h2 class="anchored" data-anchor-id="distributions-for-a-predicted-value-and-for-a-predicted-mean-response">Distributions for a predicted value and for a predicted mean response</h2>
+<p>Before we added distributional assumptions, we could still make a point estimate for the value of <span class="math inline">\(Y\)</span> at a specific combination of predictors, using the estimated relationship <span class="math inline">\(\hat{Y} = \boldsymbol{X\hat{\beta}}\)</span>. Now we can add a distribution around this prediction.</p>
+<p>The distribution is helpful because new values of <span class="math inline">\(Y\)</span> won’t be exactly where we predict it, but more likely somewhere nearby. The distribution allows us to place reasonable bounds on how far off we might be.</p>
+<p>When we make predictions for <span class="math inline">\(Y\)</span> we need to distinguish between two types of prediction, which share the same point estimate yet have different variances:</p>
+<ul>
+<li><p>We can make <strong>a prediction for the true mean response</strong> <span class="math inline">\(\mu_0 = \mathbb{E}[Y|\boldsymbol{X}=\boldsymbol{x}_0]\)</span>. In plain language, we want to know, “how far away would many observations at this location <em>cluster</em>?” Our main source of error is from the estimated betas, and when our sample size is high our predictions will have a <em>low</em> standard error.</p></li>
+<li><p>Alternatively, we can make <strong>a prediction for a new value of</strong> <span class="math inline">\(Y\)</span> when <span class="math inline">\(\boldsymbol{X}=\boldsymbol{x}_0\)</span>. We expect that these values fall far from our prediction, because they are influenced by two different errors. First, as above, our uncertainty about the true betas will mean that the new values cluster somewhere different than where we predict. And second, individual values can be found near or far from the center of the cluster, depending on the variance <span class="math inline">\(\sigma^2\)</span>. New values can easily fall <span class="math inline">\(2\sigma\)</span> or farther away from the mean <span class="math inline">\((\mu_0)\)</span>. Because of this second error, our predictions for a single observation will generally have a <em>high</em> standard error.</p></li>
+</ul>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Assume a relationship between a response variable <span class="math inline">\(Y\)</span> and <span class="math inline">\(k\)</span> predictor variables <span class="math inline">\(X_1,\ldots,X_k\)</span> which meet the assumptions of ordinary least squares (OLS) regression, and use all the usual notation so far for its parameters, distributional form, and samples</p>
+<ol type="1">
+<li><p>The point estimate for <span class="math inline">\(\mu_0\)</span>, the mean response of <span class="math inline">\(Y\)</span> at a new predictor value <span class="math inline">\(\boldsymbol{x}_0\)</span>, is:</p>
+<p><span class="math display">\[\hat{\mu}_0 = \boldsymbol{x}_0\circ \boldsymbol{\hat{\beta}} = \sum_{j=0}^k \beta_jx_{j,0}\]</span></p></li>
+<li><p>The standard error for <span class="math inline">\(\hat{\mu}_0\)</span> is:</p>
+<p><span class="math display">\[\mathrm{s.\!e.}(\hat{\mu}_0) = \hat{\sigma}\sqrt{\boldsymbol{x}_0^T (\mathbf{X}^T \mathbf{X})^{-1}\boldsymbol{x}_0}\]</span></p></li>
+<li><p>A symmetric, two-sided <span class="math inline">\(1-\alpha\)</span> confidence interval for the true location of the mean response <span class="math inline">\(\mu_0\)</span> when <span class="math inline">\(\boldsymbol{X} = \boldsymbol{x}_0\)</span> is:</p>
+<p><span class="math display">\[\mathrm{CI}_{\mu_0,1-\alpha} = \hat{\mu}_0 \pm t_{n-k-1,\alpha⁄2}^* \cdot \mathrm{s.\!e.}(\hat{\mu}_0)\]</span></p></li>
+<li><p>The point estimate for <span class="math inline">\(y_0\)</span>, the value of <span class="math inline">\(Y\)</span> at a new predictor value <span class="math inline">\(\boldsymbol{x}_0\)</span>, is also:</p>
+<p><span class="math display">\[\hat{y}_0 = \boldsymbol{x}_0\circ \boldsymbol{\hat{\beta}} = \sum_{j=0}^k \beta_jx_{j,0}\]</span></p></li>
+<li><p>The standard error for <span class="math inline">\(\hat{y}_0\)</span> is:</p>
+<p><span class="math display">\[\mathrm{s.\!e.}(\hat{y}_0) = \hat{\sigma}\sqrt{1+\boldsymbol{x}_0^T (\mathbf{X}^T \mathbf{X})^{-1}\boldsymbol{x}_0}\]</span></p></li>
+<li><p>A symmetric, two-sided <span class="math inline">\(1-\alpha\)</span> confidence interval for the true location of an unobserved value <span class="math inline">\(y_0\)</span> when <span class="math inline">\(\boldsymbol{X} = \boldsymbol{x}_0\)</span> is:</p>
+<p><span class="math display">\[\mathrm{CI}_{y_0,1-\alpha} = \hat{y}_0 \pm t_{n-k-1,\alpha⁄2}^* \cdot \mathrm{s.\!e.}(\hat{y}_0)\]</span></p></li>
+</ol>
+</div>
+</div>
+<p>These new prediction tools allow us to give best- and worst-case scenarios for new predictions. As you can see in the figure below, the two prediction intervals are each centered around the line of best fit, but the estimated individual values <span class="math inline">\(\hat{y}_0\)</span> are found in a wider interval than their means <span class="math inline">\(\hat{\mu}_0\)</span>. You’ll also notice that both intervals “flare” a little toward the far left and right sides of the graph. This is because we do not know the true linear relationship, but we do assume that it must pass through the middle of the data, <em>i.e.</em> the line-of-best-fit must pass through the point <span class="math inline">\((\bar{x},\bar{y})\)</span>. Therefore, near the middle of the data, our error from estimating the parameters <span class="math inline">\(\boldsymbol{\beta}\)</span> will be relatively small. But if we have the slopes wrong, then the small degree of “tilt” away from the true values will create quite large errors in our predictions at locations far from the center of the data.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>X <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>Y <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">6</span>,<span class="dv">8</span>,<span class="dv">6</span>,<span class="dv">2</span>,<span class="dv">3</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>y0 <span class="ot">&lt;-</span> <span class="fu">predict</span>(<span class="fu">lm</span>(Y<span class="sc">~</span>X),<span class="at">newdata=</span><span class="fu">data.frame</span>(<span class="at">X=</span><span class="fu">seq</span>(<span class="dv">1</span>,<span class="dv">5</span>,<span class="fl">0.1</span>)),</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>               <span class="at">level=</span><span class="fl">0.9</span>,<span class="at">interval=</span><span class="st">'prediction'</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>mu0 <span class="ot">&lt;-</span> <span class="fu">predict</span>(<span class="fu">lm</span>(Y<span class="sc">~</span>X),<span class="at">newdata=</span><span class="fu">data.frame</span>(<span class="at">X=</span><span class="fu">seq</span>(<span class="dv">1</span>,<span class="dv">5</span>,<span class="fl">0.1</span>)),</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>               <span class="at">level=</span><span class="fl">0.9</span>,<span class="at">interval=</span><span class="st">'confidence'</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">1</span>))</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(X,Y,<span class="at">ylim=</span><span class="fu">c</span>(<span class="sc">-</span><span class="dv">3</span>,<span class="dv">13</span>),<span class="at">main=</span><span class="st">'Predictions for new values of Y'</span>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">reg=</span><span class="fu">lm</span>(Y<span class="sc">~</span>X))</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(<span class="fu">seq</span>(<span class="dv">1</span>,<span class="dv">5</span>,<span class="fl">0.1</span>),y0[,<span class="dv">2</span>],<span class="at">lty=</span><span class="dv">3</span>,<span class="at">col=</span><span class="st">'#0000ff'</span>)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(<span class="fu">seq</span>(<span class="dv">1</span>,<span class="dv">5</span>,<span class="fl">0.1</span>),y0[,<span class="dv">3</span>],<span class="at">lty=</span><span class="dv">3</span>,<span class="at">col=</span><span class="st">'#0000ff'</span>)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="at">x=</span><span class="st">'topright'</span>,<span class="at">bty=</span><span class="st">'n'</span>,<span class="at">lty=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>),<span class="at">col=</span><span class="fu">c</span>(<span class="st">'#000000'</span>,<span class="st">'#0000ff'</span>),</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>       <span class="at">legend=</span><span class="fu">c</span>(<span class="st">'Point estimate'</span>,<span class="st">'90% Confidence Interval'</span>))</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(X,Y,<span class="at">ylim=</span><span class="fu">c</span>(<span class="sc">-</span><span class="dv">3</span>,<span class="dv">13</span>),<span class="at">main=</span><span class="st">'Predictions for mean response of Y'</span>)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">reg=</span><span class="fu">lm</span>(Y<span class="sc">~</span>X))</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(<span class="fu">seq</span>(<span class="dv">1</span>,<span class="dv">5</span>,<span class="fl">0.1</span>),mu0[,<span class="dv">2</span>],<span class="at">lty=</span><span class="dv">2</span>,<span class="at">col=</span><span class="st">'#0000ff'</span>)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(<span class="fu">seq</span>(<span class="dv">1</span>,<span class="dv">5</span>,<span class="fl">0.1</span>),mu0[,<span class="dv">3</span>],<span class="at">lty=</span><span class="dv">2</span>,<span class="at">col=</span><span class="st">'#0000ff'</span>)</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="at">x=</span><span class="st">'topright'</span>,<span class="at">bty=</span><span class="st">'n'</span>,<span class="at">lty=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>),<span class="at">col=</span><span class="fu">c</span>(<span class="st">'#000000'</span>,<span class="st">'#0000ff'</span>),</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>       <span class="at">legend=</span><span class="fu">c</span>(<span class="st">'Point estimate'</span>,<span class="st">'90% Confidence Interval'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-predictionintervals" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-predictionintervals-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="multiplemle_files/figure-html/fig-predictionintervals-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-predictionintervals-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;14.1: Prediction intervals for OLS regression
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+
+
+</section>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1"><p>“MVNormal” here indicates a multivariate Normal distribution defined by a vector of means and a corresponding vector of variances, a straightforward extension of the Normal distribution we already know.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>“Line-of-best-fit” is now just an analogy, really what we are doing is projecting a high-dimensional vector <span class="math inline">\(\boldsymbol{y}\)</span> (which exists in an <span class="math inline">\(n\)</span>-dimensional vector space) into a lower-dimensional space spanned by the predictors (at most <span class="math inline">\((k+1)\)</span>-dimensional, where <span class="math inline">\(k\)</span> is the number of predictors other than the vector of ones). It would be more accurate to say we are finding the “hyperplane-of-best-fit”, but this might cause some consternation…<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p>In the simplest case, for a single observation <span class="math inline">\(y_1=10\)</span>, we could model the mean as <span class="math inline">\(\hat{\mu}=\hat{y}=10\)</span>. But if we then calculate the variance as <span class="math inline">\(\hat{\sigma}^2 = \sum_i(y_i-\hat{\mu})^2/n = (10-10)^2/1 = 0\)</span>, clearly our estimate would be biased.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -811,25 +1084,64 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         }
       };
     }
-      // Attach click handler to the DT
-      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
-      for (const annoteDlNode of annoteDls) {
-        annoteDlNode.addEventListener('click', (event) => {
-          const clickedEl = event.target;
-          if (clickedEl !== selectedAnnoteEl) {
-            unselectCodeLines();
-            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
-            if (activeEl) {
-              activeEl.classList.remove('code-annotation-active');
-            }
-            selectCodeLines(clickedEl);
-            clickedEl.classList.add('code-annotation-active');
-          } else {
-            // Unselect the line
-            unselectCodeLines();
-            clickedEl.classList.remove('code-annotation-active');
+      const annoteTargets = window.document.querySelectorAll('.code-annotation-anchor');
+      for (let i=0; i<annoteTargets.length; i++) {
+        const annoteTarget = annoteTargets[i];
+        const targetCell = annoteTarget.getAttribute("data-target-cell");
+        const targetAnnotation = annoteTarget.getAttribute("data-target-annotation");
+        const contentFn = () => {
+          const content = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          if (content) {
+            const tipContent = content.cloneNode(true);
+            tipContent.classList.add("code-annotation-tip-content");
+            return tipContent.outerHTML;
           }
-        });
+        }
+        const config = {
+          allowHTML: true,
+          content: contentFn,
+          onShow: (instance) => {
+            selectCodeLines(instance.reference);
+            instance.reference.classList.add('code-annotation-active');
+            window.tippy.hideAll();
+          },
+          onHide: (instance) => {
+            unselectCodeLines();
+            instance.reference.classList.remove('code-annotation-active');
+          },
+          maxWidth: 300,
+          delay: [50, 0],
+          duration: [200, 0],
+          offset: [5, 10],
+          arrow: true,
+          appendTo: function(el) {
+            return el.parentElement.parentElement.parentElement;
+          },
+          interactive: true,
+          interactiveBorder: 10,
+          theme: 'quarto',
+          placement: 'right',
+          popperOptions: {
+            modifiers: [
+            {
+              name: 'flip',
+              options: {
+                flipVariations: false, // true by default
+                allowedAutoPlacements: ['right'],
+                fallbackPlacements: ['right', 'top', 'top-start', 'top-end', 'bottom', 'bottom-start', 'bottom-end', 'left'],
+              },
+            },
+            {
+              name: 'preventOverflow',
+              options: {
+                mainAxis: false,
+                altAxis: false
+              }
+            }
+            ]        
+          }      
+        };
+        window.tippy(annoteTarget, config); 
       }
   const findCites = (el) => {
     const parentEl = el.parentElement;
@@ -870,15 +1182,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script>
-<nav class="page-navigation column-page-right">
+<nav class="page-navigation column-body">
   <div class="nav-page nav-page-previous">
-      <a href="./simplemle.html" class="pagination-link" aria-label="simplemle.html">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">simplemle.html</span></span>
+      <a href="./simpleregression.html" class="pagination-link" aria-label="Simple regression">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Simple regression</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./olsproperties.html" class="pagination-link" aria-label="olsproperties.html">
-        <span class="nav-page-text"><span class="chapter-title">olsproperties.html</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./variancedecomposition.html" class="pagination-link" aria-label="Variance decomposition">
+        <span class="nav-page-text"><span class="chapter-title">Variance decomposition</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

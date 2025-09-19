@@ -1,4 +1,4 @@
-# Normal distribution {.unnumbered}
+# Normal distribution {#dist-normal}
 
 ## Assumptions
 
@@ -73,7 +73,3 @@ shinyApp(ui = ui, server = server)
  * The standard normal distribution is the limit case for the Student's *t*-distribution (as $df \rightarrow \infty$). The standard normal can be used in place of the *t*-distribution with little loss of accuracy for large $df$.
  * The normal distribution with mean $df$ and standard deviation $\sqrt{2df}$ closely approximates the chi-squared distribution for large $df$.
  * The Poisson distribution and binomial distribution both form discrete approximations to the normal distribution when either $\lambda$ is very large (Poisson) or $np$ is very large and $p$ is not near 0 or 1. 
- 
- 
- 
- gfds

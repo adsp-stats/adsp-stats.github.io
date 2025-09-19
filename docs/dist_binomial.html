@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Binomial distribution – Statistical Analysis Using R: Online Notes</title>
+<title>Appendix B — Binomial distribution – Statistical Analysis Using R: Online Notes</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,6 +19,40 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -41,6 +75,11 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="site_libs/bootstrap/bootstrap-2ed9fe205cf6ca358fce3f52e912d798.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<meta name="shinylive:serviceworker_dir" content=".">
+<script src="site_libs/quarto-contrib/shinylive-0.9.1/shinylive/load-shinylive-sw.js" type="module"></script>
+<script src="site_libs/quarto-contrib/shinylive-0.9.1/shinylive/run-python-blocks.js" type="module"></script>
+<link href="site_libs/quarto-contrib/shinylive-0.9.1/shinylive/shinylive.css" rel="stylesheet">
+<link href="site_libs/quarto-contrib/shinylive-quarto-css/shinylive-quarto.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -70,6 +109,35 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -82,7 +150,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Appendices</li><li class="breadcrumb-item"><a href="./dist_bernoulli.html">Distributions</a></li><li class="breadcrumb-item"><a href="./dist_binomial.html">Binomial distribution</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Appendices</li><li class="breadcrumb-item"><a href="./dist_bernoulli.html">Distributions</a></li><li class="breadcrumb-item"><a href="./dist_binomial.html"><span class="chapter-title">Binomial distribution</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -140,7 +208,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./biasvariance.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Estimator bias and variance</span></a>
+  <a href="./biasvariance.html" class="sidebar-item-text sidebar-link"><span class="chapter-title"><em>Estimator bias and variance</em></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -151,6 +219,11 @@ ul.task-list li input[type="checkbox"] {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./identification.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Identifying distributions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./howtounivariate.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Coding it up in R</span></a>
   </div>
 </li>
       </ul>
@@ -166,27 +239,32 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./newton.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">newton.html</span></a>
+  <a href="./newton.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The Newton-Raphson method</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./gradientdescent.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">gradientdescent.html</span></a>
+  <a href="./gradientdescent.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Gradient descent</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./clt.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">clt.html</span></a>
+  <a href="./clt.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The Central Limit Theorem</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./ttests.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">ttests.html</span></a>
+  <a href="./ttests.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The Student’s <em>t</em> distribution</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./rulesofthumb.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">rulesofthumb.html</span></a>
+  <a href="./rulesofthumb.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Handy rules of thumb</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./howtoapproximate.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Coding it up in R</span></a>
   </div>
 </li>
       </ul>
@@ -202,32 +280,22 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./simpleregression.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">simpleregression.html</span></a>
+  <a href="./simpleregression.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Simple regression</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./simplels.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">simplels.html</span></a>
+  <a href="./multiplemle.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Multiple regression</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./simplemle.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">simplemle.html</span></a>
+  <a href="./variancedecomposition.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Variance decomposition</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./multiplemle.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">multiplemle.html</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./olsproperties.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">olsproperties.html</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./variancedecomposition.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">variancedecomposition.html</span></a>
+  <a href="./howtoregress.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Coding it up in R</span></a>
   </div>
 </li>
       </ul>
@@ -243,17 +311,22 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./heteroskedasticity.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">heteroskedasticity.html</span></a>
+  <a href="./robustness.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Regression robustness</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./autocorrelation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">autocorrelation.html</span></a>
+  <a href="./heteroskedasticity.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Heteroskedasticity</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./nonnormality.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">nonnormality.html</span></a>
+  <a href="./autocorrelation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Autocorrelation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./nonnormality.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Non-normal errors</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -355,14 +428,12 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth2 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dist_bernoulli.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Bernoulli distribution</span></a>
+  <a href="./dist_bernoulli.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Bernoulli distribution</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dist_binomial.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Binomial distribution</span></a>
+  <a href="./dist_binomial.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Binomial distribution</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -373,8 +444,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dist_exponential.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Exponential distribution</span></a>
+  <a href="./dist_exponential.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Exponential distribution</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -385,8 +455,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dist_geometric.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Geometric distribution</span></a>
+  <a href="./dist_geometric.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Geometric distribution</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -397,14 +466,12 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dist_normal.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Normal distribution</span></a>
+  <a href="./dist_normal.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Normal distribution</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dist_poisson.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Poisson distribution</span></a>
+  <a href="./dist_poisson.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Poisson distribution</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -423,14 +490,12 @@ ul.task-list li input[type="checkbox"] {
   </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./proofs.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Proofs</span></a>
+  <a href="./proofs.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Proofs</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./listofsymbols.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">List of Symbols</span></a>
+  <a href="./listofsymbols.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">List of Symbols</span></a>
   </div>
 </li>
       </ul>
@@ -440,20 +505,29 @@ ul.task-list li input[type="checkbox"] {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#assumptions" id="toc-assumptions" class="nav-link active" data-scroll-target="#assumptions">Assumptions</a></li>
+  <li><a href="#definition" id="toc-definition" class="nav-link" data-scroll-target="#definition">Definition</a></li>
+  <li><a href="#visualizer" id="toc-visualizer" class="nav-link" data-scroll-target="#visualizer">Visualizer</a></li>
+  <li><a href="#relations-to-other-distributions" id="toc-relations-to-other-distributions" class="nav-link" data-scroll-target="#relations-to-other-distributions">Relations to other distributions</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
-<main class="content column-page-right" id="quarto-document-content">
+<main class="content column-body" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Appendices</li><li class="breadcrumb-item"><a href="./dist_bernoulli.html">Distributions</a></li><li class="breadcrumb-item"><a href="./dist_binomial.html">Binomial distribution</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Appendices</li><li class="breadcrumb-item"><a href="./dist_bernoulli.html">Distributions</a></li><li class="breadcrumb-item"><a href="./dist_binomial.html"><span class="chapter-title">Binomial distribution</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Binomial distribution</h1>
+<h1 class="title"><span id="dist-binomial" class="quarto-section-identifier">Appendix B — Binomial distribution</span></h1>
 </div>
 
 
 
-<div class="quarto-title-meta column-page-right">
+<div class="quarto-title-meta column-body">
 
     
   
@@ -465,8 +539,97 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<p>The Binomial distribution counts the number of successes in a fixed series of Bernoulli trials.</p>
+<section id="assumptions" class="level2">
+<h2 class="anchored" data-anchor-id="assumptions">Assumptions</h2>
+<p>Let <span class="math inline">\(B_1, \ldots, B_n\)</span> be a series of <span class="math inline">\(n\)</span> Bernoulli variables each identically and independently distributed with parameter <span class="math inline">\(p\)</span>. Define their sum as,</p>
+<p><span class="math display">\[X =\sum_{i=1}^n B_n\]</span></p>
+<p>Then <span class="math inline">\(X \sim \mathrm{Binomial}(n,p)\)</span>.</p>
+<p>Two key premises of the Binomial distribution are that <em>(i)</em> <span class="math inline">\(n\)</span>, the number of trials, is fixed beforehand,<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> and <em>(ii)</em> the probability of success never changes over time or in response to the previous trials.</p>
+</section>
+<section id="definition" class="level2">
+<h2 class="anchored" data-anchor-id="definition">Definition</h2>
+<p><span class="math display">\[\begin{array}{ll}
+  \text{Support:} &amp; \{0,1,2,\ldots,n\} \\
+  \text{Parameter(s):} &amp; p,\text{ the probability of success }(p \in [0,1]) \\ &amp; n,\text{ the number of trials }(n \in \mathbb{Z}^+) \\
+  \text{PMF:} &amp; P(X=k) = \left(\begin{array}{c} n \\ k \end{array} \right) p^k (1-p)^{n-k} \\
+  \text{CDF:} &amp; F_X(x) = \left\{\begin{array}{cl} 0, &amp; \quad x \lt 0 \\ \sum_{i=0}^{\lfloor x \rfloor} \left(\begin{array}{c} n \\ i \end{array}\right) p^i (1-p)^{n-i}, &amp; \quad 0 \le x \lt n \\ 1, &amp; \quad x \ge n \end{array}\right\} \\
+  \text{Mean:} &amp; \mathbb{E}[X] = np \\
+  \text{Variance:} &amp; \mathbb{V}[X] = np(1-p) \\
+\end{array}\]</span></p>
+</section>
+<section id="visualizer" class="level2">
+<h2 class="anchored" data-anchor-id="visualizer">Visualizer</h2>
+<pre class="shinylive-r" data-engine="r"><code>#| '!! shinylive warning !!': |
+#|   shinylive does not work in self-contained HTML documents.
+#|   Please set `embed-resources: false` in your metadata.
+#| standalone: true
+#| viewerHeight: 650
+
+library(shiny)
+library(bslib)
+
+ui &lt;- page_fluid(
+      tags$head(tags$style(HTML("body {overflow-x: hidden;}"))),
+  title = "Bernoulli distribution PMF",
+  fluidRow(plotOutput("distPlot")),
+  fluidRow(column(width=6,sliderInput("n", "Trials (n)", min=5, max=25, step=1, value=15)),
+           column(width=6,sliderInput("p", "Probability (p)", min=0, max=1, step=0.01,value=0.5))))
+
+server &lt;- function(input, output) {
+  output$distPlot &lt;- renderPlot({
+    plot(x=0:input$n,y=dbinom(x=0:input$n,input$n,input$p),main=NULL,
+         xlab='x (Successes)',ylab='Probability',type='h',lwd=3)})
+}
+
+shinyApp(ui = ui, server = server)</code></pre>
+</section>
+<section id="relations-to-other-distributions" class="level2">
+<h2 class="anchored" data-anchor-id="relations-to-other-distributions">Relations to other distributions</h2>
+<ul>
+<li><p>A Binomial(<span class="math inline">\(n,p\)</span>) variable is equivalent to the sum of <span class="math inline">\(n\)</span> i.i.d. Bernoulli(<span class="math inline">\(p\)</span>) variables</p>
+<ul>
+<li>As a corollary, when <span class="math inline">\(n=1\)</span>, a Binomial(<span class="math inline">\(n,p\)</span>) variable is simply a Bernoulli(<span class="math inline">\(p\)</span>) variable.</li>
+</ul></li>
+<li><p>The Binomial distribution forms a discrete approximation to the Normal distribution with <span class="math inline">\(\mu = np\)</span> and <span class="math inline">\(\sigma^2 = np(1-p)\)</span>, and the quality of this approximation grows when <span class="math inline">\(np\)</span> is very large and <span class="math inline">\(p\)</span> is not near 0 or 1. The accuracy of this approximation increases with the use of a “continuity correction”, such as adding or subtracting 0.5 to the Normal quantile. For example, compare:</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pbinom</span>(<span class="at">q=</span><span class="dv">155</span>,<span class="at">size=</span><span class="dv">200</span>,<span class="at">prob=</span><span class="fl">0.8</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.2112617</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pnorm</span>(<span class="at">q=</span><span class="dv">155</span>,<span class="at">mean=</span><span class="dv">200</span><span class="sc">*</span><span class="fl">0.8</span>,<span class="at">sd=</span><span class="fu">sqrt</span>(<span class="dv">200</span><span class="sc">*</span><span class="fl">0.8</span><span class="sc">*</span><span class="fl">0.2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.1883796</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pnorm</span>(<span class="at">q=</span><span class="fl">155.5</span>,<span class="at">mean=</span><span class="dv">200</span><span class="sc">*</span><span class="fl">0.8</span>,<span class="at">sd=</span><span class="fu">sqrt</span>(<span class="dv">200</span><span class="sc">*</span><span class="fl">0.8</span><span class="sc">*</span><span class="fl">0.2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.2131628</code></pre>
+</div>
+</div>
+<ul>
+<li><p>The Poisson distribution can be seen as a limit case of the Binomial distribution, as <span class="math inline">\(n\)</span> grows toward infinity and <span class="math inline">\(p\)</span> shrinks to zero, with <span class="math inline">\(\lambda = np\)</span>. When the usual counts are <em>nowhere near</em> the theoretical upper bound, we can often use the Poisson instead of the Binomial.</p>
+<p>For example, say that a town has 20,000 homes, and that any home has a 0.1% chance to have a termite infestation. The current number of termite infestations is technically a Binomial(20000,0.001) variable, but well-approximated by a Poisson(20) variable:</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dbinom</span>(<span class="at">x=</span><span class="dv">6</span><span class="sc">:</span><span class="dv">10</span>,<span class="at">size=</span><span class="dv">20000</span>,<span class="at">prob=</span><span class="fl">0.001</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.0001823448 0.0005213501 0.0013042233 0.0029000148 0.0058032228</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dpois</span>(<span class="at">x=</span><span class="dv">6</span><span class="sc">:</span><span class="dv">10</span>,<span class="at">lambda=</span><span class="dv">20</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.0001832137 0.0005234676 0.0013086690 0.0029081533 0.0058163065</code></pre>
+</div>
+</div>
 
 
+</section>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1"><p>Unlike, say, the Geometric distribution in which trials are continued until the first success occurs.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -827,25 +990,64 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         }
       };
     }
-      // Attach click handler to the DT
-      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
-      for (const annoteDlNode of annoteDls) {
-        annoteDlNode.addEventListener('click', (event) => {
-          const clickedEl = event.target;
-          if (clickedEl !== selectedAnnoteEl) {
-            unselectCodeLines();
-            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
-            if (activeEl) {
-              activeEl.classList.remove('code-annotation-active');
-            }
-            selectCodeLines(clickedEl);
-            clickedEl.classList.add('code-annotation-active');
-          } else {
-            // Unselect the line
-            unselectCodeLines();
-            clickedEl.classList.remove('code-annotation-active');
+      const annoteTargets = window.document.querySelectorAll('.code-annotation-anchor');
+      for (let i=0; i<annoteTargets.length; i++) {
+        const annoteTarget = annoteTargets[i];
+        const targetCell = annoteTarget.getAttribute("data-target-cell");
+        const targetAnnotation = annoteTarget.getAttribute("data-target-annotation");
+        const contentFn = () => {
+          const content = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          if (content) {
+            const tipContent = content.cloneNode(true);
+            tipContent.classList.add("code-annotation-tip-content");
+            return tipContent.outerHTML;
           }
-        });
+        }
+        const config = {
+          allowHTML: true,
+          content: contentFn,
+          onShow: (instance) => {
+            selectCodeLines(instance.reference);
+            instance.reference.classList.add('code-annotation-active');
+            window.tippy.hideAll();
+          },
+          onHide: (instance) => {
+            unselectCodeLines();
+            instance.reference.classList.remove('code-annotation-active');
+          },
+          maxWidth: 300,
+          delay: [50, 0],
+          duration: [200, 0],
+          offset: [5, 10],
+          arrow: true,
+          appendTo: function(el) {
+            return el.parentElement.parentElement.parentElement;
+          },
+          interactive: true,
+          interactiveBorder: 10,
+          theme: 'quarto',
+          placement: 'right',
+          popperOptions: {
+            modifiers: [
+            {
+              name: 'flip',
+              options: {
+                flipVariations: false, // true by default
+                allowedAutoPlacements: ['right'],
+                fallbackPlacements: ['right', 'top', 'top-start', 'top-end', 'bottom', 'bottom-start', 'bottom-end', 'left'],
+              },
+            },
+            {
+              name: 'preventOverflow',
+              options: {
+                mainAxis: false,
+                altAxis: false
+              }
+            }
+            ]        
+          }      
+        };
+        window.tippy(annoteTarget, config); 
       }
   const findCites = (el) => {
     const parentEl = el.parentElement;
@@ -886,10 +1088,10 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script>
-<nav class="page-navigation column-page-right">
+<nav class="page-navigation column-body">
   <div class="nav-page nav-page-previous">
       <a href="./dist_bernoulli.html" class="pagination-link" aria-label="Bernoulli distribution">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Bernoulli distribution</span>
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Bernoulli distribution</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">

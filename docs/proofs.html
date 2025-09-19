@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Proofs – Statistical Analysis Using R: Online Notes</title>
+<title>Appendix C — Proofs – Statistical Analysis Using R: Online Notes</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -70,6 +70,35 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -82,7 +111,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Appendices</li><li class="breadcrumb-item"><a href="./proofs.html">Proofs</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Appendices</li><li class="breadcrumb-item"><a href="./proofs.html"><span class="chapter-title">Proofs</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -140,7 +169,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./biasvariance.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Estimator bias and variance</span></a>
+  <a href="./biasvariance.html" class="sidebar-item-text sidebar-link"><span class="chapter-title"><em>Estimator bias and variance</em></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -151,6 +180,11 @@ ul.task-list li input[type="checkbox"] {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./identification.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Identifying distributions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./howtounivariate.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Coding it up in R</span></a>
   </div>
 </li>
       </ul>
@@ -166,27 +200,32 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./newton.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">newton.html</span></a>
+  <a href="./newton.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The Newton-Raphson method</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./gradientdescent.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">gradientdescent.html</span></a>
+  <a href="./gradientdescent.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Gradient descent</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./clt.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">clt.html</span></a>
+  <a href="./clt.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The Central Limit Theorem</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./ttests.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">ttests.html</span></a>
+  <a href="./ttests.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The Student’s <em>t</em> distribution</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./rulesofthumb.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">rulesofthumb.html</span></a>
+  <a href="./rulesofthumb.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Handy rules of thumb</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./howtoapproximate.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Coding it up in R</span></a>
   </div>
 </li>
       </ul>
@@ -202,32 +241,22 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./simpleregression.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">simpleregression.html</span></a>
+  <a href="./simpleregression.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Simple regression</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./simplels.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">simplels.html</span></a>
+  <a href="./multiplemle.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Multiple regression</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./simplemle.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">simplemle.html</span></a>
+  <a href="./variancedecomposition.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Variance decomposition</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./multiplemle.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">multiplemle.html</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./olsproperties.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">olsproperties.html</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./variancedecomposition.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">variancedecomposition.html</span></a>
+  <a href="./howtoregress.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Coding it up in R</span></a>
   </div>
 </li>
       </ul>
@@ -243,7 +272,12 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./heteroskedasticity.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">heteroskedasticity.html</span></a>
+  <a href="./robustness.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Regression robustness</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./heteroskedasticity.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Heteroskedasticity</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -355,8 +389,7 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dist_bernoulli.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Bernoulli distribution</span></a>
+  <a href="./dist_bernoulli.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Bernoulli distribution</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -397,8 +430,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dist_normal.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Normal distribution</span></a>
+  <a href="./dist_normal.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Normal distribution</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -423,14 +455,12 @@ ul.task-list li input[type="checkbox"] {
   </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./proofs.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Proofs</span></a>
+  <a href="./proofs.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Proofs</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./listofsymbols.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">List of Symbols</span></a>
+  <a href="./listofsymbols.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">List of Symbols</span></a>
   </div>
 </li>
       </ul>
@@ -440,20 +470,28 @@ ul.task-list li input[type="checkbox"] {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#arithmetic-solution-for-simple-ols-regression" id="toc-arithmetic-solution-for-simple-ols-regression" class="nav-link active" data-scroll-target="#arithmetic-solution-for-simple-ols-regression">Arithmetic solution for simple OLS regression</a></li>
+  <li><a href="#linear-algebraic-solution-for-multiple-ols-regression" id="toc-linear-algebraic-solution-for-multiple-ols-regression" class="nav-link" data-scroll-target="#linear-algebraic-solution-for-multiple-ols-regression">Linear algebraic solution for multiple OLS regression</a></li>
+  <li><a href="#proofs-about-the-average-fitted-value-and-the-average-residual" id="toc-proofs-about-the-average-fitted-value-and-the-average-residual" class="nav-link" data-scroll-target="#proofs-about-the-average-fitted-value-and-the-average-residual">Proofs about the average fitted value and the average residual</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
-<main class="content column-page-right" id="quarto-document-content">
+<main class="content column-body" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Appendices</li><li class="breadcrumb-item"><a href="./proofs.html">Proofs</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Appendices</li><li class="breadcrumb-item"><a href="./proofs.html"><span class="chapter-title">Proofs</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Proofs</h1>
+<h1 class="title"><span id="sec-proofs" class="quarto-section-identifier">Appendix C — Proofs</span></h1>
 </div>
 
 
 
-<div class="quarto-title-meta column-page-right">
+<div class="quarto-title-meta column-body">
 
     
   
@@ -465,8 +503,61 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<section id="arithmetic-solution-for-simple-ols-regression" class="level2">
+<h2 class="anchored" data-anchor-id="arithmetic-solution-for-simple-ols-regression">Arithmetic solution for simple OLS regression</h2>
+<p>We can readily find the values of <span class="math inline">\(\hat{\beta}_0\)</span> and <span class="math inline">\(\hat{\beta}_1\)</span> which minimize the residual sum of squares by writing out the RSS function, taking its first partial derivatives, setting them equal to zero, and solving. We require two preliminary results which are purely arithmetic and not a matter of statistical theory:</p>
+<ul>
+<li><strong>Finding 1</strong></li>
+</ul>
+<p>Note that,</p>
+<p><span class="math display">\[\begin{aligned} \sum_i(x_i - \bar{x}) x_i &amp;= \sum_i(x_i^2 - \bar{x} x_i) = \sum_i x_i^2 - \bar{x}\sum_i x_i \\ &amp;= \sum_i x_i^2 - n\bar{x}^2\end{aligned}\]</span></p>
+<p>And also that,</p>
+<p><span class="math display">\[\begin{aligned} \sum_i(x_i - \bar{x})^2 &amp;= \sum_i(x_i^2 - 2x_i\bar{x}  + \bar{x}^2) = \sum_i x_i^2 - 2\bar{x}\sum_i x_i + n\bar{x}^2 \\ &amp;= \sum_i x_i^2 - n\bar{x}^2 \end{aligned}\]</span> And so by transitivity,</p>
+<p><span class="math display">\[(1) \quad \sum_i(x_i - \bar{x}) x_i = \sum_i(x_i - \bar{x})^2\]</span></p>
+<ul>
+<li><strong>Finding 2</strong></li>
+</ul>
+<p>Likewise note that,</p>
+<p><span class="math display">\[\begin{aligned} \sum_i(y_i - \bar{y}) x_i &amp;= \sum_i(y_i x_i - \bar{y} x_i) = \sum_i y_i x_i - \bar{y}\sum_i x_i \\ &amp;= \sum_i y_i x_i - n\bar{y}\bar{x} \end{aligned}\]</span></p>
+<p>And also that,</p>
+<p><span class="math display">\[\begin{aligned} \sum_i(y_i - \bar{y})(x_i - \bar{x}) &amp;= \sum_i(y_i x_i - y_i\bar{x} - \bar{y}x_i + \bar{y}\bar{x}) = \sum_i y_i x_i - \bar{x}\sum_i y_i - \bar{y}\sum_i x_i + \bar{y}\bar{x} \\ &amp;= \sum_i y_i x_i - n\bar{y}\bar{x} \end{aligned}\]</span> And so by transitivity,</p>
+<p><span class="math display">\[(2) \quad \sum_i(y_i - \bar{y}) x_i = \sum_i(y_i - \bar{y})(x_i - \bar{x})\]</span></p>
+<p>Now for the actual Least Squares solution. First, we write out the RSS function which we need to minimize:</p>
+<p><span class="math display">\[\mathrm{RSS} = \sum_i e_i^2 = \sum_i (y_i - \hat{y}_i)^2 = \sum_i (y_i - \hat{\beta}_0 - \hat{\beta}_1x_i)^2\]</span></p>
+<p>Next we take the derivative with respect to <span class="math inline">\(\hat{\beta}_0\)</span>, set it equal to zero, and solve:</p>
+<p><span class="math display">\[\begin{aligned} \frac{\delta\mathrm{RSS}}{\delta\hat{\beta}_0} = 2 \sum_i (y_i - \hat{\beta}_0 - \hat{\beta}_1x_i)(-1) &amp;= 0 \\ \longrightarrow  \sum_i (y_i - \hat{\beta}_0 - \hat{\beta}_1x_i) &amp;= 0 \\ \longrightarrow \sum_i y_i - n\hat{\beta}_0 - \hat{\beta}_1 \sum_i x_i &amp;= 0 \\ \longrightarrow n\bar{y} - n\hat{\beta}_0 - n\hat{\beta}_1 \bar{x} &amp;= 0 \\ \longrightarrow n\hat{\beta}_0 &amp;= n\bar{y} - n\hat{\beta}_1 \bar{x} \\ \longrightarrow \hat{\beta}_0 &amp;= \bar{y} - \hat{\beta}_1 \bar{x} \end{aligned}\]</span> ̅ Last we take the derivative with respect to <span class="math inline">\(\hat{\beta}_1\)</span>, set it equal to zero, and solve as well. Notice that we use the substitution for <span class="math inline">\(\hat{\beta}_0\)</span> derived above, and that the final lines rely upon preliminary results (1) and (2):</p>
+<p><span class="math display">\[\begin{aligned} \frac{\delta\mathrm{RSS}}{\delta\hat{\beta}_1} = 2 \sum_i (y_i - \hat{\beta}_0 - \hat{\beta}_1x_i)(-x_i) &amp;= 0 \\ \longrightarrow \sum_i (y_i - \bar{y} + \hat{\beta}_1\bar{x} - \hat{\beta}_1x_i)(-x_i) &amp;= 0 \\ \longrightarrow \sum_i (y_i - \bar{y})x_i - \hat{\beta}_1 \sum_i (x_i - \bar{x}) x_i &amp;= 0 \\ \longrightarrow \hat{\beta}_1 &amp;= \frac{\sum_i (y_i - \bar{y})x_i}{\sum_i (x_i - \bar{x}) x_i} \\ \longrightarrow \hat{\beta}_1 &amp;= \frac{\sum_i (y_i - \bar{y})(x_i - \bar{x})}{\sum_i (x_i - \bar{x})^2} \\ \longrightarrow \hat{\beta}_1 &amp;= \frac{\mathrm{Cov}(\boldsymbol{y},\boldsymbol{x})}{\mathbb{V}[\boldsymbol{x}]} \end{aligned}\]</span></p>
+</section>
+<section id="linear-algebraic-solution-for-multiple-ols-regression" class="level2">
+<h2 class="anchored" data-anchor-id="linear-algebraic-solution-for-multiple-ols-regression">Linear algebraic solution for multiple OLS regression</h2>
+<p>The simple linear regression case above conveys the concept of the least squares solution, but readers may wish to see a full solution for the more general case with multiple predictors. This proof will require you to know (or feel your way through) some linear algebra and vector calculus. Let us begin with two findings which help set up the main finding:</p>
+<ul>
+<li><strong>Finding 1</strong></li>
+</ul>
+<p><span class="math display">\[(1) \quad (\boldsymbol{a} - \boldsymbol{b}) \circ (\boldsymbol{a} - \boldsymbol{b}) = \boldsymbol{a} \circ \boldsymbol{a} + \boldsymbol{b} \circ \boldsymbol{b} - 2\boldsymbol{a} \circ \boldsymbol{b}\]</span></p>
+<p>The finding above is really just algebra, but we shall be glad of it soon. Take note that the bolded letters are vectors, not scalars, though the result matches our scalar expectations.</p>
+<ul>
+<li><strong>Finding 2</strong></li>
+</ul>
+<p><span class="math display">\[\begin{aligned} \mathrm{RSS}(\hat{\boldsymbol{\beta}}) &amp;= \sum_i e_i^2 = \boldsymbol{e} \circ \boldsymbol{e} = (\boldsymbol{y} - \mathbf{X}\hat{\boldsymbol{\beta}}) \circ (\boldsymbol{y} - \mathbf{X}\hat{\boldsymbol{\beta}}) \\ (2) \quad &amp;= \boldsymbol{y} \circ \boldsymbol{y} + \hat{\boldsymbol{\beta}}^T(\mathbf{X}^T\mathbf{X}) \hat{\boldsymbol{\beta}} - 2\boldsymbol{y}^T \mathbf{X}\hat{\boldsymbol{\beta}} \end{aligned}\]</span></p>
+<p>This second finding relies on the first, and it establishes that the residual sum of squares for a given choice of betas can be condensed into three summary statistics of the data: <span class="math inline">\(\boldsymbol{y} \circ \boldsymbol{y}\)</span>, <span class="math inline">\(\mathbf{X}^T\mathbf{X}\)</span>, and <span class="math inline">\(\boldsymbol{y}^T \mathbf{X}\)</span>. You can think of these in turn as functions of the means and variances of <span class="math inline">\(\boldsymbol{y}\)</span> and <span class="math inline">\(\mathbf{X}\)</span> along with the covariance of <span class="math inline">\(\boldsymbol{y}\)</span> and <span class="math inline">\(\mathbf{X}\)</span>, which matches the simple regression case above.</p>
+<p>With these findings, we proceed to the main event: finding the vector <span class="math inline">\(\hat{\boldsymbol{\beta}}\)</span> which minimizes the residual sum of squares. We take the gradient vector of RSS with respect to <span class="math inline">\(\hat{\boldsymbol{\beta}}\)</span>, set equal to zero, and solve:</p>
+<p><span class="math display">\[\begin{aligned} \nabla \mathrm{RSS}(\hat{\boldsymbol{\beta}}) = \frac{\delta}{\delta\hat{\boldsymbol{\beta}}}\left( \boldsymbol{y} \circ \boldsymbol{y} + \hat{\boldsymbol{\beta}}^T(\mathbf{X}^T\mathbf{X}) \hat{\boldsymbol{\beta}} - 2\boldsymbol{y}^T \mathbf{X}\hat{\boldsymbol{\beta}}\right) &amp; \\ = 2(\mathbf{X}^T\mathbf{X}) \hat{\boldsymbol{\beta}} - 2\boldsymbol{y}^T \mathbf{X} &amp;= 0 \\ \longrightarrow (\mathbf{X}^T\mathbf{X}) \hat{\boldsymbol{\beta}} &amp;= \boldsymbol{y}^T \mathbf{X} \\ \longrightarrow \hat{\boldsymbol{\beta}} &amp;= (\mathbf{X}^T \mathbf{X})^{-1} \mathbf{X}^T \boldsymbol{y} \end{aligned}\]</span></p>
+<p>Because <span class="math inline">\(\hat{\boldsymbol{y}} = \mathbf{X}\hat{\boldsymbol{\beta}}=\mathbf{X}(\mathbf{X}^T \mathbf{X})^{-1} \mathbf{X}^T \boldsymbol{y}\)</span>, we can think of the fitted values <span class="math inline">\(\hat{\boldsymbol{y}}\)</span> as a projection of the original values <span class="math inline">\(\boldsymbol{y}\)</span> onto the model space of <span class="math inline">\(\mathbf{X}\)</span>. The projection matrix for this transformation (sometimes also called the “hat matrix”) would be <span class="math inline">\(\mathbf{X}(\mathbf{X}^T \mathbf{X})^{-1} \mathbf{X}^T\)</span>.</p>
+</section>
+<section id="proofs-about-the-average-fitted-value-and-the-average-residual" class="level2">
+<h2 class="anchored" data-anchor-id="proofs-about-the-average-fitted-value-and-the-average-residual">Proofs about the average fitted value and the average residual</h2>
+<p>These proofs were referenced in <a href="variancedecomposition.html" class="quarto-xref"><span>Variance decomposition</span></a>, and rely upon the findings above. The case for simple regression is easily proven; the multiple regression version requires some familiarity with linear algebra.</p>
+<ul>
+<li><strong>Simple regression case</strong>: To claim that the average fitted value <span class="math inline">\(\hat{\boldsymbol{y}}\)</span> is equal to the average response value <span class="math inline">\(\boldsymbol{y}\)</span> we can note that:</li>
+</ul>
+<p><span class="math display">\[\begin{aligned} \frac{1}{n}\sum_i \hat{y}_i &amp;= \frac{1}{n}\sum_i (\hat{\beta}_0 + \hat{\beta}_1x_i) \\ &amp;= \hat{\beta}_0 + \hat{\beta}_1 \frac{1}{n}\sum_i x_i \\ &amp;= \hat{\beta}_0 + \hat{\beta}_1 \bar{x}_i \\ &amp;= (\bar{y} - \hat{\beta}_1 \bar{x}) + \hat{\beta}_1 \bar{x}_i = \bar{y}\end{aligned}\]</span></p>
+<p>And since <span class="math inline">\(e_i = y_i - \hat{y}_i\)</span>, we can show that the average residual must be 0:</p>
+<p><span class="math display">\[\frac{1}{n}\sum_i e_i = \frac{1}{n}\sum_i (y_i - \hat{y}_i) = \bar{y} - \frac{1}{n}\sum_i \hat{y}_i = \bar{y} - \bar{y} = 0\]</span></p>
+<p>I would be happy to supply a proof for the more general multiple regression case upon student request.</p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -827,25 +918,64 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         }
       };
     }
-      // Attach click handler to the DT
-      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
-      for (const annoteDlNode of annoteDls) {
-        annoteDlNode.addEventListener('click', (event) => {
-          const clickedEl = event.target;
-          if (clickedEl !== selectedAnnoteEl) {
-            unselectCodeLines();
-            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
-            if (activeEl) {
-              activeEl.classList.remove('code-annotation-active');
-            }
-            selectCodeLines(clickedEl);
-            clickedEl.classList.add('code-annotation-active');
-          } else {
-            // Unselect the line
-            unselectCodeLines();
-            clickedEl.classList.remove('code-annotation-active');
+      const annoteTargets = window.document.querySelectorAll('.code-annotation-anchor');
+      for (let i=0; i<annoteTargets.length; i++) {
+        const annoteTarget = annoteTargets[i];
+        const targetCell = annoteTarget.getAttribute("data-target-cell");
+        const targetAnnotation = annoteTarget.getAttribute("data-target-annotation");
+        const contentFn = () => {
+          const content = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          if (content) {
+            const tipContent = content.cloneNode(true);
+            tipContent.classList.add("code-annotation-tip-content");
+            return tipContent.outerHTML;
           }
-        });
+        }
+        const config = {
+          allowHTML: true,
+          content: contentFn,
+          onShow: (instance) => {
+            selectCodeLines(instance.reference);
+            instance.reference.classList.add('code-annotation-active');
+            window.tippy.hideAll();
+          },
+          onHide: (instance) => {
+            unselectCodeLines();
+            instance.reference.classList.remove('code-annotation-active');
+          },
+          maxWidth: 300,
+          delay: [50, 0],
+          duration: [200, 0],
+          offset: [5, 10],
+          arrow: true,
+          appendTo: function(el) {
+            return el.parentElement.parentElement.parentElement;
+          },
+          interactive: true,
+          interactiveBorder: 10,
+          theme: 'quarto',
+          placement: 'right',
+          popperOptions: {
+            modifiers: [
+            {
+              name: 'flip',
+              options: {
+                flipVariations: false, // true by default
+                allowedAutoPlacements: ['right'],
+                fallbackPlacements: ['right', 'top', 'top-start', 'top-end', 'bottom', 'bottom-start', 'bottom-end', 'left'],
+              },
+            },
+            {
+              name: 'preventOverflow',
+              options: {
+                mainAxis: false,
+                altAxis: false
+              }
+            }
+            ]        
+          }      
+        };
+        window.tippy(annoteTarget, config); 
       }
   const findCites = (el) => {
     const parentEl = el.parentElement;
@@ -886,7 +1016,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script>
-<nav class="page-navigation column-page-right">
+<nav class="page-navigation column-body">
   <div class="nav-page nav-page-previous">
       <a href="./dist_uniform.html" class="pagination-link" aria-label="Uniform distribution">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Uniform distribution</span>
@@ -894,7 +1024,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   </div>
   <div class="nav-page nav-page-next">
       <a href="./listofsymbols.html" class="pagination-link" aria-label="List of Symbols">
-        <span class="nav-page-text">List of Symbols</span> <i class="bi bi-arrow-right-short"></i>
+        <span class="nav-page-text"><span class="chapter-title">List of Symbols</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

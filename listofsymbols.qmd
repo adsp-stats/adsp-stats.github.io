@@ -1,1 +1,67 @@
-# List of Symbols {.unnumbered}
+# List of Symbols {#sec-listofsymbols}
+
+## Lowercase Greek letters
+
+| Letter  | Symbol  | Uses                                            |
+|:--------|:--------|:------------------------------------------------|
+|alpha    |$\alpha$ |A generic constant, or a significance threshold  |
+|beta     |$\beta$  |An intercept, slope, or other model coefficient  |
+|gamma    |$\gamma$ |A step size                                      |
+|delta    |$\delta$ |A partial derivative, or a tiny amount           |
+|epsilon  |$\varepsilon$|An error term, or a tolerance factor         |
+|eta      |$\eta$   |The linear predictor for a GLM                   |
+|theta    |$\theta$ |A generic parameter or set of parameters         |
+|lambda   |$\beta$  |The rate of a Poisson or exponential distribution|
+|mu       |$\mu$    |The mean of a random variable                    |
+|pi       |$\pi$    |The constant 3.14159..., or a probability        |
+|rho      |$\rho$   |Correlation                                      |
+|sigma    |$\sigma$ |The standard deviation of a random variable      |
+|        |$\sigma^2$|The variance of a random variable                |
+|phi      |$\phi$   |Dispersion parameter for quasi-likelihood models |
+|chi      |$\chi$   |Symbol used to name the chi-squared distribution |
+
+## Uppercase Greek letters
+
+| Letter  | Symbol  | Uses                                            |
+|:--------|:--------|:------------------------------------------------|
+|Delta    |$\Delta$ |Change                                           |
+|Pi       |$\Pi$    |Product                                          |
+|Sigma    |$\Sigma$ |Sum                                              |
+|Phi      |$\Phi$   |CDF of the standard normal distribution          |
+|Omega    |$\Omega$ |Universal set (all possible outcomes)            |
+
+## Set theory
+
+| Name    | Symbol  | Meaning                                         |
+|:--------|:--------|:------------------------------------------------|
+|         |$\in$    |Is an element of                                 |
+|         |$\subseteq$|Is a subset of (and can be equal to)           |
+|         |$\cup$   |Union ("or")                                     |
+|         |$\cap$   |Intersection ("and")                             |
+|         |$\mathcal{A}^c$|A-complement ("everything *but* A")        |
+|null     |$\emptyset$|The empty set (or null set)                    |
+|Omega    |$\Omega$ |Universal set (all possible outcomes)            |
+|         |$\mathbb{R}$|The real numbers                              |
+|         |$\mathbb{Z}$|The integers                                  |
+|       |$\mathbb{Z}^+,\mathbb{Z}^-$|The positive or negative integers|
+|         |$\mathbb{N}$|The natural numbers (0, 1, 2, ...)            |
+
+## Other mathematical symbols
+
+| Name    | Symbol  | Meaning                                         |
+|:--------|:--------|:------------------------------------------------|
+|nabla    |$\nabla$ |Gradient (vector of first derivatives)           |
+|factorial|$!$|Factorial operator, e.g. 5! = 5 x 4 x 3 x 2 x 1 = 120  |
+||$\lfloor\;\rfloor$|Floor operator, e.g. $\lfloor3.14159\rfloor=3$   |
+|         |$\sim$   |Is distributed according to, or depends upon     |
+|         |$\approx$|Is approximately equal to                        |
+|         |$\ll,\gg$|Is much less than, is much greater than          |
+|         |$\perp$  |Perpendicular or orthogonal to, independent of   |
+|dot      |$\circ$  |Dot product (a vector operator)                  |
+|         |$|x|$    |Absolute value of a scalar x                     |
+|         |$||\boldsymbol{x}||$|Magnitude (length) of a vector x      |
+||$F^{-1},\mathbf{A}^{-1}$|Inverse of a function F or matrix A        |
+||$\boldsymbol{x}^T,\mathbf{A}^T$|Transpose of a vector x or matrix A |
+|         |$1\!\!1$ |Indicator function, or a vector of ones          |
+|         |$\mathcal{L}$|Likelihood                                   |
+|         |$\mathcal{l}$|Log-likelihood                               |

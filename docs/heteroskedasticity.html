@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>heteroskedasticity – Statistical Analysis Using R: Online Notes</title>
+<title>Heteroskedasticity – Statistical Analysis Using R: Online Notes</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -31,7 +65,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
 <link href="./autocorrelation.html" rel="next">
-<link href="./variancedecomposition.html" rel="prev">
+<link href="./robustness.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -41,6 +75,11 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="site_libs/bootstrap/bootstrap-2ed9fe205cf6ca358fce3f52e912d798.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<meta name="shinylive:serviceworker_dir" content=".">
+<script src="site_libs/quarto-contrib/shinylive-0.9.1/shinylive/load-shinylive-sw.js" type="module"></script>
+<script src="site_libs/quarto-contrib/shinylive-0.9.1/shinylive/run-python-blocks.js" type="module"></script>
+<link href="site_libs/quarto-contrib/shinylive-0.9.1/shinylive/shinylive.css" rel="stylesheet">
+<link href="site_libs/quarto-contrib/shinylive-quarto-css/shinylive-quarto.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -70,6 +109,35 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -82,7 +150,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./heteroskedasticity.html">4. Regression Robustness</a></li><li class="breadcrumb-item"><a href="./heteroskedasticity.html"><span class="chapter-title">heteroskedasticity.html</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./robustness.html">4. Regression Robustness</a></li><li class="breadcrumb-item"><a href="./heteroskedasticity.html"><span class="chapter-title">Heteroskedasticity</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -140,7 +208,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./biasvariance.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Estimator bias and variance</span></a>
+  <a href="./biasvariance.html" class="sidebar-item-text sidebar-link"><span class="chapter-title"><em>Estimator bias and variance</em></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -151,6 +219,11 @@ ul.task-list li input[type="checkbox"] {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./identification.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Identifying distributions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./howtounivariate.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Coding it up in R</span></a>
   </div>
 </li>
       </ul>
@@ -166,27 +239,32 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./newton.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">newton.html</span></a>
+  <a href="./newton.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The Newton-Raphson method</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./gradientdescent.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">gradientdescent.html</span></a>
+  <a href="./gradientdescent.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Gradient descent</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./clt.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">clt.html</span></a>
+  <a href="./clt.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The Central Limit Theorem</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./ttests.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">ttests.html</span></a>
+  <a href="./ttests.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The Student’s <em>t</em> distribution</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./rulesofthumb.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">rulesofthumb.html</span></a>
+  <a href="./rulesofthumb.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Handy rules of thumb</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./howtoapproximate.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Coding it up in R</span></a>
   </div>
 </li>
       </ul>
@@ -202,32 +280,22 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./simpleregression.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">simpleregression.html</span></a>
+  <a href="./simpleregression.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Simple regression</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./simplels.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">simplels.html</span></a>
+  <a href="./multiplemle.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Multiple regression</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./simplemle.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">simplemle.html</span></a>
+  <a href="./variancedecomposition.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Variance decomposition</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./multiplemle.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">multiplemle.html</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./olsproperties.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">olsproperties.html</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./variancedecomposition.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">variancedecomposition.html</span></a>
+  <a href="./howtoregress.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Coding it up in R</span></a>
   </div>
 </li>
       </ul>
@@ -243,17 +311,22 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./heteroskedasticity.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">heteroskedasticity.html</span></a>
+  <a href="./robustness.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Regression robustness</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./autocorrelation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">autocorrelation.html</span></a>
+  <a href="./heteroskedasticity.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Heteroskedasticity</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./nonnormality.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">nonnormality.html</span></a>
+  <a href="./autocorrelation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Autocorrelation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./nonnormality.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Non-normal errors</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -355,14 +428,12 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dist_bernoulli.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Bernoulli distribution</span></a>
+  <a href="./dist_bernoulli.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Bernoulli distribution</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dist_binomial.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Binomial distribution</span></a>
+  <a href="./dist_binomial.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Binomial distribution</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -373,8 +444,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dist_exponential.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Exponential distribution</span></a>
+  <a href="./dist_exponential.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Exponential distribution</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -385,8 +455,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dist_geometric.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Geometric distribution</span></a>
+  <a href="./dist_geometric.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Geometric distribution</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -397,14 +466,12 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dist_normal.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Normal distribution</span></a>
+  <a href="./dist_normal.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Normal distribution</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dist_poisson.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Poisson distribution</span></a>
+  <a href="./dist_poisson.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Poisson distribution</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -423,14 +490,12 @@ ul.task-list li input[type="checkbox"] {
   </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./proofs.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Proofs</span></a>
+  <a href="./proofs.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Proofs</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./listofsymbols.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">List of Symbols</span></a>
+  <a href="./listofsymbols.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">List of Symbols</span></a>
   </div>
 </li>
       </ul>
@@ -440,17 +505,267 @@ ul.task-list li input[type="checkbox"] {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#categories-and-illustrations-of-heteroskedasticity" id="toc-categories-and-illustrations-of-heteroskedasticity" class="nav-link active" data-scroll-target="#categories-and-illustrations-of-heteroskedasticity">Categories and illustrations of heteroskedasticity</a></li>
+  <li><a href="#consequences-of-heteroskedasticity" id="toc-consequences-of-heteroskedasticity" class="nav-link" data-scroll-target="#consequences-of-heteroskedasticity">Consequences of heteroskedasticity</a></li>
+  <li><a href="#identifying-heteroskedasticity" id="toc-identifying-heteroskedasticity" class="nav-link" data-scroll-target="#identifying-heteroskedasticity">Identifying heteroskedasticity</a>
+  <ul class="collapse">
+  <li><a href="#diagnostic-plots" id="toc-diagnostic-plots" class="nav-link" data-scroll-target="#diagnostic-plots">Diagnostic plots</a></li>
+  <li><a href="#hypothesis-tests" id="toc-hypothesis-tests" class="nav-link" data-scroll-target="#hypothesis-tests">Hypothesis tests</a></li>
+  </ul></li>
+  <li><a href="#correcting-or-mitigating-heteroskedasticity" id="toc-correcting-or-mitigating-heteroskedasticity" class="nav-link" data-scroll-target="#correcting-or-mitigating-heteroskedasticity">Correcting or mitigating heteroskedasticity</a></li>
+  <li><a href="#visualizer" id="toc-visualizer" class="nav-link" data-scroll-target="#visualizer">Visualizer</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
-<main class="content column-page-right" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./heteroskedasticity.html">4. Regression Robustness</a></li><li class="breadcrumb-item"><a href="./heteroskedasticity.html"><span class="chapter-title">heteroskedasticity.html</span></a></li></ol></nav></header>
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./robustness.html">4. Regression Robustness</a></li><li class="breadcrumb-item"><a href="./heteroskedasticity.html"><span class="chapter-title">Heteroskedasticity</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span id="sec-heteroskedasticity" class="quarto-section-identifier"><span class="chapter-title">Heteroskedasticity</span></span></h1>
+</div>
 
 
 
+<div class="quarto-title-meta column-body">
+
+    
+  
+    
+  </div>
+  
 
 
+</header>
 
+
+<p>OLS regression models require <strong>homoskedasticity</strong>, meaning that each error <span class="math inline">\(\varepsilon_i\)</span> is drawn from the same normal distribution with mean zero and a constant variance <span class="math inline">\(\sigma^2\)</span>. (Homoskedasticity comes from the Greek for “equally scattered”). Of course, each error will be a different size — some positive, some negative, some small, some large — but the probability of an error being a certain size will be the same for each observation. The troubling alternative to homoskedasticity is <strong>heteroskedasticity</strong>, in which different observations have differing error variances.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<section id="categories-and-illustrations-of-heteroskedasticity" class="level2">
+<h2 class="anchored" data-anchor-id="categories-and-illustrations-of-heteroskedasticity">Categories and illustrations of heteroskedasticity</h2>
+<p>Heteroskedasticity takes a few different forms:</p>
+<ul>
+<li><em>Regime change.</em> In a regime change, also called a structural break, the parameters of a model observed over time suddenly shift to new values, often as a result of a strong system shock. This can affect both the betas <span class="math inline">\(\boldsymbol{\beta}\)</span> and the error variance <span class="math inline">\(\sigma^2\)</span>. For example, a company’s monthly electrical bills might be dependent on how much GPU processing time they use, but the errors might become permanently less volatile after they install solar battery storage systems.</li>
+</ul>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1789</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>hetX <span class="ot">&lt;-</span> <span class="fu">sort</span>(<span class="fu">runif</span>(<span class="dv">100</span>,<span class="dv">0</span>,<span class="dv">7</span>))</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>hetE <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">100</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>hetY <span class="ot">&lt;-</span> <span class="dv">1000</span> <span class="sc">+</span> <span class="dv">20</span><span class="sc">*</span>hetX <span class="sc">+</span> hetE<span class="sc">*</span><span class="fu">rep</span>(<span class="fu">c</span>(<span class="dv">30</span>,<span class="dv">10</span>),<span class="at">times=</span><span class="fu">c</span>(<span class="dv">70</span>,<span class="dv">30</span>))</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(hetX,hetY,<span class="at">main=</span><span class="st">'X-Y plot of original data'</span>,<span class="at">xlab=</span><span class="st">'Total GPU time (hours)'</span>,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab=</span><span class="st">'Weekly power costs ($)'</span>,<span class="at">pch=</span><span class="dv">19</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="heteroskedasticity_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption>Heteroskedasticity from a mixed distribution</figcaption>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">lm</span>(hetY<span class="sc">~</span>hetX)<span class="sc">$</span>residuals,<span class="at">main=</span><span class="st">'Ordered plot of OLS residuals'</span>,</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab=</span><span class="st">'Week'</span>,<span class="at">ylab=</span><span class="st">'Residual power costs ($)'</span>,<span class="at">pch=</span><span class="dv">19</span>,)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">h=</span><span class="dv">0</span>,<span class="at">col=</span><span class="st">'grey50'</span>,<span class="at">lty=</span><span class="dv">3</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v=</span><span class="fl">70.5</span>,<span class="at">lwd=</span><span class="dv">2</span>,<span class="at">lty=</span><span class="dv">2</span>,<span class="at">col=</span><span class="st">'#0000ff'</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="dv">88</span>,<span class="dv">50</span>,<span class="at">labels=</span><span class="st">'Solar battery'</span>,<span class="at">col=</span><span class="st">'#0000ff'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="heteroskedasticity_files/figure-html/unnamed-chunk-1-2.png" class="img-fluid figure-img" width="672"></p>
+<figcaption>Heteroskedasticity from a mixed distribution</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<pre><code>* *Mixed distributions.*  In a regime change, the break point clearly separates the data and the distributions into a "before" and "after" period. But in other datasets, we see two (or more) error distributions which are mixed together such that each new observation can come from either (or any) error source. For example, a company’s stock might have one error variance on slow news days and a larger error variance on days where the market learns important information about the company.</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1776</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>hetE <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">5</span>),<span class="dv">500</span>,<span class="cn">TRUE</span>)<span class="sc">*</span><span class="fu">rnorm</span>(<span class="dv">500</span>,<span class="dv">0</span>,<span class="fl">0.5</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(hetE,<span class="at">main=</span><span class="st">'Daily unexplained market movement'</span>,<span class="at">xlab=</span><span class="st">'Trading Day'</span>,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab=</span><span class="st">'Residual S&amp;P 500 Return'</span>,<span class="at">pch=</span><span class="dv">19</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="heteroskedasticity_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(hetE,<span class="at">breaks=</span><span class="fu">seq</span>(<span class="sc">-</span><span class="fl">7.25</span>,<span class="fl">7.25</span>,<span class="fl">0.25</span>),<span class="at">main=</span><span class="st">'Histogram of Residual Returns'</span>,</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab=</span><span class="st">'Daily Residual Return (%)'</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(<span class="fu">seq</span>(<span class="sc">-</span><span class="dv">7</span>,<span class="dv">7</span>,<span class="fl">0.1</span>),<span class="fu">dnorm</span>(<span class="fu">seq</span>(<span class="sc">-</span><span class="dv">7</span>,<span class="dv">7</span>,<span class="fl">0.1</span>),<span class="dv">0</span>,<span class="fl">2.5</span>)<span class="sc">*</span><span class="fl">0.1</span><span class="sc">*</span><span class="dv">500</span>,<span class="at">lwd=</span><span class="dv">2</span>,<span class="at">col=</span><span class="st">'#0000ff'</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(<span class="fu">seq</span>(<span class="sc">-</span><span class="dv">7</span>,<span class="dv">7</span>,<span class="fl">0.1</span>),<span class="fu">dnorm</span>(<span class="fu">seq</span>(<span class="sc">-</span><span class="dv">7</span>,<span class="dv">7</span>,<span class="fl">0.1</span>),<span class="dv">0</span>,<span class="fl">0.5</span>)<span class="sc">*</span><span class="fl">0.2</span><span class="sc">*</span><span class="dv">500</span>,<span class="at">lwd=</span><span class="dv">2</span>,<span class="at">col=</span><span class="st">'#0000ff'</span>,<span class="at">lty=</span><span class="dv">2</span>)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="at">x=</span><span class="st">'topright'</span>,<span class="at">col=</span><span class="st">'#0000ff'</span>,<span class="at">lty=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>),<span class="at">legend=</span><span class="fu">c</span>(<span class="st">'News Day'</span>,<span class="st">'Quiet Day'</span>),<span class="at">bty=</span><span class="st">'n'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="heteroskedasticity_files/figure-html/unnamed-chunk-2-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<pre><code>* *Unconditional heteroskedasticity.*  Error variances can grow and shrink in proportion to an unobserved variable, particularly in time series data.  For example, speculative assets such as cryptocurrencies might enter periods of high and low volatility over the span of weeks (if examining daily data) or even seconds/minutes (if examining intraday data), and these differences in the error distribution would present as a smooth continuüm rather than a clean structural break.</code></pre>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1814</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>hetE <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1000</span>)<span class="sc">*</span><span class="fu">arima.sim</span>(<span class="fu">list</span>(<span class="at">ar=</span><span class="fl">0.993</span>),<span class="at">n=</span><span class="dv">1000</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(hetE,<span class="at">main=</span><span class="st">'Volatility of a Fictitious Cryptocurrency Over Time'</span>,</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab=</span><span class="st">'Days since ICO'</span>,<span class="at">ylab=</span><span class="st">'% Change in Value'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="heteroskedasticity_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption>Heteroskedasticity not associated with the predictors</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<pre><code>Conditional heteroskedasticity.  Sometimes, the predictors themselves not only predict Y but also predict the size of the error variance σ^2.  One common case would be datasets in which the errors are proportional, that is multiplicative and not additive.  For example, the value of a diamond is usually based not just on the size of the stone, but on metrics such as the color, the brilliancy of the cut, and the lack of visible flaws.  A small 0.5 carat diamond might be worth $400 ± $100 depending on the other factors, while a larger 2.0 carat diamond might be worth $2000 ± $500.  The qualitative factors adjust the base value on a proportional basis, creating larger errors for larger stones.  </code></pre>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1803</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>hetX <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="dv">50</span>,<span class="fl">0.3</span>,<span class="dv">3</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>hetE <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="dv">50</span>,<span class="fl">0.75</span>,<span class="fl">1.25</span>)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>hetY <span class="ot">&lt;-</span> <span class="sc">-</span><span class="dv">200</span><span class="sc">+</span><span class="dv">1100</span><span class="sc">*</span>hetX<span class="sc">*</span>hetE</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(hetX,hetY,<span class="at">main=</span><span class="st">'Diamond Value by Carat Size'</span>,</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab=</span><span class="st">'Carats'</span>,<span class="at">ylab=</span><span class="st">'Retail Value ($)'</span>,<span class="at">pch=</span><span class="dv">19</span>)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">reg=</span><span class="fu">lm</span>(hetY<span class="sc">~</span>hetX),<span class="at">lty=</span><span class="dv">2</span>,<span class="at">lwd=</span><span class="dv">2</span>,<span class="at">col=</span><span class="st">'grey50'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="heteroskedasticity_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption>Heteroskedasticity associated with the predictors</figcaption>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(hetX,<span class="fu">lm</span>(hetY<span class="sc">~</span>hetX)<span class="sc">$</span>residuals,<span class="at">main=</span><span class="st">'Residuals of Diamond Value by Carat Size'</span>,</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab=</span><span class="st">'Carats'</span>,<span class="at">ylab=</span><span class="st">'Residual of Retail Value ($)'</span>,<span class="at">pch=</span><span class="dv">19</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">h=</span><span class="dv">0</span>,<span class="at">lty=</span><span class="dv">2</span>,<span class="at">lwd=</span><span class="dv">2</span>,<span class="at">col=</span><span class="st">'grey50'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="heteroskedasticity_files/figure-html/unnamed-chunk-4-2.png" class="img-fluid figure-img" width="672"></p>
+<figcaption>Heteroskedasticity associated with the predictors</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="consequences-of-heteroskedasticity" class="level2">
+<h2 class="anchored" data-anchor-id="consequences-of-heteroskedasticity">Consequences of heteroskedasticity</h2>
+<p>The chief danger of using OLS regression in the presence of heteroskedasticity is simply that we will mislead ourselves about the error variance.</p>
+<pre><code>* We may be more confident or less confident than we should be that our betas are statistically significant and belong in the model
+
+* All our confidence intervals (for predictions, mean responses, and the true values of the betas) will be narrower or wider than they should be
+
+* We may view the errors as arithmetic/additive when they are really geometric/multiplicative</code></pre>
+<p>These are important hazards, but they need not be fatal. Heteroskedastic data will not bias our betas (just their standard errors), so we may remain reasonably confident in our point estimates, so long as we see no regime changes.</p>
+</section>
+<section id="identifying-heteroskedasticity" class="level2">
+<h2 class="anchored" data-anchor-id="identifying-heteroskedasticity">Identifying heteroskedasticity</h2>
+<p>There are usually two ways to identify violations of your modeling assumptions: <em>(1)</em> finding the right plots to highlight any potential problems, and <em>(2)</em> hypothesis tests specifically built to test the assumption in question. These two groups of methods pair well with each other, complementing the strengths and weaknesses of the other:</p>
+<pre><code>* Hypothesis tests are best at noticing subtle, aggregate trends. The human eye cannot easily tell when the errors are slightly heteroskedastic, but with even a moderate sample size a test can confirm such findings without a doubt. 
+
+* The human eye is best at noticing the presence of outliers and meaningful patterns. Tests aggregate the entire dataset into a single number without telling you why the data scored well or poorly. The human eye will notice individual data points that tell a story, or speak to unmodeled features in the data.</code></pre>
+<section id="diagnostic-plots" class="level3">
+<h3 class="anchored" data-anchor-id="diagnostic-plots">Diagnostic plots</h3>
+<p>There are several plots which help to reveal heteroskedasticity, and two of them were shown in the figures above:</p>
+<ul>
+<li><p>Simply <em>plotting the residuals in order</em> might reveal structural breaks or periods of unconditional volatility</p></li>
+<li><p>A <em>histogram or density</em> of the residuals might suggest the presence of a mixed distribution</p></li>
+<li><p><em>Plotting the residuals as a function of the fitted values</em> (or as a function of the predictor in simple regression) is the classic way to reveal conditional heteroskedasticity. Look for a “trumpet” shape to the residuals: a flared or triangular pattern.</p></li>
+</ul>
+</section>
+<section id="hypothesis-tests" class="level3">
+<h3 class="anchored" data-anchor-id="hypothesis-tests">Hypothesis tests</h3>
+<p>There are many tests which offer evidence on heteroskedasticity; I will provide details on one such test, and sketch out another.</p>
+<p><strong>The Breusch-Pagan test</strong> (1979) takes a very straightforward, two-stage approach to identifying heteroskedasticity associated with the predictors. (This test does <em>not</em> detect other types of heteroskedasticity!) First, we run the multiple regression model as usual, producing a set of residuals and a maximum likelihood estimate of the error variance:</p>
+<p><span class="math display">\[\begin{aligned} \mathrm{M1:} \quad y_i &amp;= \boldsymbol{x}_i \boldsymbol{\beta} + \varepsilon_i \\ e_i &amp;= y_i - \hat{y}_i = y_i - \boldsymbol{x}_i \hat{\boldsymbol{\beta}} \\ \hat{\sigma}^2_{ML} &amp;= \sum_i e_i^2 / n \end{aligned}\]</span></p>
+<p>Then we run a second-stage regression to see if the error sizes (represented by the squared, normalized residuals) can be meaningfully predicted by the original predictors.<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> If we write the second regression equation using alpha <span class="math inline">\((\alpha)\)</span> for the slopes and delta <span class="math inline">\((\delta)\)</span> for the error term, it would be:</p>
+<p><span class="math display">\[\mathrm{M2:} \quad \frac{e_i^2}{\hat{\sigma}^2_{ML}} = \boldsymbol{x}_i \boldsymbol{\alpha} + \delta_i\]</span></p>
+<p>The Breusch-Pagan test uses likelihood-based methods to show that half the model sum-of-squares (SSM) of the second-stage model is distributed chi-squared, with degrees of freedom equal to the predictors in the second-stage model (<span class="math inline">\(k\)</span>), under the null assumption of no heteroskedasticity.</p>
+<p><span class="math display">\[\frac{1}{2}\mathrm{SSM}_\mathrm{M2} \sim \chi^2_{k}\]</span></p>
+<p>The Breusch-Pagan test only examines heteroskedasticity which increases (or decreases) linearly with the predictors. It’s simple to implement, and available in all common statistical software, but may not catch more subtle forms of heteroskedasticity.</p>
+<p>A related, slightly more comprehensive test is White’s test (1980). White’s test includes both all the original regression predictors, and their squares, and their cross-products in the second-stage regression. In this way, White’s test can measure both non-linear heteroskedasticity as well as possible misspecification of the model (<em>i.e.</em> cases where adding an additional predictor would help the model match OLS regression assumptions). Software packages can usually implement White’s test as well.</p>
+</section>
+</section>
+<section id="correcting-or-mitigating-heteroskedasticity" class="level2">
+<h2 class="anchored" data-anchor-id="correcting-or-mitigating-heteroskedasticity">Correcting or mitigating heteroskedasticity</h2>
+<p>The right approach to mitigating heteroskedasticity depends heavily on what type of heteroskedasticity has been observed.</p>
+<ul>
+<li><p>In the presence of a structural break, the easiest solution is to model the “before” and “after” periods separately (or drop one of them entirely), as these will now presumably show homoskedastic errors. In cases where a single model is necessary (either because of a phenomenon bridging both periods, or simply to preserve as large a sample as possible), more advanced modeling such as WLS or fGLS methods will be needed, both of which are beyond the scope of this document.</p></li>
+<li><p>In the presence of a mixed distribution, the solutions are more difficult. If the two distributions can be easily disentangled, perhaps through a feature already in the data, then the subsamples can be modeled separately. But if not, we may have to accept some degree of misspecification. Standard errors and confidence intervals will be less reliable.</p></li>
+<li><p>In the presence of heteroskedasticity not associated with the predictors, if we believe the heteroskedasticity to have time-series properties, then ARCH (auto-regressive conditionally heteroskedastic) and GARCH (generalized ARCH) models are a popular remedy. When the volatility is not time-based, we may need to consider WLS and fGLS models, including the use of <strong>Huber-White errors</strong>, sometimes called <strong>heteroskedasticity-consistent errors</strong>. All of these remedies are beyond the scope of this document.</p></li>
+<li><p>In the presence of heteroskedasticity associated with the predictors, we may choose between both simple and complex solutions. In addition to the advanced WLS and fGLS methods mentioned above, we can often use a simple transformation to significantly align our residuals with the OLS assumptions. For example, if our errors are proportional rather than additive, then a log-transformation of the response will lead to a suitable OLS target.</p></li>
+</ul>
+<p>In practice, we may wish to try a few different ways of controlling the variance. Log-transformations and square root-transformations are the most common, but we may also look at reciprocals (modeling <span class="math inline">\(1⁄\boldsymbol{y}\)</span> instead of <span class="math inline">\(\boldsymbol{y}\)</span>), rates, or other transformations and features.</p>
+<p>Once we apply a potential solution, we can re-examine the new residuals using either the graphical methods or the hypothesis tests mentioned above. The new residuals may still fail a hypothesis test at our desired significance threshold, but we often can achieve a significant reduction in heteroskedasticity which should increase our confidence in the regression estimates, predictions, and confidence intervals.</p>
+</section>
+<section id="visualizer" class="level2">
+<h2 class="anchored" data-anchor-id="visualizer">Visualizer</h2>
+<p>While heteroskedasticity doesn’t necessarily bias the estimated betas, it can still pose severe challenges for regression. The data below show conditional heteroskedasticity: larger predictors are linked to larger errors (both positive and negative). Consider how accurate or inaccurate the stated “80% prediction interval” would be at different locations:</p>
+<ul>
+<li><p>For small predictor values, the 80% prediction interval becomes too conservative, <em>i.e.</em> wider than needed</p></li>
+<li><p>For large predictor values, much more than 20% of new data points would be expected to fall outside the 80% prediction interval</p></li>
+</ul>
+<pre class="shinylive-r" data-engine="r"><code>#| '!! shinylive warning !!': |
+#|   shinylive does not work in self-contained HTML documents.
+#|   Please set `embed-resources: false` in your metadata.
+#| standalone: true
+#| viewerHeight: 960
+
+library(shiny)
+library(bslib)
+
+set.seed(1628)
+hetdat &lt;- data.frame(X=runif(200,min=0,max=10))
+hetdat$Y &lt;- 10 + 1.5*hetX + 0.5*hetX*rnorm(200)
+hetLM &lt;- lm(Y~X,hetdat)
+hetint &lt;- predict(hetLM,newdata=data.frame(X=seq(0,10,0.1)),
+                  interval='prediction',level=0.8)
+  
+ui &lt;- page_fluid(
+  tags$head(tags$style(HTML("body {overflow-x: hidden;}"))),
+  title = "80% CIs for predicted new observations",
+  fluidRow(sliderInput("x", "x-level of new observations", min=0, max=10, value=5, step=0.1)),
+  fluidRow(plotOutput("distPlot1")))
+
+server &lt;- function(input, output) {
+  index &lt;- reactive({input$x*10+1})
+  output$distPlot1 &lt;- renderPlot({
+    plot(NA,NA,xlab='X',ylab='Y',xlim=c(-0.1,10.1),ylim=c(0,40))
+    rect(xleft=input$x-0.1,ybottom=hetint[index(),2],
+         xright=input$x+0.1,ytop=hetint[index(),3],
+         border=NA,density=NA,col='#0000ff50')
+    points(hetdat$X,hetdat$Y,)})
+}
+
+shinyApp(ui = ui, server = server)</code></pre>
+
+
+</section>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1"><p>You will also see the spellings “homoscedasticity” and “heteroscedasticity” (with a ‘c’ instead of a ‘k’). It’s a matter of transliteration, without a clear right or wrong choice.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>In fact, we need not use the original predictors. If you can hypothesize a functional form for your heteroskedasticity, you can use whichever variables you like in the second-stage regression.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -811,25 +1126,64 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         }
       };
     }
-      // Attach click handler to the DT
-      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
-      for (const annoteDlNode of annoteDls) {
-        annoteDlNode.addEventListener('click', (event) => {
-          const clickedEl = event.target;
-          if (clickedEl !== selectedAnnoteEl) {
-            unselectCodeLines();
-            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
-            if (activeEl) {
-              activeEl.classList.remove('code-annotation-active');
-            }
-            selectCodeLines(clickedEl);
-            clickedEl.classList.add('code-annotation-active');
-          } else {
-            // Unselect the line
-            unselectCodeLines();
-            clickedEl.classList.remove('code-annotation-active');
+      const annoteTargets = window.document.querySelectorAll('.code-annotation-anchor');
+      for (let i=0; i<annoteTargets.length; i++) {
+        const annoteTarget = annoteTargets[i];
+        const targetCell = annoteTarget.getAttribute("data-target-cell");
+        const targetAnnotation = annoteTarget.getAttribute("data-target-annotation");
+        const contentFn = () => {
+          const content = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          if (content) {
+            const tipContent = content.cloneNode(true);
+            tipContent.classList.add("code-annotation-tip-content");
+            return tipContent.outerHTML;
           }
-        });
+        }
+        const config = {
+          allowHTML: true,
+          content: contentFn,
+          onShow: (instance) => {
+            selectCodeLines(instance.reference);
+            instance.reference.classList.add('code-annotation-active');
+            window.tippy.hideAll();
+          },
+          onHide: (instance) => {
+            unselectCodeLines();
+            instance.reference.classList.remove('code-annotation-active');
+          },
+          maxWidth: 300,
+          delay: [50, 0],
+          duration: [200, 0],
+          offset: [5, 10],
+          arrow: true,
+          appendTo: function(el) {
+            return el.parentElement.parentElement.parentElement;
+          },
+          interactive: true,
+          interactiveBorder: 10,
+          theme: 'quarto',
+          placement: 'right',
+          popperOptions: {
+            modifiers: [
+            {
+              name: 'flip',
+              options: {
+                flipVariations: false, // true by default
+                allowedAutoPlacements: ['right'],
+                fallbackPlacements: ['right', 'top', 'top-start', 'top-end', 'bottom', 'bottom-start', 'bottom-end', 'left'],
+              },
+            },
+            {
+              name: 'preventOverflow',
+              options: {
+                mainAxis: false,
+                altAxis: false
+              }
+            }
+            ]        
+          }      
+        };
+        window.tippy(annoteTarget, config); 
       }
   const findCites = (el) => {
     const parentEl = el.parentElement;
@@ -870,15 +1224,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script>
-<nav class="page-navigation column-page-right">
+<nav class="page-navigation column-body">
   <div class="nav-page nav-page-previous">
-      <a href="./variancedecomposition.html" class="pagination-link" aria-label="variancedecomposition.html">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">variancedecomposition.html</span></span>
+      <a href="./robustness.html" class="pagination-link" aria-label="Regression robustness">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Regression robustness</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./autocorrelation.html" class="pagination-link" aria-label="autocorrelation.html">
-        <span class="nav-page-text"><span class="chapter-title">autocorrelation.html</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./autocorrelation.html" class="pagination-link" aria-label="Autocorrelation">
+        <span class="nav-page-text"><span class="chapter-title">Autocorrelation</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

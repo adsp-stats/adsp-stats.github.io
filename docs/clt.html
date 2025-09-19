@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>clt – Statistical Analysis Using R: Online Notes</title>
+<title>The Central Limit Theorem – Statistical Analysis Using R: Online Notes</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,6 +19,40 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -41,6 +75,11 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="site_libs/bootstrap/bootstrap-2ed9fe205cf6ca358fce3f52e912d798.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<meta name="shinylive:serviceworker_dir" content=".">
+<script src="site_libs/quarto-contrib/shinylive-0.9.1/shinylive/load-shinylive-sw.js" type="module"></script>
+<script src="site_libs/quarto-contrib/shinylive-0.9.1/shinylive/run-python-blocks.js" type="module"></script>
+<link href="site_libs/quarto-contrib/shinylive-0.9.1/shinylive/shinylive.css" rel="stylesheet">
+<link href="site_libs/quarto-contrib/shinylive-quarto-css/shinylive-quarto.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -70,6 +109,35 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -82,7 +150,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./newton.html">2. Useful Approximations</a></li><li class="breadcrumb-item"><a href="./clt.html"><span class="chapter-title">clt.html</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./newton.html">2. Useful Approximations</a></li><li class="breadcrumb-item"><a href="./clt.html"><span class="chapter-title">The Central Limit Theorem</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -140,7 +208,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./biasvariance.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Estimator bias and variance</span></a>
+  <a href="./biasvariance.html" class="sidebar-item-text sidebar-link"><span class="chapter-title"><em>Estimator bias and variance</em></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -151,6 +219,11 @@ ul.task-list li input[type="checkbox"] {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./identification.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Identifying distributions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./howtounivariate.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Coding it up in R</span></a>
   </div>
 </li>
       </ul>
@@ -166,27 +239,32 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./newton.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">newton.html</span></a>
+  <a href="./newton.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The Newton-Raphson method</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./gradientdescent.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">gradientdescent.html</span></a>
+  <a href="./gradientdescent.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Gradient descent</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./clt.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">clt.html</span></a>
+  <a href="./clt.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">The Central Limit Theorem</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./ttests.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">ttests.html</span></a>
+  <a href="./ttests.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The Student’s <em>t</em> distribution</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./rulesofthumb.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">rulesofthumb.html</span></a>
+  <a href="./rulesofthumb.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Handy rules of thumb</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./howtoapproximate.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Coding it up in R</span></a>
   </div>
 </li>
       </ul>
@@ -202,32 +280,22 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./simpleregression.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">simpleregression.html</span></a>
+  <a href="./simpleregression.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Simple regression</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./simplels.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">simplels.html</span></a>
+  <a href="./multiplemle.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Multiple regression</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./simplemle.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">simplemle.html</span></a>
+  <a href="./variancedecomposition.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Variance decomposition</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./multiplemle.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">multiplemle.html</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./olsproperties.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">olsproperties.html</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./variancedecomposition.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">variancedecomposition.html</span></a>
+  <a href="./howtoregress.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Coding it up in R</span></a>
   </div>
 </li>
       </ul>
@@ -243,17 +311,22 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./heteroskedasticity.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">heteroskedasticity.html</span></a>
+  <a href="./robustness.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Regression robustness</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./autocorrelation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">autocorrelation.html</span></a>
+  <a href="./heteroskedasticity.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Heteroskedasticity</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./nonnormality.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">nonnormality.html</span></a>
+  <a href="./autocorrelation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Autocorrelation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./nonnormality.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Non-normal errors</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -355,14 +428,12 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dist_bernoulli.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Bernoulli distribution</span></a>
+  <a href="./dist_bernoulli.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Bernoulli distribution</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dist_binomial.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Binomial distribution</span></a>
+  <a href="./dist_binomial.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Binomial distribution</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -373,8 +444,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dist_exponential.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Exponential distribution</span></a>
+  <a href="./dist_exponential.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Exponential distribution</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -385,8 +455,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dist_geometric.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Geometric distribution</span></a>
+  <a href="./dist_geometric.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Geometric distribution</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -397,14 +466,12 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dist_normal.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Normal distribution</span></a>
+  <a href="./dist_normal.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Normal distribution</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dist_poisson.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Poisson distribution</span></a>
+  <a href="./dist_poisson.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Poisson distribution</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -423,14 +490,12 @@ ul.task-list li input[type="checkbox"] {
   </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./proofs.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Proofs</span></a>
+  <a href="./proofs.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Proofs</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./listofsymbols.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">List of Symbols</span></a>
+  <a href="./listofsymbols.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">List of Symbols</span></a>
   </div>
 </li>
       </ul>
@@ -440,17 +505,185 @@ ul.task-list li input[type="checkbox"] {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#the-sample-mean-as-a-random-variable" id="toc-the-sample-mean-as-a-random-variable" class="nav-link active" data-scroll-target="#the-sample-mean-as-a-random-variable">The sample mean as a random variable</a></li>
+  <li><a href="#formal-and-informal-definitions" id="toc-formal-and-informal-definitions" class="nav-link" data-scroll-target="#formal-and-informal-definitions">Formal and informal definitions</a></li>
+  <li><a href="#example-approximate-confidence-interval-for-true-mean-heights" id="toc-example-approximate-confidence-interval-for-true-mean-heights" class="nav-link" data-scroll-target="#example-approximate-confidence-interval-for-true-mean-heights">Example: approximate confidence interval for true mean heights</a></li>
+  <li><a href="#visualizer" id="toc-visualizer" class="nav-link" data-scroll-target="#visualizer">Visualizer</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
-<main class="content column-page-right" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./newton.html">2. Useful Approximations</a></li><li class="breadcrumb-item"><a href="./clt.html"><span class="chapter-title">clt.html</span></a></li></ol></nav></header>
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./newton.html">2. Useful Approximations</a></li><li class="breadcrumb-item"><a href="./clt.html"><span class="chapter-title">The Central Limit Theorem</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span id="sec-clt" class="quarto-section-identifier"><span class="chapter-title">The Central Limit Theorem</span></span></h1>
+</div>
 
 
 
+<div class="quarto-title-meta column-body">
+
+    
+  
+    
+  </div>
+  
 
 
+</header>
 
+
+<section id="the-sample-mean-as-a-random-variable" class="level2">
+<h2 class="anchored" data-anchor-id="the-sample-mean-as-a-random-variable">The sample mean as a random variable</h2>
+<p>By now, you are hopefully used to thinking of different populations as following known probability distributions. Perhaps bus waiting times are exponentially distributed, or the number people in Chicago using a payphone right <em>now</em> could be Poisson distributed.</p>
+<p>A sample drawn from a population will change each time a new sample is drawn, and therefore the properties of that sample will also change, meaning that those properties are random variables. However, the distribution of the sample property is not the same as the population distribution.</p>
+<ul>
+<li><p>If a population is uniformly distributed, the minimum of each new sample is not itself uniformly distributed (since low numbers will be more common than high numbers).</p></li>
+<li><p>If a population is Poisson distributed, the variance of each new sample is not Poisson distributed (since Poisson values are integers, and a sample variance can be fractional)</p></li>
+</ul>
+<p>And so on. Perhaps the most important property of any sample is the <em>mean</em>. We would love to know if a sample mean is so small or so large that it casts doubt on our null hypothesis or our distributional assumptions, but we cannot make these calculations if we do not know the supposed distribution of the sample mean.</p>
+<p>** Estimating the sample mean distribution as Normal</p>
+<p>The <em>true</em> distribution of the sample mean will depend upon both the distribution of the population and the sample size and is often very,very hard to compute. The good news is, we don’t have to compute the exact distribution, because the sample mean of a sample from almost <em>any</em> distribution grows more and more normally distributed as the sample size increases:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#normalization of sample means</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">2</span>))</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1985</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>rolls10 <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>,<span class="dv">500000</span>,<span class="cn">TRUE</span>),<span class="at">ncol=</span><span class="dv">10</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>avgs10 <span class="ot">&lt;-</span> <span class="fu">apply</span>(rolls10,<span class="dv">1</span>,mean)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>rolls50 <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>,<span class="dv">5000000</span>,<span class="cn">TRUE</span>),<span class="at">ncol=</span><span class="dv">50</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>avgs50 <span class="ot">&lt;-</span> <span class="fu">apply</span>(rolls50,<span class="dv">1</span>,mean)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>,<span class="fu">rep</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">6</span>,<span class="dv">6</span>),<span class="at">type=</span><span class="st">'h'</span>,<span class="at">lwd=</span><span class="dv">3</span>,<span class="at">ylim=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="fl">0.18</span>),</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>     <span class="at">main=</span><span class="st">'Sample means when rolling 1 die'</span>,</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab=</span><span class="st">'Probability'</span>,<span class="at">xlab=</span><span class="st">'Sample average'</span>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">seq</span>(<span class="dv">1</span>,<span class="dv">6</span>,<span class="fl">0.5</span>),<span class="dv">1</span><span class="sc">/</span><span class="dv">6</span><span class="sc">-</span><span class="fu">abs</span>(<span class="fl">3.5</span><span class="sc">-</span><span class="fu">seq</span>(<span class="dv">1</span>,<span class="dv">6</span>,<span class="fl">0.5</span>))<span class="sc">/</span><span class="dv">18</span>,<span class="at">type=</span><span class="st">'h'</span>,</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>     <span class="at">lwd=</span><span class="dv">3</span>,<span class="at">ylim=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="fl">0.18</span>),</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>     <span class="at">main=</span><span class="st">'Sample means when rolling 2 dice'</span>,</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab=</span><span class="st">'Probability'</span>,<span class="at">xlab=</span><span class="st">'Sample average'</span>)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">table</span>(avgs10)<span class="sc">/</span><span class="dv">50000</span>,<span class="at">lwd=</span><span class="dv">3</span>,<span class="at">ylim=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="fl">0.08</span>),<span class="at">xlim=</span><span class="fu">c</span>(<span class="fl">1.6</span>,<span class="fl">5.4</span>),</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>     <span class="at">main=</span><span class="st">'Sample means when rolling 10 dice'</span>,</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab=</span><span class="st">'Probability'</span>,<span class="at">xlab=</span><span class="st">'Sample average'</span>)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">table</span>(avgs50)<span class="sc">/</span><span class="dv">100000</span>,<span class="at">lwd=</span><span class="dv">2</span>,<span class="at">ylim=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="fl">0.04</span>),<span class="at">xlim=</span><span class="fu">c</span>(<span class="fl">2.6</span>,<span class="fl">4.4</span>),</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>     <span class="at">main=</span><span class="st">'Sample means when rolling 50 dice'</span>,</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab=</span><span class="st">'Probability'</span>,<span class="at">xlab=</span><span class="st">'Sample average'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-coinaverages" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-coinaverages-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="clt_files/figure-html/fig-coinaverages-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-coinaverages-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;9.1: Sample means approaching normality as sample size increases
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The figure above illustrates this principle by considering the sample mean of one or more fair, six-sided dice.</p>
+<ul>
+<li><p>Clearly, when we roll only one die, the “mean” of the sample is just the roll itself, and so it shares the same <em>discrete uniform distribution</em>. All integers 1 through 6 are equally likely.</p></li>
+<li><p>When we roll two dice, a total of 7 is the most common value, which is the same as a sample mean of 3.5. It would be rare to roll two 1s (sample mean of 1) or two 6s (sample mean of 6). The sample mean forms a <em>discrete triangular distribtion</em>.</p></li>
+<li><p>When we increase the number of dice to 10 or 50, the distribution of sample means will still be centered at 3.5, but now resembles the bell curve of the <em>Normal distribution</em>. Of course it’s not a Normal curve – since that is a continuous distribution defined at every point, while this is still a discrete distribution.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p></li>
+</ul>
+<p>You might also notice that the distribution of the sample means has tightened considerably. When rolling just one or two dice, a sample mean of 2 or 5 was fairly common. But when rolling 10 or 50 dice, the sample average would almost never be so low as 2 or so high as 5. As sample size increases, the variance of the sample mean shrinks.</p>
+</section>
+<section id="formal-and-informal-definitions" class="level2">
+<h2 class="anchored" data-anchor-id="formal-and-informal-definitions">Formal and informal definitions</h2>
+<p>We can capture this all this behavior with the following rule:</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>The Central Limit Theorem (CLT):</strong> Let <span class="math inline">\(X\)</span> be a random variable with mean <span class="math inline">\(\mu\)</span> and finite variance <span class="math inline">\(\sigma^2\)</span><a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>, and let <span class="math inline">\(\boldsymbol{x} = x_1,x_2,\ldots,x_n\)</span> be a sample of independent observations of <span class="math inline">\(X\)</span>. Then,</p>
+<p><span class="math display">\[\lim_{n \rightarrow \infty} P\left(\frac{\bar{x}-\mu}{\sigma⁄\sqrt{n}} &lt; z\right)=\Phi(z)\]</span></p>
+<p>Where <span class="math inline">\(\bar{x}\)</span> is the sample mean of <span class="math inline">\(\boldsymbol{x}\)</span> and <span class="math inline">\(\Phi(z)\)</span> is the cumulative distribution function of the standard Normal distribution.</p>
+</div>
+</div>
+<p>In my experience, many students “bounce off” of this theoretical definition without really understanding what it means or why it can be so helpful. Let me rephrase the CLT in slightly less formal terms.</p>
+<p><strong>Informal CLT:</strong> If your sample is independently drawn from a population with a finite mean and a known variance, then as the sample size increases, your sample mean will be approximately normally distributed around the true population mean. Specifically,</p>
+<p><span class="math display">\[\textrm{For large } n, \textrm{and as an approximation,}\;\bar{X} \sim \textrm{Normal}\left(\mu,\frac{\sigma^2}{n}\right)\]</span> Where <span class="math inline">\(\bar{X}\)</span> represents the random variable of the sample mean, and <span class="math inline">\(\mu\)</span>, <span class="math inline">\(\sigma^2\)</span>, and <span class="math inline">\(n\)</span> are all the same as in the formal CLT definition above.</p>
+<p>The beauty of this result is that it provides an easy way to approximate the probable locations of the true mean of the distribution. When we measure our sample mean, we cannot know how far away the true mean might be. We don’t know whether we have underestimated or overestimated the true mean. But we know that the distance between the true mean and the sample mean is a random variable which is roughly normally distributed, meaning that we can identify reasonable lower and upper bounds on how far the true mean is from our sample means.</p>
+<p>The <em>difficulty</em> of this result is that we have to know the true population variance, <span class="math inline">\(\sigma^2\)</span>, in order to use this equation. We wil address this difficulty in the next section.</p>
+</section>
+<section id="example-approximate-confidence-interval-for-true-mean-heights" class="level2">
+<h2 class="anchored" data-anchor-id="example-approximate-confidence-interval-for-true-mean-heights">Example: approximate confidence interval for true mean heights</h2>
+<p>Earlier, when discussing the nature of parametric inference, I posed the following question:</p>
+<ul>
+<li>We observe the heights of ten women, and we assume they represent a sample from a population which is normally distributed. Based on our sample, what are realistic ranges for the unknown mean <span class="math inline">\(\mu\)</span> and variance <span class="math inline">\(\sigma^2\)</span>?</li>
+</ul>
+<p>Let’s attempt a (partial) answer. We will assume the same ten heights described earlier, measured in centimeters:</p>
+<p><span class="math display">\[\boldsymbol{x}=\{170.1,161.6,175.2,166.3,165.6,165.8,152.0,155.8,168.6,154.3\}\]</span> And furthermore, we will assume that a little bird has whispered in our ear that the true variance of the heights of adult women in the United States is 50 cm<sup>2</sup>.</p>
+<p>The sample mean of our heights is 163.53 cm. That’s a good point estimate for the true mean. But how large or small could the true mean be? We might start by calculating a 95% confidence interval, bounded by:</p>
+<ul>
+<li><p>A lower bound where the true mean would be so low that data “this high” or higher would only occur in 2.5% of random samples</p></li>
+<li><p>An upper bound where the true mean would be so high that data “this low” or lower would only occur in 2.5% of random samples</p></li>
+</ul>
+<p>The CLT greatly simplifies the process of finding these two bounds. We know that the true mean is likely not far from our sample mean. We also know that the distance between the true mean and sample mean is approximately normal, with mean 0 and standard deviation of <span class="math inline">\(\sigma/\sqrt{n}\)</span>. Finally, we know that the upper 2.5% of the normal distribution falls roughly 1.96 standard deviations from the mean (<em>i.e.</em> <span class="math inline">\(\Phi^{-1}(0.975) \approx 1.96\)</span>). Therefore,</p>
+<p><span class="math display">\[\textrm{CI}_{μ,0.95} = \bar{x} \pm z_{0.975}^* \frac{\sigma}{\sqrt{n}} \approx 163.53 \pm 1.96 \cdot \sqrt{50⁄10} \approx [159.15,167.91]\]</span> From our sample of ten women’s heights, we believe that the true mean height of adult women in the United States is between 159.15 and 167.91 cm. Compare this to a <a href="https://www.cdc.gov/nchs/data/nhsr/nhsr122-508.pdf">2018 Centers for Disease Control publication</a> that reported a true mean height of 161.7 cm: our sample mean was a little high, but the confidence interval did contain the true parameter!</p>
+</section>
+<section id="visualizer" class="level2">
+<h2 class="anchored" data-anchor-id="visualizer">Visualizer</h2>
+<p>Choose a distribution and a sample size, and notice whether the approximation of the CLT (in blue) seems accurate or not to the actual distribution of means (in black):</p>
+<pre class="shinylive-r" data-engine="r"><code>#| '!! shinylive warning !!': |
+#|   shinylive does not work in self-contained HTML documents.
+#|   Please set `embed-resources: false` in your metadata.
+#| standalone: true
+#| viewerHeight: 960
+
+library(shiny)
+library(bslib)
+
+myunif &lt;- function(u) qunif(u,min=0,max=6) 
+mypois &lt;- function(u) qpois(u,lambda=3) 
+myexp &lt;- function(u) qexp(u,rate=1/sqrt(3))
+mygeom &lt;- function(u) qgeom(u,prob=(sqrt(13)-1)/6)
+
+ui &lt;- page_fluid(
+  tags$head(tags$style(HTML("body {overflow-x: hidden;}"))),
+  title = "Sample mean distribtions approximated by the CLT",
+  fluidRow(column(width=6,selectInput("dist", "Distribution", 
+    list(`Uniform(0,6)` = 'myunif', `Poisson(3)` = 'mypois', 
+         `Exponential(0.577)` = 'myexp', `Geometric(0.434)` = 'mygeom'))),
+           column(width=6,sliderInput("nsamp", "N (sample size)", min=1, max=50, value=5))),
+  fluidRow(column(width=12,plotOutput("distPlot1"))))
+
+server &lt;- function(input, output) {
+  samp &lt;- reactive(eval(call(input$dist,u=runif(2e4*input$nsamp))))
+  sampmeans &lt;- reactive(rowMeans(matrix(samp(),ncol=input$nsamp)))
+  output$distPlot1 &lt;- renderPlot({
+      (h &lt;- hist(sampmeans(),main='Histogram of 20,000 sample means',
+                 xlab='Sample mean',ylab='Frequency'))
+      points(h$mids,2e4*(pnorm(h$breaks[-1],mean(sampmeans()),sqrt(3)/sqrt(input$nsamp)) - 
+               pnorm(h$breaks[-length(h$breaks)],mean(sampmeans()),sqrt(3)/sqrt(input$nsamp))), 
+             col='#0000ff')
+      legend(x='topright',legend='CLT Approx',pch=1,col='#0000ff',bty='n')})
+}
+
+shinyApp(ui = ui, server = server)</code></pre>
+
+
+</section>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1"><p>For example, with 10 dice, the sample average could be 3.6 or 3.7 but never 3.65<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>Note: though I use <span class="math inline">\(\mu\)</span> and <span class="math inline">\(\sigma^2\)</span> to denote the mean and variance, <span class="math inline">\(X\)</span> does <em>not</em> have to be Normally distributed<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -811,25 +1044,64 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         }
       };
     }
-      // Attach click handler to the DT
-      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
-      for (const annoteDlNode of annoteDls) {
-        annoteDlNode.addEventListener('click', (event) => {
-          const clickedEl = event.target;
-          if (clickedEl !== selectedAnnoteEl) {
-            unselectCodeLines();
-            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
-            if (activeEl) {
-              activeEl.classList.remove('code-annotation-active');
-            }
-            selectCodeLines(clickedEl);
-            clickedEl.classList.add('code-annotation-active');
-          } else {
-            // Unselect the line
-            unselectCodeLines();
-            clickedEl.classList.remove('code-annotation-active');
+      const annoteTargets = window.document.querySelectorAll('.code-annotation-anchor');
+      for (let i=0; i<annoteTargets.length; i++) {
+        const annoteTarget = annoteTargets[i];
+        const targetCell = annoteTarget.getAttribute("data-target-cell");
+        const targetAnnotation = annoteTarget.getAttribute("data-target-annotation");
+        const contentFn = () => {
+          const content = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          if (content) {
+            const tipContent = content.cloneNode(true);
+            tipContent.classList.add("code-annotation-tip-content");
+            return tipContent.outerHTML;
           }
-        });
+        }
+        const config = {
+          allowHTML: true,
+          content: contentFn,
+          onShow: (instance) => {
+            selectCodeLines(instance.reference);
+            instance.reference.classList.add('code-annotation-active');
+            window.tippy.hideAll();
+          },
+          onHide: (instance) => {
+            unselectCodeLines();
+            instance.reference.classList.remove('code-annotation-active');
+          },
+          maxWidth: 300,
+          delay: [50, 0],
+          duration: [200, 0],
+          offset: [5, 10],
+          arrow: true,
+          appendTo: function(el) {
+            return el.parentElement.parentElement.parentElement;
+          },
+          interactive: true,
+          interactiveBorder: 10,
+          theme: 'quarto',
+          placement: 'right',
+          popperOptions: {
+            modifiers: [
+            {
+              name: 'flip',
+              options: {
+                flipVariations: false, // true by default
+                allowedAutoPlacements: ['right'],
+                fallbackPlacements: ['right', 'top', 'top-start', 'top-end', 'bottom', 'bottom-start', 'bottom-end', 'left'],
+              },
+            },
+            {
+              name: 'preventOverflow',
+              options: {
+                mainAxis: false,
+                altAxis: false
+              }
+            }
+            ]        
+          }      
+        };
+        window.tippy(annoteTarget, config); 
       }
   const findCites = (el) => {
     const parentEl = el.parentElement;
@@ -870,15 +1142,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script>
-<nav class="page-navigation column-page-right">
+<nav class="page-navigation column-body">
   <div class="nav-page nav-page-previous">
-      <a href="./gradientdescent.html" class="pagination-link" aria-label="gradientdescent.html">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">gradientdescent.html</span></span>
+      <a href="./gradientdescent.html" class="pagination-link" aria-label="Gradient descent">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Gradient descent</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./ttests.html" class="pagination-link" aria-label="ttests.html">
-        <span class="nav-page-text"><span class="chapter-title">ttests.html</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./ttests.html" class="pagination-link" aria-label="The Student's *t* distribution">
+        <span class="nav-page-text"><span class="chapter-title">The Student’s <em>t</em> distribution</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

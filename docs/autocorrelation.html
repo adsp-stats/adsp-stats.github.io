@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>autocorrelation – Statistical Analysis Using R: Online Notes</title>
+<title>Autocorrelation – Statistical Analysis Using R: Online Notes</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,6 +19,40 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -41,6 +75,11 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="site_libs/bootstrap/bootstrap-2ed9fe205cf6ca358fce3f52e912d798.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<meta name="shinylive:serviceworker_dir" content=".">
+<script src="site_libs/quarto-contrib/shinylive-0.9.1/shinylive/load-shinylive-sw.js" type="module"></script>
+<script src="site_libs/quarto-contrib/shinylive-0.9.1/shinylive/run-python-blocks.js" type="module"></script>
+<link href="site_libs/quarto-contrib/shinylive-0.9.1/shinylive/shinylive.css" rel="stylesheet">
+<link href="site_libs/quarto-contrib/shinylive-quarto-css/shinylive-quarto.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -70,6 +109,35 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -82,7 +150,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./heteroskedasticity.html">4. Regression Robustness</a></li><li class="breadcrumb-item"><a href="./autocorrelation.html"><span class="chapter-title">autocorrelation.html</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./robustness.html">4. Regression Robustness</a></li><li class="breadcrumb-item"><a href="./autocorrelation.html"><span class="chapter-title">Autocorrelation</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -140,7 +208,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./biasvariance.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Estimator bias and variance</span></a>
+  <a href="./biasvariance.html" class="sidebar-item-text sidebar-link"><span class="chapter-title"><em>Estimator bias and variance</em></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -151,6 +219,11 @@ ul.task-list li input[type="checkbox"] {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./identification.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Identifying distributions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./howtounivariate.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Coding it up in R</span></a>
   </div>
 </li>
       </ul>
@@ -166,27 +239,32 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./newton.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">newton.html</span></a>
+  <a href="./newton.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The Newton-Raphson method</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./gradientdescent.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">gradientdescent.html</span></a>
+  <a href="./gradientdescent.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Gradient descent</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./clt.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">clt.html</span></a>
+  <a href="./clt.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The Central Limit Theorem</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./ttests.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">ttests.html</span></a>
+  <a href="./ttests.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The Student’s <em>t</em> distribution</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./rulesofthumb.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">rulesofthumb.html</span></a>
+  <a href="./rulesofthumb.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Handy rules of thumb</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./howtoapproximate.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Coding it up in R</span></a>
   </div>
 </li>
       </ul>
@@ -202,32 +280,22 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./simpleregression.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">simpleregression.html</span></a>
+  <a href="./simpleregression.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Simple regression</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./simplels.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">simplels.html</span></a>
+  <a href="./multiplemle.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Multiple regression</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./simplemle.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">simplemle.html</span></a>
+  <a href="./variancedecomposition.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Variance decomposition</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./multiplemle.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">multiplemle.html</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./olsproperties.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">olsproperties.html</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./variancedecomposition.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">variancedecomposition.html</span></a>
+  <a href="./howtoregress.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Coding it up in R</span></a>
   </div>
 </li>
       </ul>
@@ -243,17 +311,22 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./heteroskedasticity.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">heteroskedasticity.html</span></a>
+  <a href="./robustness.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Regression robustness</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./autocorrelation.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">autocorrelation.html</span></a>
+  <a href="./heteroskedasticity.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Heteroskedasticity</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./nonnormality.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">nonnormality.html</span></a>
+  <a href="./autocorrelation.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Autocorrelation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./nonnormality.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Non-normal errors</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -355,14 +428,12 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dist_bernoulli.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Bernoulli distribution</span></a>
+  <a href="./dist_bernoulli.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Bernoulli distribution</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dist_binomial.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Binomial distribution</span></a>
+  <a href="./dist_binomial.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Binomial distribution</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -373,8 +444,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dist_exponential.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Exponential distribution</span></a>
+  <a href="./dist_exponential.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Exponential distribution</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -385,8 +455,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dist_geometric.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Geometric distribution</span></a>
+  <a href="./dist_geometric.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Geometric distribution</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -397,14 +466,12 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dist_normal.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Normal distribution</span></a>
+  <a href="./dist_normal.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Normal distribution</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dist_poisson.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Poisson distribution</span></a>
+  <a href="./dist_poisson.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Poisson distribution</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -423,14 +490,12 @@ ul.task-list li input[type="checkbox"] {
   </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./proofs.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Proofs</span></a>
+  <a href="./proofs.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Proofs</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./listofsymbols.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">List of Symbols</span></a>
+  <a href="./listofsymbols.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">List of Symbols</span></a>
   </div>
 </li>
       </ul>
@@ -440,17 +505,220 @@ ul.task-list li input[type="checkbox"] {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#categories-and-illustrations-of-serial-correlation" id="toc-categories-and-illustrations-of-serial-correlation" class="nav-link active" data-scroll-target="#categories-and-illustrations-of-serial-correlation">Categories and illustrations of serial correlation</a></li>
+  <li><a href="#consequences-of-serial-correlation" id="toc-consequences-of-serial-correlation" class="nav-link" data-scroll-target="#consequences-of-serial-correlation">Consequences of serial correlation</a></li>
+  <li><a href="#identifying-serial-correlation" id="toc-identifying-serial-correlation" class="nav-link" data-scroll-target="#identifying-serial-correlation">Identifying serial correlation</a>
+  <ul class="collapse">
+  <li><a href="#diagnostic-plots" id="toc-diagnostic-plots" class="nav-link" data-scroll-target="#diagnostic-plots">Diagnostic plots</a></li>
+  <li><a href="#hypothesis-tests" id="toc-hypothesis-tests" class="nav-link" data-scroll-target="#hypothesis-tests">Hypothesis tests</a></li>
+  </ul></li>
+  <li><a href="#correcting-or-mitigating-serial-correlation" id="toc-correcting-or-mitigating-serial-correlation" class="nav-link" data-scroll-target="#correcting-or-mitigating-serial-correlation">Correcting or mitigating serial correlation</a></li>
+  <li><a href="#visualizer" id="toc-visualizer" class="nav-link" data-scroll-target="#visualizer">Visualizer</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
-<main class="content column-page-right" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./heteroskedasticity.html">4. Regression Robustness</a></li><li class="breadcrumb-item"><a href="./autocorrelation.html"><span class="chapter-title">autocorrelation.html</span></a></li></ol></nav></header>
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./robustness.html">4. Regression Robustness</a></li><li class="breadcrumb-item"><a href="./autocorrelation.html"><span class="chapter-title">Autocorrelation</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span id="sec-autocorrelation" class="quarto-section-identifier"><span class="chapter-title">Autocorrelation</span></span></h1>
+</div>
 
 
 
+<div class="quarto-title-meta column-body">
+
+    
+  
+    
+  </div>
+  
 
 
+</header>
 
+
+<p>OLS regression assumes that our errors are all independent and thus uncorrelated with each other, <em>i.e.</em></p>
+<p><span class="math display">\[\mathbb{E}[\varepsilon_i \cdot \varepsilon_j] = 0 \quad \forall i,j:i \ne j\]</span></p>
+<p>This assumption is often presented as demanding complete <em>independence</em> between the errors, and from time to time I will use the concept of independence as a convenient shorthand, but we may relax this assumption to simply require the errors be <em>uncorrelated</em>, and all of our useful OLS results will still hold.</p>
+<p>When the errors are correlated, we say that the data show <strong>serial correlation</strong>, which is also called <strong>autocorrelation</strong>.</p>
+<section id="categories-and-illustrations-of-serial-correlation" class="level2">
+<h2 class="anchored" data-anchor-id="categories-and-illustrations-of-serial-correlation">Categories and illustrations of serial correlation</h2>
+<p>Most of the literature on serial correlation describes data with an obvious time series nature, such as daily market prices or hourly transaction totals. However, many datasets will show serial correlation even if they are completely cross-sectional, that is, gathered all at the same time:</p>
+<pre><code>* Say that I administer a test to college students in five different classrooms. When I collate and enter the data, I will likely enter all the grades from one section, followed by a second, and a third, etc. Within each classroom, there might be unique factors (noise and light levels, teacher attributes, reasons why that time slot worked best for the students, etc.) which correlate errors within the same classroom.</code></pre>
+<ul>
+<li><p>Say that I reorder the dataset by student ID number. However, the student ID number might be a function of when they were first entered into the school’s IT systems. This in turn would be correlated with factors such cohort/graduation year, or whether a student was accepted through early admission or accepted late from the waitlist, which may also be correlated with educational outcomes.</p></li>
+<li><p>Say that I reorder the dataset by student’s last name. However, last names starting with certain letters are more common in some countries than others, so once again we might observe some correlation between nearby observations, corresponding to linguistic and cultural similarities between the students.</p></li>
+</ul>
+<p>You will note that the serial correlation in these examples has no real time series component but results instead from how we order the observations in our sample. As we shall see, this type of serial correlation does not always pose a problem for our analyses.</p>
+<p>The more classic type of serial correlation results from data gathered regularly across a time interval, such as daily stock market prices. Using <span class="math inline">\(t\)</span> to subscript the data instead of our customary <span class="math inline">\(i\)</span>, consider an error process which is itself a combination of the previous observation and a separate IID-normal error term:</p>
+<p><span class="math display">\[\varepsilon_t = \rho \varepsilon_{t-1} + u_t, \quad |\rho| \le 1, u_t \sim \mathrm{Normal}(0,\sigma^2)\]</span></p>
+<p>Now imagine these correlated errors become the errors of a multiple regression model:</p>
+<p><span class="math display">\[y_t = \boldsymbol{x}_t \boldsymbol{\beta} + \varepsilon_t\]</span></p>
+<p>Together, these two models become a regression with an “AR1” (first-order autocorrelation) error process, and when the model is estimated from a sample of data, we would expect to find serial correlation among the residuals, which are estimators for <span class="math inline">\(\varepsilon_t\)</span>. When the correlation parameter <span class="math inline">\(\rho\)</span> is large and positive, the residuals resemble a random walk; when <span class="math inline">\(\rho\)</span> is large and negative, the residuals will swing wildly from one residual to the next:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1860</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>))</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">arima.sim</span>(<span class="at">model=</span><span class="fu">list</span>(<span class="at">ar=</span><span class="fl">0.8</span>),<span class="at">n=</span><span class="dv">50</span>),</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>     <span class="at">main=</span><span class="fu">expression</span>(<span class="fu">paste</span>(<span class="st">'Autocorrelation of '</span>,rho <span class="sc">==</span> <span class="fl">0.8</span>)),</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylim=</span><span class="fu">c</span>(<span class="sc">-</span><span class="dv">3</span>,<span class="dv">3</span>),<span class="at">ylab=</span><span class="st">'Residual'</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">h=</span><span class="dv">0</span>,<span class="at">lwd=</span><span class="dv">2</span>,<span class="at">lty=</span><span class="dv">2</span>,<span class="at">col=</span><span class="st">'grey50'</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">arima.sim</span>(<span class="at">model=</span><span class="fu">list</span>(<span class="at">ar=</span><span class="fl">0.0</span>),<span class="at">n=</span><span class="dv">50</span>),</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylim=</span><span class="fu">c</span>(<span class="sc">-</span><span class="dv">3</span>,<span class="dv">3</span>),<span class="at">main=</span><span class="st">'No autocorrelation'</span>,<span class="at">ylab=</span><span class="st">'Residual'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in min(Mod(polyroot(c(1, -model$ar)))): no non-missing arguments to
+min; returning Inf</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">h=</span><span class="dv">0</span>,<span class="at">lwd=</span><span class="dv">2</span>,<span class="at">lty=</span><span class="dv">2</span>,<span class="at">col=</span><span class="st">'grey50'</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">arima.sim</span>(<span class="at">model=</span><span class="fu">list</span>(<span class="at">ar=</span><span class="sc">-</span><span class="fl">0.8</span>),<span class="at">n=</span><span class="dv">50</span>),</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">main=</span><span class="fu">expression</span>(<span class="fu">paste</span>(<span class="st">'Autocorrelation of '</span>,rho <span class="sc">==</span> <span class="sc">-</span><span class="fl">0.8</span>)),</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylim=</span><span class="fu">c</span>(<span class="sc">-</span><span class="dv">3</span>,<span class="dv">3</span>),<span class="at">ylab=</span><span class="st">'Residual'</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">h=</span><span class="dv">0</span>,<span class="at">lwd=</span><span class="dv">2</span>,<span class="at">lty=</span><span class="dv">2</span>,<span class="at">col=</span><span class="st">'grey50'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="autocorrelation_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption>Illustrations of positive and negative autocorrelation</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Notice that each residual, if uncorrelated, should have an independent 50-50 chance of being either positive or negative. The probability of observing roughly 25 positive residuals in a row (in the leftmost plot above) would normally approach zero. Likewise, the probability of always observing a sign change from one residual to the next (in the rightmost plot above) should be near zero, just as it would be unusual to observe a sequence of coin flips HTHTHTHTHTHTHTH… By contrast, in the middle plot above, note that the next residual in a sequence has a roughly 50% chance of sharing the sign of the previous residual. In uncorrelated residuals, the past should not predict the present!</p>
+</section>
+<section id="consequences-of-serial-correlation" class="level2">
+<h2 class="anchored" data-anchor-id="consequences-of-serial-correlation">Consequences of serial correlation</h2>
+<p>Let’s consider three separate causes of serial correlation:</p>
+<ol type="1">
+<li><p>In some cases, serial correlation can be ignored without much consequence. When the data aren’t actually from a time series, and the serial correlation comes instead from an arbitrary ordering of the rows, and especially if the model will not be used for out-of-sample prediction, then mild or moderate serial correlation may be disregarded. In fact, for all but the most sensitive applications, a mild amount of serial correlation (say, <span class="math inline">\(|\rho| \le 0.1\)</span>) may be disregarded, since the regression model almost surely has larger challenges elsewhere.</p></li>
+<li><p>When the data instead shows true time series behavior, the presence of any amount of serial correlation begins to affect the model conclusions. Although “true” serial correlation does not bias the betas, it does distort many of the other model characteristics: the significance and standard errors of the betas, the estimated error variance, confidence intervals for predictions and mean responses, etc. Serial correlation also means the OLS model is no longer <em>consistent</em>, an estimation term meaning that the model estimators smoothly converge on the true parameters with larger and larger sample sizes.</p></li>
+<li><p>Finally, when the serial correlation comes from omitted variables, we might say instead that the model is <em>misspecified</em> and that the serial correlation is simply a symptom of the misspecification, rather than a property of the data’s generating process. In such circumstances, the estimates of the betas may no longer be reliable, as the omitted variables could easily bias the regression results!</p></li>
+</ol>
+</section>
+<section id="identifying-serial-correlation" class="level2">
+<h2 class="anchored" data-anchor-id="identifying-serial-correlation">Identifying serial correlation</h2>
+<p>As with the discussion of <a href="heteroskedasticity.html" class="quarto-xref"><span>Heteroskedasticity</span></a>, there are two principal ways to identify serial correlation: examining plots of the data, and conducting hypothesis tests.</p>
+<section id="diagnostic-plots" class="level3">
+<h3 class="anchored" data-anchor-id="diagnostic-plots">Diagnostic plots</h3>
+<p>A simple ordered plot of the residuals (like those above) will sometimes provide enough evidence to spark suspicion. However, the human eye is not very adept at distinguishing mild to moderate amounts of serial correlation.</p>
+<p>Another way to notice autocorrelation is to plot the residuals against their own lagged values. For example, if your regression contains 100 residuals, plot the paired points <span class="math inline">\((e_1,e_2), (e_2,e_3), \ldots, (e_{99},e_{100})\)</span>. In cases of strong serial correlation you will see a linear trend to the data. However, even here the human eye can easily mislead us:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1833</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>tmp <span class="ot">&lt;-</span> <span class="fu">arima.sim</span>(<span class="at">model=</span><span class="fu">list</span>(<span class="at">ar=</span><span class="fl">0.8</span>),<span class="at">n=</span><span class="dv">100</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(tmp[<span class="dv">1</span><span class="sc">:</span><span class="dv">99</span>],tmp[<span class="dv">2</span><span class="sc">:</span><span class="dv">100</span>],</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>     <span class="at">main=</span><span class="fu">expression</span>(<span class="fu">paste</span>(<span class="st">'Autocorrelation of '</span>,rho <span class="sc">==</span> <span class="fl">0.8</span>)),</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab=</span><span class="st">'Previous Residual'</span>,<span class="at">ylab=</span><span class="st">'Current Residual'</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>tmp <span class="ot">&lt;-</span> <span class="fu">arima.sim</span>(<span class="at">model=</span><span class="fu">list</span>(<span class="at">ar=</span><span class="sc">-</span>.<span class="dv">15</span>),<span class="at">n=</span><span class="dv">100</span>)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(tmp[<span class="dv">1</span><span class="sc">:</span><span class="dv">99</span>],tmp[<span class="dv">2</span><span class="sc">:</span><span class="dv">100</span>],</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>     <span class="at">main=</span><span class="fu">expression</span>(<span class="fu">paste</span>(<span class="st">'Autocorrelation of '</span>,rho <span class="sc">==</span> <span class="sc">-</span><span class="fl">0.15</span>)),</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab=</span><span class="st">'Previous Residual'</span>,<span class="at">ylab=</span><span class="st">'Current Residual'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="autocorrelation_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption>Plots of the residuals vs their own lagged values</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>As you can see above, strong positive autocorrelation leaves a clear trend in the lagged residuals, while weaker (but still substantial) negative correlation shows almost no evidence of a linear trend.</p>
+<p>The best way to spot serial correlation is not to stare at the raw data, but to specifically plot the correlations of the residuals with its past values. This type of plot is known as an <strong>autocorrelation function (ACF)</strong> plot, and it can reveal not just first-order correlation, but also seasonality in the data beyond the first lag:<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1933</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">1</span>))</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>tmp <span class="ot">&lt;-</span> <span class="fu">arima.sim</span>(<span class="at">model=</span><span class="fu">list</span>(<span class="at">ar=</span><span class="fu">c</span>(<span class="fl">0.4</span>,<span class="sc">-</span><span class="fl">0.8</span>),<span class="at">order=</span><span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">0</span>,<span class="dv">0</span>)),<span class="at">n=</span><span class="dv">120</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(tmp,<span class="at">main=</span><span class="st">'Residuals over time'</span>,<span class="at">ylab=</span><span class="st">'Residual'</span>)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">acf</span>(tmp,<span class="at">plot=</span><span class="cn">FALSE</span>),<span class="at">main=</span><span class="st">'ACF plot of residuals'</span>,<span class="at">ylab=</span><span class="st">'Correlation'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="autocorrelation_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption>Simulated AR2 residuals and their ACF plot</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The figure above shows a set of residuals with complicated serial correlation (positive first-order correlation and negative second-order correlation). The ACF plot highlights that several sets of the lagged residuals show a stronger correlation with the current residuals than would be predicted by chance alone.</p>
+</section>
+<section id="hypothesis-tests" class="level3">
+<h3 class="anchored" data-anchor-id="hypothesis-tests">Hypothesis tests</h3>
+<p>As mentioned earlier, plots are helpful but the human eye can easily fail us or lead to subjective differences in opinion between different analysts. Hypothesis tests can be a reliable partner to diagnostic plots and <em>vice versa</em>.</p>
+<p>Two widely used tests for serial correlation are the Durbin-Watson test and the Ljung-Box test. Both</p>
+<p>&lt;TO BE CONTINUED?&gt;</p>
+</section>
+</section>
+<section id="correcting-or-mitigating-serial-correlation" class="level2">
+<h2 class="anchored" data-anchor-id="correcting-or-mitigating-serial-correlation">Correcting or mitigating serial correlation</h2>
+<p>As with <a href="heteroskedasticity.html" class="quarto-xref"><span>Heteroskedasticity</span></a>, the appropriate correction for serially correlated residuals will depend upon <em>why</em> they are serially correlated.</p>
+<ul>
+<li><p>True time series behavior should usually be addressed with an explicit time series model, which is beyond the scope of this course (though XARIMA models and dynamic regression models with AR errors are two natural extensions of the models presented here.)</p></li>
+<li><p>Autocorrelated errors caused by omitted variables are best remedied either by finding those variables (or their proxies), or by using clustered standard errors. The Newey-West estimator is a procedure for approximating the variance-covariance matrix of the betas in the presence of heteroskedastic and serially-correlated data, using weighted least squares (WLS). It generalizes the Huber-White standard errors mentioned in <a href="heteroskedasticity.html" class="quarto-xref"><span>Heteroskedasticity</span></a>.</p></li>
+</ul>
+</section>
+<section id="visualizer" class="level2">
+<h2 class="anchored" data-anchor-id="visualizer">Visualizer</h2>
+<p>While serial correlation doesn’t necessarily bias the estimated betas, it can still pose challenges for regression. Adjust the first-order error correlation between -1 and +1 and see how the estimated betas and predicted new values start to become untrustworthy:</p>
+<ul>
+<li><p>With positive autocorrelation, the estimated intercept becomes less reliable</p></li>
+<li><p>With negative autocorrelation, the estimated slope becomes less reliable</p></li>
+</ul>
+<pre class="shinylive-r" data-engine="r"><code>#| '!! shinylive warning !!': |
+#|   shinylive does not work in self-contained HTML documents.
+#|   Please set `embed-resources: false` in your metadata.
+#| standalone: true
+#| viewerHeight: 960
+
+library(shiny)
+library(bslib)
+
+set.seed(1621)
+arX &lt;- runif(60,min=0,max=10)
+  
+ui &lt;- page_fluid(
+  tags$head(tags$style(HTML("body {overflow-x: hidden;}"))),
+  title = "100 Estimates of the true relationship, N = 60 obs",
+  fluidRow(sliderInput("rho", "Error correlation (rho)", min=-0.99, max=0.99, value=0.2, step=0.01)),
+  fluidRow(plotOutput("distPlot1")))
+
+server &lt;- function(input, output) {
+  arE &lt;- reactive({})
+  arY &lt;- reactive({replicate(n=100,expr={30 - 2*arX + 3*arima.sim(list(ar=input$rho),n=60)})})
+  output$distPlot1 &lt;- renderPlot({
+    plot(NA,NA,xlab='X',ylab='Y',xlim=c(0,10),ylim=c(0,40))
+    apply(arY(),2,function(z) abline(reg=lm(z~arX),lwd=2,col='#000000'))
+    abline(30,-2,lwd=3,col='#0000ff')
+    legend(x='topright',legend=c('True betas','Estimated betas'),
+           col=c('#0000ff','#000000'),lwd=c(3,2),cex=0.8)})
+}
+
+shinyApp(ui = ui, server = server)</code></pre>
+
+
+</section>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1"><p>Another plot, the partial autocorrelation function (or PACF), measures a different type of time series behavior. The full interpretation of these functions and plots must be left to a dedicated time series course.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -811,25 +1079,64 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         }
       };
     }
-      // Attach click handler to the DT
-      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
-      for (const annoteDlNode of annoteDls) {
-        annoteDlNode.addEventListener('click', (event) => {
-          const clickedEl = event.target;
-          if (clickedEl !== selectedAnnoteEl) {
-            unselectCodeLines();
-            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
-            if (activeEl) {
-              activeEl.classList.remove('code-annotation-active');
-            }
-            selectCodeLines(clickedEl);
-            clickedEl.classList.add('code-annotation-active');
-          } else {
-            // Unselect the line
-            unselectCodeLines();
-            clickedEl.classList.remove('code-annotation-active');
+      const annoteTargets = window.document.querySelectorAll('.code-annotation-anchor');
+      for (let i=0; i<annoteTargets.length; i++) {
+        const annoteTarget = annoteTargets[i];
+        const targetCell = annoteTarget.getAttribute("data-target-cell");
+        const targetAnnotation = annoteTarget.getAttribute("data-target-annotation");
+        const contentFn = () => {
+          const content = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          if (content) {
+            const tipContent = content.cloneNode(true);
+            tipContent.classList.add("code-annotation-tip-content");
+            return tipContent.outerHTML;
           }
-        });
+        }
+        const config = {
+          allowHTML: true,
+          content: contentFn,
+          onShow: (instance) => {
+            selectCodeLines(instance.reference);
+            instance.reference.classList.add('code-annotation-active');
+            window.tippy.hideAll();
+          },
+          onHide: (instance) => {
+            unselectCodeLines();
+            instance.reference.classList.remove('code-annotation-active');
+          },
+          maxWidth: 300,
+          delay: [50, 0],
+          duration: [200, 0],
+          offset: [5, 10],
+          arrow: true,
+          appendTo: function(el) {
+            return el.parentElement.parentElement.parentElement;
+          },
+          interactive: true,
+          interactiveBorder: 10,
+          theme: 'quarto',
+          placement: 'right',
+          popperOptions: {
+            modifiers: [
+            {
+              name: 'flip',
+              options: {
+                flipVariations: false, // true by default
+                allowedAutoPlacements: ['right'],
+                fallbackPlacements: ['right', 'top', 'top-start', 'top-end', 'bottom', 'bottom-start', 'bottom-end', 'left'],
+              },
+            },
+            {
+              name: 'preventOverflow',
+              options: {
+                mainAxis: false,
+                altAxis: false
+              }
+            }
+            ]        
+          }      
+        };
+        window.tippy(annoteTarget, config); 
       }
   const findCites = (el) => {
     const parentEl = el.parentElement;
@@ -870,15 +1177,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script>
-<nav class="page-navigation column-page-right">
+<nav class="page-navigation column-body">
   <div class="nav-page nav-page-previous">
-      <a href="./heteroskedasticity.html" class="pagination-link" aria-label="heteroskedasticity.html">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">heteroskedasticity.html</span></span>
+      <a href="./heteroskedasticity.html" class="pagination-link" aria-label="Heteroskedasticity">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Heteroskedasticity</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./nonnormality.html" class="pagination-link" aria-label="nonnormality.html">
-        <span class="nav-page-text"><span class="chapter-title">nonnormality.html</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./nonnormality.html" class="pagination-link" aria-label="Non-normal errors">
+        <span class="nav-page-text"><span class="chapter-title">Non-normal errors</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

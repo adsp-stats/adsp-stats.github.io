@@ -1,1 +1,73 @@
-# Binomial distribution {.unnumbered}
+# Binomial distribution {#dist-binomial}
+
+The Binomial distribution counts the number of successes in a fixed series of Bernoulli trials.
+
+## Assumptions
+
+Let $B_1, \ldots, B_n$ be a series of $n$ Bernoulli variables each identically and independently distributed with parameter $p$. Define their sum as,
+
+$$X =\sum_{i=1}^n B_n$$
+
+Then $X \sim \mathrm{Binomial}(n,p)$.
+
+Two key premises of the Binomial distribution are that *(i)* $n$, the number of trials, is fixed beforehand,^[Unlike, say, the Geometric distribution in which trials are continued until the first success occurs.] and *(ii)* the probability of success never changes over time or in response to the previous trials.
+
+## Definition
+
+$$\begin{array}{ll}
+  \text{Support:} & \{0,1,2,\ldots,n\} \\
+  \text{Parameter(s):} & p,\text{ the probability of success }(p \in [0,1]) \\ & n,\text{ the number of trials }(n \in \mathbb{Z}^+) \\
+  \text{PMF:} & P(X=k) = \left(\begin{array}{c} n \\ k \end{array} \right) p^k (1-p)^{n-k} \\
+  \text{CDF:} & F_X(x) = \left\{\begin{array}{cl} 0, & \quad x \lt 0 \\ \sum_{i=0}^{\lfloor x \rfloor} \left(\begin{array}{c} n \\ i \end{array}\right) p^i (1-p)^{n-i}, & \quad 0 \le x \lt n \\ 1, & \quad x \ge n \end{array}\right\} \\
+  \text{Mean:} & \mathbb{E}[X] = np \\
+  \text{Variance:} & \mathbb{V}[X] = np(1-p) \\
+\end{array}$$
+
+
+## Visualizer
+```{shinylive-r}
+#| standalone: true
+#| viewerHeight: 650
+
+library(shiny)
+library(bslib)
+
+ui <- page_fluid(
+      tags$head(tags$style(HTML("body {overflow-x: hidden;}"))),
+  title = "Bernoulli distribution PMF",
+  fluidRow(plotOutput("distPlot")),
+  fluidRow(column(width=6,sliderInput("n", "Trials (n)", min=5, max=25, step=1, value=15)),
+           column(width=6,sliderInput("p", "Probability (p)", min=0, max=1, step=0.01,value=0.5))))
+
+server <- function(input, output) {
+  output$distPlot <- renderPlot({
+    plot(x=0:input$n,y=dbinom(x=0:input$n,input$n,input$p),main=NULL,
+         xlab='x (Successes)',ylab='Probability',type='h',lwd=3)})
+}
+
+shinyApp(ui = ui, server = server)
+```
+ 
+## Relations to other distributions
+
+  * A Binomial($n,p$) variable is equivalent to the sum of $n$ i.i.d. Bernoulli($p$) variables
+ 
+    - As a corollary, when $n=1$, a Binomial($n,p$) variable is simply a Bernoulli($p$) variable.
+    
+  * The Binomial distribution forms a discrete approximation to the Normal distribution with $\mu = np$ and $\sigma^2 = np(1-p)$, and the quality of this approximation grows when $np$ is very large and $p$ is not near 0 or 1. The accuracy of this approximation increases with the use of a "continuity correction", such as adding or subtracting 0.5 to the Normal quantile. For example, compare:
+ 
+```{r}
+pbinom(q=155,size=200,prob=0.8)
+pnorm(q=155,mean=200*0.8,sd=sqrt(200*0.8*0.2))
+pnorm(q=155.5,mean=200*0.8,sd=sqrt(200*0.8*0.2))
+```
+
+  * The Poisson distribution can be seen as a limit case of the Binomial distribution, as $n$ grows toward infinity and $p$ shrinks to zero, with $\lambda = np$.  When the usual counts are *nowhere near* the theoretical upper bound, we can often use the Poisson instead of the Binomial.
+  
+    For example, say that a town has 20,000 homes, and that any home has a 0.1% chance to have a termite infestation. The current number of termite infestations is technically a Binomial(20000,0.001) variable, but well-approximated by a Poisson(20) variable:
+    
+```{r}
+dbinom(x=6:10,size=20000,prob=0.001)
+dpois(x=6:10,lambda=20)
+```
+ 

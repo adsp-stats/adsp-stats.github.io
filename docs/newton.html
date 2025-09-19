@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>newton – Statistical Analysis Using R: Online Notes</title>
+<title>The Newton-Raphson method – Statistical Analysis Using R: Online Notes</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,6 +19,40 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -70,6 +104,35 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -82,7 +145,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./newton.html">2. Useful Approximations</a></li><li class="breadcrumb-item"><a href="./newton.html"><span class="chapter-title">newton.html</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./newton.html">2. Useful Approximations</a></li><li class="breadcrumb-item"><a href="./newton.html"><span class="chapter-title">The Newton-Raphson method</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -166,12 +229,12 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./newton.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">newton.html</span></a>
+  <a href="./newton.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">The Newton-Raphson method</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./gradientdescent.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">gradientdescent.html</span></a>
+  <a href="./gradientdescent.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Gradient descent</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -440,17 +503,175 @@ ul.task-list li input[type="checkbox"] {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#motivation" id="toc-motivation" class="nav-link active" data-scroll-target="#motivation">Motivation</a></li>
+  <li><a href="#definition" id="toc-definition" class="nav-link" data-scroll-target="#definition">Definition</a></li>
+  <li><a href="#estimating-derivatives-with-secant-approximations" id="toc-estimating-derivatives-with-secant-approximations" class="nav-link" data-scroll-target="#estimating-derivatives-with-secant-approximations">Estimating derivatives with secant approximations</a></li>
+  <li><a href="#programming-example" id="toc-programming-example" class="nav-link" data-scroll-target="#programming-example">Programming example</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
-<main class="content column-page-right" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./newton.html">2. Useful Approximations</a></li><li class="breadcrumb-item"><a href="./newton.html"><span class="chapter-title">newton.html</span></a></li></ol></nav></header>
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./newton.html">2. Useful Approximations</a></li><li class="breadcrumb-item"><a href="./newton.html"><span class="chapter-title">The Newton-Raphson method</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span id="sec-newton" class="quarto-section-identifier"><span class="chapter-title">The Newton-Raphson method</span></span></h1>
+</div>
 
 
 
+<div class="quarto-title-meta column-body">
+
+    
+  
+    
+  </div>
+  
 
 
+</header>
 
+
+<section id="motivation" class="level2">
+<h2 class="anchored" data-anchor-id="motivation">Motivation</h2>
+<p>In <a href="likelihood.html" class="quarto-xref"><span>Univariate likelihood</span></a>, we learned to maximize likelihood functions using arithmetic and calculus. However, sometimes the likelihood function does not allow a closed-form solution, and of course modern computers do not solve problems with pencil and paper. How then would we find the maximum of an unsolvable likelihood equation?</p>
+<p>The short answer is that we can use any of several algorithmic optimization methods. These methods were not developed specifically for statistical use, but they work quite well for our purposes, and we can easily express them in machine-readable code. One example of these optimization algorithms is the Newton-Raphson method, which has been used for hundreds of years.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+</section>
+<section id="definition" class="level2">
+<h2 class="anchored" data-anchor-id="definition">Definition</h2>
+<p>The <strong>Newton-Raphson method</strong> specifically finds the root of an equation, <em>i.e.</em> the value of <span class="math inline">\(x\)</span> for which the function’s value <span class="math inline">\(f(x)\)</span> is zero. We can use this to find where the first derivative of a log-likelihood function is zero, which in turn will (usually) be the maximum of the original likelihood function:<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></p>
+<div class="{callout-note}">
+<p>Let <span class="math inline">\(f\)</span> be a continuous and differentiable function with derivative <span class="math inline">\(f'\)</span> and at least one root, <em>i.e.</em> there exists some <span class="math inline">\(x^*\)</span> such that <span class="math inline">\(f(x^*) = 0\)</span>. The root <span class="math inline">\(x^*\)</span> can sometimes be approximated, depending on the nature of the function <span class="math inline">\(f\)</span> and the choice of an initial guess <span class="math inline">\(x_0\)</span>, by successively iterating the following series:</p>
+<p><span class="math display">\[x_n = x_{n-1} - \frac{f(x_{n-1})}{f'(x_{n-1})}\]</span></p>
+</div>
+</section>
+<section id="estimating-derivatives-with-secant-approximations" class="level2">
+<h2 class="anchored" data-anchor-id="estimating-derivatives-with-secant-approximations">Estimating derivatives with secant approximations</h2>
+<p>When we have a perfect algebraic expression for the derivative <span class="math inline">\(f^{'}\)</span>, then we should by all means use it. But if we don’t have a closed-form solution, or if we are using computers to speed our work, we may approximate the derivative with a local linearization. If you were taught calculus through the concept of <em>infinitesimals</em>, this formula may be familiar. Rather than compute the slope of an <em>exact</em> tangent line, we can compute the slope of a secant line between two very nearby points, as shown in the equation and figure below:</p>
+<p><span class="math display">\[ \mathrm{for}\; \delta \approx0, \quad f'(x) \approx \frac{f(x + \delta) - f(x - \delta)}{2 \delta}\]</span></p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#secant approximation to the derivative</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>),<span class="at">mar=</span><span class="fu">c</span>(<span class="dv">4</span>,<span class="dv">2</span>,<span class="dv">4</span>,<span class="dv">2</span>)<span class="sc">+</span><span class="fl">0.1</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>sec.x <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fl">0.5</span>,<span class="fl">2.5</span>,<span class="fl">0.05</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>fsec <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="dv">2</span><span class="sc">*</span><span class="fu">log</span>(x)<span class="sc">-</span>x<span class="sc">+</span><span class="dv">3</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sec.x,<span class="fu">fsec</span>(sec.x),<span class="at">type=</span><span class="st">'l'</span>,<span class="at">lwd=</span><span class="dv">2</span>,<span class="at">ylim=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="fl">2.8</span>),</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>     <span class="at">main=</span><span class="st">'Exact derivative of a function'</span>,<span class="at">xlab=</span><span class="st">'x'</span>,<span class="at">ylab=</span><span class="st">'f(x)'</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="fu">fsec</span>(<span class="fl">1.5</span>)<span class="sc">-</span><span class="fl">0.5</span>,<span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>,<span class="at">col=</span><span class="st">'#800000'</span>,<span class="at">lwd=</span><span class="dv">2</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(<span class="at">x=</span><span class="fu">c</span>(<span class="fl">1.5</span>,<span class="fl">1.5</span>),<span class="at">y=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="fu">fsec</span>(<span class="fl">1.5</span>)))</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="fl">0.8</span>,<span class="fl">2.3</span>,<span class="st">"f'(1.5)=0.333..."</span>,<span class="at">col=</span><span class="st">'#800000'</span>,<span class="at">cex=</span><span class="fl">0.8</span>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sec.x,<span class="fu">fsec</span>(sec.x),<span class="at">type=</span><span class="st">'l'</span>,<span class="at">lwd=</span><span class="dv">2</span>,<span class="at">ylim=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="fl">2.8</span>),</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>     <span class="at">main=</span><span class="st">'Approximation using secant line'</span>,<span class="at">xlab=</span><span class="st">'x'</span>,<span class="at">ylab=</span><span class="st">'f(x)'</span>)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(<span class="at">x=</span><span class="fu">c</span>(<span class="fl">1.3</span>,<span class="fl">1.3</span>),<span class="at">y=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="fu">fsec</span>(<span class="fl">1.3</span>)),<span class="at">lty=</span><span class="dv">2</span>)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(<span class="at">x=</span><span class="fu">c</span>(<span class="fl">1.7</span>,<span class="fl">1.7</span>),<span class="at">y=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="fu">fsec</span>(<span class="fl">1.3</span>)),<span class="at">lty=</span><span class="dv">2</span>)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(<span class="at">x=</span><span class="fu">c</span>(<span class="fl">1.3</span>,<span class="fl">1.7</span>),<span class="at">y=</span><span class="fu">c</span>(<span class="fu">fsec</span>(<span class="fl">1.3</span>),<span class="fu">fsec</span>(<span class="fl">1.3</span>)))</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(<span class="at">x=</span><span class="fu">c</span>(<span class="fl">1.7</span>,<span class="fl">1.7</span>),<span class="at">y=</span><span class="fu">c</span>(<span class="fu">fsec</span>(<span class="fl">1.3</span>),<span class="fu">fsec</span>(<span class="fl">1.7</span>)))</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(<span class="at">x=</span><span class="fu">c</span>(<span class="fl">1.5</span>,<span class="fl">1.5</span>),<span class="at">y=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>))</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>sec.b <span class="ot">&lt;-</span> (<span class="fu">fsec</span>(<span class="fl">1.7</span>)<span class="sc">-</span><span class="fu">fsec</span>(<span class="fl">1.3</span>))<span class="sc">/</span><span class="fl">0.4</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="fu">fsec</span>(<span class="fl">1.3</span>)<span class="sc">-</span><span class="fl">1.3</span><span class="sc">*</span>sec.b,sec.b,<span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>,<span class="at">col=</span><span class="st">'#800000'</span>,<span class="at">lwd=</span><span class="dv">2</span>)</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="fl">0.8</span>,<span class="fl">2.3</span>,<span class="fu">expression</span>(<span class="st">"f'(1.5)"</span><span class="sc">%~~%</span><span class="fl">0.341</span>),<span class="at">col=</span><span class="st">'#800000'</span>,<span class="at">cex=</span><span class="fl">0.8</span>)</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="fl">1.5</span>,<span class="fl">1.1</span>,<span class="fu">expression</span>(x),<span class="at">cex=</span><span class="fl">0.8</span>)</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="fl">1.2</span>,<span class="fl">1.1</span>,<span class="fu">expression</span>(x<span class="sc">-</span>epsilon),<span class="at">cex=</span><span class="fl">0.8</span>)</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="fl">1.8</span>,<span class="fl">1.1</span>,<span class="fu">expression</span>(x<span class="sc">+</span>epsilon),<span class="at">cex=</span><span class="fl">0.8</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-secant" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-secant-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="newton_files/figure-html/fig-secant-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-secant-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6.1: Approximating the derivative with a secant line
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Whether we use an exact algebraic solution for the derivative or approximate it with a secant line, we are now ready to use the Newton-Raphson method to produce a MLE:</p>
+<ol type="1">
+<li><p>Compute a log-likelihood function for your parameter</p></li>
+<li><p>Find the derivative of the log-likelihood function, or estimate it using the secant approximation. You will be trying to find a root for this equation; it is the function <span class="math inline">\(f\)</span> described in the equations above.</p></li>
+<li><p>Find the <em>second</em> derivative of the log-likelihood function, or estimate it using the second approximation. You will use this second derivative to iterate the algorithm; it is the function <span class="math inline">\(f'\)</span> in the equations above.</p></li>
+<li><p>Choose an initial guess for the root (<em>i.e.</em> the best parameter value.)</p></li>
+<li><p>Choose a tolerance which will help you know when to stop iterating the algorithm. This tolerance is sometimes expressed as an maximum change in <span class="math inline">\(x\)</span>, or other times as a maximum increment in <span class="math inline">\(f(x)\)</span> (<em>i.e.</em> the first derivative of the log-likelihood).</p></li>
+<li><p>Iterate until the new values of <span class="math inline">\(x\)</span> and <span class="math inline">\(f(x)\)</span> are within tolerance, or stop the algorithm if your search does not converge upon a root.</p></li>
+</ol>
+<p>Notice that the method I have outlined here only works for functions of a <em>single variable</em>, meaning that it will only work to identify distributions defined by a <em>single parameter</em>. Distributions with multiple parameters are more typically solved through gradient descent, which will be outlined in the next section.</p>
+</section>
+<section id="programming-example" class="level2">
+<h2 class="anchored" data-anchor-id="programming-example">Programming example</h2>
+<div class="cell" data-code-annotations="hover">
+<div class="sourceCode cell-code" id="annotated-cell-2"><pre class="sourceCode r code-annotation-code code-with-copy code-annotated"><code class="sourceCode r"><span id="annotated-cell-2-1"><a href="#annotated-cell-2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#coin data generated with true p=0.6</span></span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-2" data-target-annotation="1">1</button><span id="annotated-cell-2-2" class="code-annotation-target"><a href="#annotated-cell-2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2061</span>)</span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-2" data-target-annotation="2">2</button><span id="annotated-cell-2-3" class="code-annotation-target"><a href="#annotated-cell-2-3" aria-hidden="true" tabindex="-1"></a>coins <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">1</span>,<span class="dv">50</span>,<span class="cn">TRUE</span>,<span class="fu">c</span>(<span class="fl">0.4</span>,<span class="fl">0.6</span>))</span>
+<span id="annotated-cell-2-4"><a href="#annotated-cell-2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="annotated-cell-2-5"><a href="#annotated-cell-2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># derivative of log-likelihood for coin parameter</span></span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-2" data-target-annotation="3">3</button><span id="annotated-cell-2-6" class="code-annotation-target"><a href="#annotated-cell-2-6" aria-hidden="true" tabindex="-1"></a>coin.dll <span class="ot">&lt;-</span> <span class="cf">function</span>(p) <span class="fu">sum</span>(coins)<span class="sc">/</span>p<span class="sc">-</span><span class="fu">sum</span>(<span class="dv">1</span><span class="sc">-</span>coins)<span class="sc">/</span>(<span class="dv">1</span><span class="sc">-</span>p)</span>
+<span id="annotated-cell-2-7"><a href="#annotated-cell-2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="annotated-cell-2-8"><a href="#annotated-cell-2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># helper function to approximate derivatives</span></span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-2" data-target-annotation="4">4</button><span id="annotated-cell-2-9" class="code-annotation-target"><a href="#annotated-cell-2-9" aria-hidden="true" tabindex="-1"></a>ddx <span class="ot">&lt;-</span> <span class="cf">function</span>(value, func, <span class="at">delta=</span><span class="fl">1e-6</span>){</span>
+<span id="annotated-cell-2-10"><a href="#annotated-cell-2-10" aria-hidden="true" tabindex="-1"></a>  (<span class="fu">func</span>(value<span class="sc">+</span>delta)<span class="sc">-</span><span class="fu">func</span>(value<span class="sc">-</span>delta))<span class="sc">/</span>(<span class="dv">2</span><span class="sc">*</span>delta)}</span>
+<span id="annotated-cell-2-11"><a href="#annotated-cell-2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="annotated-cell-2-12"><a href="#annotated-cell-2-12" aria-hidden="true" tabindex="-1"></a><span class="co"># core newton-raphson algorithm, plus some output</span></span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-2" data-target-annotation="5">5</button><span id="annotated-cell-2-13" class="code-annotation-target"><a href="#annotated-cell-2-13" aria-hidden="true" tabindex="-1"></a>newton <span class="ot">&lt;-</span> <span class="cf">function</span>(f, x0, <span class="at">tol=</span><span class="fl">1e-6</span>, <span class="at">max.iter=</span><span class="dv">20</span>){</span>
+<span id="annotated-cell-2-14"><a href="#annotated-cell-2-14" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> x0</span>
+<span id="annotated-cell-2-15"><a href="#annotated-cell-2-15" aria-hidden="true" tabindex="-1"></a>  i <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-2" data-target-annotation="6">6</button><span id="annotated-cell-2-16" class="code-annotation-target"><a href="#annotated-cell-2-16" aria-hidden="true" tabindex="-1"></a>  results <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">iter=</span>i,<span class="at">x=</span>x,<span class="at">fx=</span><span class="fu">f</span>(x))</span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-2" data-target-annotation="7">7</button><span id="annotated-cell-2-17" class="code-annotation-target"><a href="#annotated-cell-2-17" aria-hidden="true" tabindex="-1"></a>  <span class="cf">while</span> (<span class="fu">abs</span>(<span class="fu">f</span>(x))<span class="sc">&gt;</span>tol <span class="sc">&amp;</span> i<span class="sc">&lt;</span>max.iter) {</span>
+<span id="annotated-cell-2-18"><a href="#annotated-cell-2-18" aria-hidden="true" tabindex="-1"></a>    i <span class="ot">&lt;-</span> i <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="annotated-cell-2-19"><a href="#annotated-cell-2-19" aria-hidden="true" tabindex="-1"></a>    x <span class="ot">&lt;-</span> x <span class="sc">-</span> <span class="fu">f</span>(x)<span class="sc">/</span><span class="fu">ddx</span>(x,f)</span>
+<span id="annotated-cell-2-20"><a href="#annotated-cell-2-20" aria-hidden="true" tabindex="-1"></a>    results <span class="ot">&lt;-</span> <span class="fu">rbind</span>(results,<span class="fu">data.frame</span>(<span class="at">iter=</span>i,<span class="at">x=</span>x,<span class="at">fx=</span><span class="fu">f</span>(x)))}</span>
+<span id="annotated-cell-2-21"><a href="#annotated-cell-2-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(results)}</span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-annotation">
+<dl class="code-annotation-container-hidden code-annotation-container-grid">
+<dt data-target-cell="annotated-cell-2" data-target-annotation="1">1</dt>
+<dd>
+<span data-code-cell="annotated-cell-2" data-code-lines="2" data-code-annotation="1">Specifying the seed forces the same “random” numbers to occur each time</span>
+</dd>
+<dt data-target-cell="annotated-cell-2" data-target-annotation="2">2</dt>
+<dd>
+<span data-code-cell="annotated-cell-2" data-code-lines="3" data-code-annotation="2">Even though <span class="math inline">\(p=0.6\)</span>, only <span class="math inline">\(27/50 = 54\%\)</span> of these 50 flips are heads</span>
+</dd>
+<dt data-target-cell="annotated-cell-2" data-target-annotation="3">3</dt>
+<dd>
+<span data-code-cell="annotated-cell-2" data-code-lines="6" data-code-annotation="3">We derived this formula earlier, in <a href="likelihood.html" class="quarto-xref"><span>Univariate likelihood</span></a></span>
+</dd>
+<dt data-target-cell="annotated-cell-2" data-target-annotation="4">4</dt>
+<dd>
+<span data-code-cell="annotated-cell-2" data-code-lines="9,10" data-code-annotation="4">This implements the secant approximation method shown above</span>
+</dd>
+<dt data-target-cell="annotated-cell-2" data-target-annotation="5">5</dt>
+<dd>
+<span data-code-cell="annotated-cell-2" data-code-lines="13" data-code-annotation="5">The inputs are f (the function whose root we are finding), x0 (an initial guess), tol (tolerance; we will stop the algorithm when we get this close to a root), and a maximum number of iterations (in case we don’t converge)</span>
+</dd>
+<dt data-target-cell="annotated-cell-2" data-target-annotation="6">6</dt>
+<dd>
+<span data-code-cell="annotated-cell-2" data-code-lines="16" data-code-annotation="6">To show my work, I’m outputting results to a table</span>
+</dd>
+<dt data-target-cell="annotated-cell-2" data-target-annotation="7">7</dt>
+<dd>
+<span data-code-cell="annotated-cell-2" data-code-lines="17" data-code-annotation="7">The algorithm will stop when <span class="math inline">\(f(x)\)</span> is within tolerance of 0 or when it hits the maximum iteration count without converging</span>
+</dd>
+</dl>
+</div>
+</div>
+
+
+</section>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1"><p>At least four mathematicians could lay claim to this method, and neither Isaac Newton nor Joseph Raphson published first or completed the version we use today. Stigler’s Law of Eponymy strikes again!<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>Do be cautious, since the root of a derivative may instead match an inflection point or local minimum of the original function, and the true maximum of a likelihood function may not be a local maximum.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -811,25 +1032,64 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         }
       };
     }
-      // Attach click handler to the DT
-      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
-      for (const annoteDlNode of annoteDls) {
-        annoteDlNode.addEventListener('click', (event) => {
-          const clickedEl = event.target;
-          if (clickedEl !== selectedAnnoteEl) {
-            unselectCodeLines();
-            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
-            if (activeEl) {
-              activeEl.classList.remove('code-annotation-active');
-            }
-            selectCodeLines(clickedEl);
-            clickedEl.classList.add('code-annotation-active');
-          } else {
-            // Unselect the line
-            unselectCodeLines();
-            clickedEl.classList.remove('code-annotation-active');
+      const annoteTargets = window.document.querySelectorAll('.code-annotation-anchor');
+      for (let i=0; i<annoteTargets.length; i++) {
+        const annoteTarget = annoteTargets[i];
+        const targetCell = annoteTarget.getAttribute("data-target-cell");
+        const targetAnnotation = annoteTarget.getAttribute("data-target-annotation");
+        const contentFn = () => {
+          const content = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          if (content) {
+            const tipContent = content.cloneNode(true);
+            tipContent.classList.add("code-annotation-tip-content");
+            return tipContent.outerHTML;
           }
-        });
+        }
+        const config = {
+          allowHTML: true,
+          content: contentFn,
+          onShow: (instance) => {
+            selectCodeLines(instance.reference);
+            instance.reference.classList.add('code-annotation-active');
+            window.tippy.hideAll();
+          },
+          onHide: (instance) => {
+            unselectCodeLines();
+            instance.reference.classList.remove('code-annotation-active');
+          },
+          maxWidth: 300,
+          delay: [50, 0],
+          duration: [200, 0],
+          offset: [5, 10],
+          arrow: true,
+          appendTo: function(el) {
+            return el.parentElement.parentElement.parentElement;
+          },
+          interactive: true,
+          interactiveBorder: 10,
+          theme: 'quarto',
+          placement: 'right',
+          popperOptions: {
+            modifiers: [
+            {
+              name: 'flip',
+              options: {
+                flipVariations: false, // true by default
+                allowedAutoPlacements: ['right'],
+                fallbackPlacements: ['right', 'top', 'top-start', 'top-end', 'bottom', 'bottom-start', 'bottom-end', 'left'],
+              },
+            },
+            {
+              name: 'preventOverflow',
+              options: {
+                mainAxis: false,
+                altAxis: false
+              }
+            }
+            ]        
+          }      
+        };
+        window.tippy(annoteTarget, config); 
       }
   const findCites = (el) => {
     const parentEl = el.parentElement;
@@ -870,15 +1130,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script>
-<nav class="page-navigation column-page-right">
+<nav class="page-navigation column-body">
   <div class="nav-page nav-page-previous">
       <a href="./identification.html" class="pagination-link" aria-label="Identifying distributions">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Identifying distributions</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./gradientdescent.html" class="pagination-link" aria-label="gradientdescent.html">
-        <span class="nav-page-text"><span class="chapter-title">gradientdescent.html</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./gradientdescent.html" class="pagination-link" aria-label="Gradient descent">
+        <span class="nav-page-text"><span class="chapter-title">Gradient descent</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

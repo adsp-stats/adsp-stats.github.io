@@ -1,1 +1,58 @@
-# Bernoulli distribution {.unnumbered}
+# Bernoulli distribution {#dist-bernoulli}
+
+The Bernoulli distribution is one of the simplest distributions, used primarily as a "building block" to define more complicated distributions such as the Binomial. However, it's worth treating on its own.
+
+## Assumptions
+
+Let $X$ be a discrete random variable that can only take on values of 0 or 1. $X$ will be a Bernoulli variable with parameter $p$ if and only if,
+
+* $P(X=1) = p$
+* $P(X=0) = 1 - p$^[Sometimes statisticians use the convention $q = 1 - p$.]
+
+That's it!  A Bernoulli variable is a simple 1/0 switch with fixed probability of being 1. A coin flip is a Bernoulli variable, including flips of a weighted coin. Any single attempt with two outcomes (success or failure, life or death, profit or loss) is a Bernoulli variable.
+
+## Definition
+
+$$\begin{array}{ll}
+  \text{Support:} & \{0,1\} \\
+  \text{Parameter(s):} & p,\text{ the probability of success }(p \in [0,1]) \\
+  \text{PMF:} & P(X=k) = \left\{\begin{array}{cl} 1-p, & \quad k=0 \\ p, & \quad k=1 \end{array}\right\} \\
+  \text{CDF:} & F_X(x) = \left\{\begin{array}{cl} 0, & \quad x \lt 0 \\ 1-p, & \quad 0 \le x \lt 1 \\ 1, & \quad x \ge 1 \end{array}\right\} \\
+  \text{Mean:} & \mathbb{E}[X]=p \\
+  \text{Variance:} & \mathbb{V}[X]=p(1-p) \\
+\end{array}$$
+
+
+## Visualizer
+```{shinylive-r}
+#| standalone: true
+#| viewerHeight: 650
+
+library(shiny)
+library(bslib)
+
+ui <- page_fluid(
+      tags$head(tags$style(HTML("body {overflow-x: hidden;}"))),
+  title = "Bernoulli distribution PMF",
+  fluidRow(plotOutput("distPlot")),
+  fluidRow(sliderInput("p", "Probability (p)", min=0, max=1, step=0.01, value=0)))
+
+server <- function(input, output) {
+  output$distPlot <- renderPlot({
+    plot(x=c(0,1),y=c(1-input$p,input$p),main=NULL,
+         xlim=c(0,1),ylim=c(0,1),
+         xlab='x',ylab='Probability',type='h',lwd=3)})
+}
+
+shinyApp(ui = ui, server = server)
+```
+ 
+## Relations to other distributions
+
+ * The sum of $n$ identically and independently-distributed Binomial variates is distributed Binomial($n,p$).
+ 
+    - As a corollary, for $n=1$, a Binomial variable is simply a Bernoulli variable.
+    
+ * The number of identical and independently-distributed Bernoulli trials required until the first success ($X=1$) is a Geometric variable with the same parameter $p$.
+ 
+ * The number of identical and independently-distributed Bernoulli trials required until the $r$^th^ success is Negative Binomial-distributed with parameters $r$ and $p$.

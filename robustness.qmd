@@ -1,1 +1,18 @@
-# Regression robustness
+# Regression robustness {#sec-robustness}
+
+OLS regression offers impressive analytical tools in a very resource-light framework which can be implemented and precisely replicated in every technology stack, even a simple spreadsheet app. In exchange, OLS regression requires that *(1)* the response varies linearly with the predictors, and *(2)* the errors are IID-normally distributed.^[There are other assumptions, such as that the model is not overdetermined or that the predictors are not fully collinear, but violations of those assumptions tend to be "immediately fatal" rather than "misleading".] The datasets we study do not often meet these strong assumptions, which can limit the occasions we use OLS or limit our trust in the conclusions.
+
+However, most practitioners agree that OLS regression is impressively “robust” in the face of misspecification or violations of its assumptions, meaning that the model remains useful and reasonably accurate --- sometimes! In this section we will discuss how to identify when the data do not meet the assumptions of linear regression, what problems that can cause for our analysis, corrective techniques which might remove or mitigate the problem, and in which situations we may remain comfortable with a moderate degree of misspecification.
+
+We will consider five types of misspecification and their effect on our analyses:^[We will leave a sixth type of misspecification, multicollinearity, for later sections]
+
+* Non-independent errors (Autocorrelation)
+
+* Non-identical errors (Heteroskedasticity)
+
+* Non-normal errors
+
+* Non-linear relationships
+
+* Omitted variable bias
+

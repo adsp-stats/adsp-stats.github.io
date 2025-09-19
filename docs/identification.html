@@ -75,6 +75,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="site_libs/bootstrap/bootstrap-2ed9fe205cf6ca358fce3f52e912d798.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<meta name="shinylive:serviceworker_dir" content=".">
+<script src="site_libs/quarto-contrib/shinylive-0.9.1/shinylive/load-shinylive-sw.js" type="module"></script>
+<script src="site_libs/quarto-contrib/shinylive-0.9.1/shinylive/run-python-blocks.js" type="module"></script>
+<link href="site_libs/quarto-contrib/shinylive-0.9.1/shinylive/shinylive.css" rel="stylesheet">
+<link href="site_libs/quarto-contrib/shinylive-quarto-css/shinylive-quarto.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -229,22 +234,22 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./newton.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">newton.html</span></a>
+  <a href="./newton.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The Newton-Raphson method</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./gradientdescent.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">gradientdescent.html</span></a>
+  <a href="./gradientdescent.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Gradient descent</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./clt.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">clt.html</span></a>
+  <a href="./clt.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The Central Limit Theorem</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./ttests.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">ttests.html</span></a>
+  <a href="./ttests.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The Student’s <em>t</em> distribution</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -510,6 +515,8 @@ window.Quarto = {
   <ul>
   <li><a href="#using-what-you-and-others-know-about-the-data" id="toc-using-what-you-and-others-know-about-the-data" class="nav-link active" data-scroll-target="#using-what-you-and-others-know-about-the-data">Using what you and others know about the data</a></li>
   <li><a href="#empirical-distribution-functions-and-the-kolmogorov-smirnov-test" id="toc-empirical-distribution-functions-and-the-kolmogorov-smirnov-test" class="nav-link" data-scroll-target="#empirical-distribution-functions-and-the-kolmogorov-smirnov-test">Empirical distribution functions and the Kolmogorov-Smirnov test</a></li>
+  <li><a href="#example-car-stopping-distances" id="toc-example-car-stopping-distances" class="nav-link" data-scroll-target="#example-car-stopping-distances">Example: Car stopping distances</a></li>
+  <li><a href="#visualizer-confidence-interval-success-and-failure" id="toc-visualizer-confidence-interval-success-and-failure" class="nav-link" data-scroll-target="#visualizer-confidence-interval-success-and-failure">Visualizer: Confidence interval success and failure</a></li>
   </ul>
 </nav>
     </div>
@@ -541,15 +548,16 @@ window.Quarto = {
 <p>The first step is to narrow down your list of candidate distributions. Ideally you will be in one of two scenarios:</p>
 <ul>
 <li><p>The data you’re examining has been studied before, and other researchers have described it as being distributed a certain way. For example, daily stock returns are often modeled as being normal or lognormal. Lightbulb lifetimes are often modeled as exponentially distributed. (Stay cautious: there may be important differences between the earlier research and the data in front of you.)</p></li>
-<li><p>The data you’re examining comes from a generating process with known physical properties suggesting certain distributions. For example, even if we are not familiar with astronomical literature, we can reason for ourselves that large meteors (<span class="math inline">\(\gt 1\,\)</span>km diameter) might strike the Earth according to a Poisson process.</p></li>
+<li><p>The data you’re examining comes from a generating process with known physical properties suggesting certain distributions. For example, even if we are not familiar with astronomical literature, we can reason for ourselves that large meteors (<span class="math inline">\(\gt\)</span> 1 km diameter) might strike the Earth according to a Poisson process.</p></li>
 </ul>
-<p>However the world is not an ideal place, and so sometimes we will choose a distribution not because it is “correct” but because it is “good enough” for our data. Remember also that your data may not be distributed neatly. Your data may include different subsamples, each with their own distribution. Your data might also be distributed a certain way <em>only after accounting for other variables</em>, which we will consider in future chapters. Do ask yourself the following, if you are unsure of where to start:</p>
+<p>However the world is not an ideal place, and so sometimes we will choose a distribution not because it is “correct” but because it is “good enough” for our data. Remember also that your data may not be distributed neatly. Your data may include different subsamples, each with their own distribution. Your data might also be distributed a certain way <em>only after accounting for other variables</em>, which we will consider in future chapters.</p>
+<p>If you are unsure of where to start, try asking the following questions:</p>
 <ul>
 <li><p>Does your data only take integer values (or is it easily transformed to take only integer values)? If so, consider a discrete distribution.</p>
 <ul>
 <li><p>But what if the integers are all very large, like stadium attendance figures? Depending on your task, continuous distributions might work just as well.</p></li>
-<li><p>What if the general scale for the integers is different in each observation, such as smoking deaths by state? Perhaps it would be better to model the <em>rate</em> (<em>e.g.</em> deaths per 100,000 residents) as a continuous distribution, rather than modeling the <em>count</em> as discrete.</p></li>
-<li><p>Can the integers be negative? If so, you might need to transform the data, since most discrete distributions don’t permit negative values.</p></li>
+<li><p>What if the general scale for the integers is different in each observation, such as smoking deaths by state?<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> Perhaps it would be better to model the <em>rate</em> (<em>e.g.</em> deaths per 100,000 residents) as a continuous distribution, rather than modeling the <em>count</em> as a discrete distribution.</p></li>
+<li><p>Can the integers be negative? If so, you might need to transform the data, since many discrete distributions don’t permit negative values.</p></li>
 </ul></li>
 <li><p>Are the data naturally bounded above and/or below? Some distributions like the uniform or exponential might have matching bounds, others like the normal distribution do not have theoretical bounds, just practical limits where it would be rare to see any data.</p></li>
 <li><p>Are your data spread out over many degrees of magnitude? If so, a logarithmic transformation or the lognormal distribution might be useful, or again finding a way to express these figures relative to some baseline which varies by observation.</p></li>
@@ -626,7 +634,7 @@ Figure&nbsp;5.2: Graphical illustration of a Kolmogorov-Smirnov test
 </div>
 </div>
 </div>
-<p>In the figure above, we see that while the empirical CDF of our 50 heights does not always perfectly match the theoretical CDF of the normal distribution with mean 162 and variance 49, that same theoretical distribution would generate samples of 50 observations that look even stranger over 52% of the time, more than half of all samples. So we cannot rule out that the height data were generated from that theoretical distribution.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<p>In the figure above, we see that while the empirical CDF of our 50 heights does not always perfectly match the theoretical CDF of the normal distribution with mean 162 and variance 49, that same theoretical distribution would generate samples of 50 observations that look even stranger over 52% of the time, more than half of all samples. So we cannot rule out that the height data were generated from that theoretical distribution.<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></p>
 <p>In practice, we can use maximum likelihood estimation and the Kolmogorov-Smirnov test as an effective “toggle” to help rapidly propose and confirm possible distributions for our data. Consider using this set of steps whenever you are faced with new univariate data:</p>
 <ol type="1">
 <li><p>Identify a candidate distribution type, such as normal or binomial</p></li>
@@ -634,13 +642,136 @@ Figure&nbsp;5.2: Graphical illustration of a Kolmogorov-Smirnov test
 <li><p>Use a K-S test to determine whether that distribution and those parameters are actually a good fit to the data (the best fit is not necessarily a good fit)</p></li>
 <li><p>If so, proceed under the assumption that your data could be distributed that way. If not, go back to step 1, identify a new distribution type, and repeat.</p></li>
 </ol>
+</section>
+<section id="example-car-stopping-distances" class="level2">
+<h2 class="anchored" data-anchor-id="example-car-stopping-distances">Example: Car stopping distances</h2>
+<p>Let’s say that we are brake systems engineers and our job is to evaluate the safety of a new car model. We wish to know the real-life distribution of stopping times (in seconds) when the car is traveling at 50 kph ($$30 mph) under ideal road conditions. We gather 20 test drivers, put them on a safe course, and observe the following stopping times:</p>
+<p><span class="math display">\[\boldsymbol{x}=\left\{ \begin{aligned} 3.68, 2.86, 3.40, 3.82, 4.32, 3.40, 3.82, 3.73, 4.33, 3.56, \\ 3.27, 3.41, 3.25, 4.04, 3.34, 3.88, 3.85, 3.07, 3.58, 3.88 \; \end{aligned} \right\}\]</span> Consulting our company’s research library, we find that prior experiments have modeled stopping times as normally distributed, but we believe that the log-normal distribution might be a better choice. Can we test these ideas?</p>
+<p>First, we fit the best normal distribution we can, retrieving the best maximum-likelihood estimates for <span class="math inline">\(\mu\)</span> and <span class="math inline">\(\sigma\)</span>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(MASS)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>stoptimes <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">3.68</span>, <span class="fl">2.86</span>, <span class="fl">3.40</span>, <span class="fl">3.82</span>, <span class="fl">4.32</span>, <span class="fl">3.40</span>, <span class="fl">3.82</span>, <span class="fl">3.73</span>, <span class="fl">4.33</span>, <span class="fl">3.56</span>, <span class="fl">3.27</span>, <span class="fl">3.41</span>, <span class="fl">3.25</span>, <span class="fl">4.04</span>, <span class="fl">3.34</span>, <span class="fl">3.88</span>, <span class="fl">3.85</span>, <span class="fl">3.07</span>, <span class="fl">3.58</span>, <span class="fl">3.88</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>(norm.ests <span class="ot">&lt;-</span> <span class="fu">fitdistr</span>(stoptimes,<span class="st">'normal'</span>)<span class="sc">$</span>estimate)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     mean        sd 
+3.6245000 0.3753595 </code></pre>
+</div>
+</div>
+<p>Then we use the K-S test to see if these ‘best’ estimates are any good:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressWarnings</span>(<span class="fu">ks.test</span>(stoptimes,pnorm,<span class="at">mean=</span>norm.ests[<span class="dv">1</span>],<span class="at">sd=</span>norm.ests[<span class="dv">2</span>]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Asymptotic one-sample Kolmogorov-Smirnov test
+
+data:  stoptimes
+D = 0.11615, p-value = 0.9501
+alternative hypothesis: two-sided</code></pre>
+</div>
+</div>
+<p>We see no reason to reject the earlier guidance that stopping times are normally distributed. There is a normal distribution out there which generates data as non-normal as our own 95% of the time! That’s almost all of the time!</p>
+<p>However, we can still see if the log-normal distribution is a good fit as well. Just like before, we find the best parameters for <span class="math inline">\(\mu'\)</span> and <span class="math inline">\(\sigma'\)</span>:<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>(lognorm.ests <span class="ot">&lt;-</span> <span class="fu">fitdistr</span>(stoptimes,<span class="st">'log-normal'</span>)<span class="sc">$</span>estimate)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  meanlog     sdlog 
+1.2822967 0.1044904 </code></pre>
+</div>
+</div>
+<p>Then we use the K-S test to see if these ‘best’ estimates are any good:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressWarnings</span>(<span class="fu">ks.test</span>(stoptimes,plnorm,<span class="at">meanlog=</span>lognorm.ests[<span class="dv">1</span>],<span class="at">sdlog=</span>lognorm.ests[<span class="dv">2</span>]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Asymptotic one-sample Kolmogorov-Smirnov test
+
+data:  stoptimes
+D = 0.11043, p-value = 0.9677
+alternative hypothesis: two-sided</code></pre>
+</div>
+</div>
+<p>As it turns out, this sample of stopping times also supports the idea that they are log-normally distributed. We can find a log-normal distribution that generates data similar to this (or more extreme) <em>97% of the time.</em></p>
+<p>We do not have enough evidence to reject the earlier literature’s assumption that stopping times are normal. However, we also find a close fit to the log-normal distribution. We might choose to use either, or both, in our research, or collect more data, or make an argument for one or the other that does not depend on relative likelihood.<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a></p>
+</section>
+<section id="visualizer-confidence-interval-success-and-failure" class="level2">
+<h2 class="anchored" data-anchor-id="visualizer-confidence-interval-success-and-failure">Visualizer: Confidence interval success and failure</h2>
+<p>When sample sizes are small, it can be difficult to tell one distribution from another. I will generate some data from a <em>triangular distribution</em>, which looks exactly as you might expect: a continuous distribution bounded by its minimum <span class="math inline">\(a\)</span> and maximum <span class="math inline">\(b\)</span>, where the density at either endpoint scales linearly to a modal maximum of <span class="math inline">\(c: a \le c \le b\)</span>.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">#theoretical pdf</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="at">x=</span><span class="fu">c</span>(<span class="dv">45</span>,<span class="dv">55</span>,<span class="dv">100</span>,<span class="dv">145</span>,<span class="dv">155</span>),<span class="at">y=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span><span class="sc">/</span><span class="dv">45</span>,<span class="dv">0</span>,<span class="dv">0</span>),<span class="at">type=</span><span class="st">'l'</span>,<span class="at">lwd=</span><span class="dv">2</span>,<span class="at">xlab=</span><span class="st">'x'</span>,<span class="at">ylab=</span><span class="st">'Density'</span>,</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>     <span class="at">main=</span><span class="st">'Triangular PDF'</span>,<span class="at">xlim=</span><span class="fu">c</span>(<span class="dv">45</span>,<span class="dv">155</span>))</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>xseq <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">45</span>,<span class="dv">155</span>,<span class="fl">0.1</span>)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>yseq <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">0</span>,<span class="dv">101</span>),(<span class="fu">seq</span>(<span class="fl">55.1</span>,<span class="dv">100</span>,<span class="fl">0.1</span>)<span class="sc">-</span><span class="dv">55</span>)<span class="sc">^</span><span class="dv">2</span><span class="sc">/</span>(<span class="dv">90</span><span class="sc">*</span><span class="dv">45</span>),</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>          <span class="dv">1</span><span class="sc">-</span>(<span class="dv">145</span><span class="sc">-</span><span class="fu">seq</span>(<span class="fl">100.1</span>,<span class="dv">145</span>,<span class="fl">0.1</span>))<span class="sc">^</span><span class="dv">2</span><span class="sc">/</span>(<span class="dv">90</span><span class="sc">*</span><span class="dv">45</span>),<span class="fu">rep</span>(<span class="dv">1</span>,<span class="dv">100</span>))</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="at">x=</span>xseq,<span class="at">y=</span>yseq,<span class="at">type=</span><span class="st">'l'</span>,<span class="at">lwd=</span><span class="dv">2</span>,<span class="at">xlab=</span><span class="st">'x'</span>,<span class="at">ylab=</span><span class="st">'Cumul. Prob.'</span>,</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>     <span class="at">main=</span><span class="st">'Triangular CDF'</span>,<span class="at">xlim=</span><span class="fu">c</span>(<span class="dv">45</span>,<span class="dv">155</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-triangular" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-triangular-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="identification_files/figure-html/fig-triangular-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-triangular-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.3: Triangular(55,145,100) distribution
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The tool below simulates data from this exact distribution, and then tests whether that data could have come from a uniform distribution (specifically, the uniform distribution which best fits each new sample). Notice that our ability to rule out the uniform distribution is closely tied to sample size: at small sample sizes, we rarely reject the null.</p>
+<pre class="shinylive-r" data-engine="r"><code>#| '!! shinylive warning !!': |
+#|   shinylive does not work in self-contained HTML documents.
+#|   Please set `embed-resources: false` in your metadata.
+#| standalone: true
+#| viewerHeight: 600
+
+library(shiny)
+library(bslib)
+
+ui &lt;- page_fluid(
+  tags$head(tags$style(HTML("body {overflow-x: hidden;}"))),
+  title = "Univariate estimation from a triangular sample",
+  fluidRow(column(width=12,sliderInput("nsamp", "N (sample size)", min=20, max=200, value=50))),
+  fluidRow(column(width=6,plotOutput("distPlot1")),
+           column(width=6,plotOutput("distPlot2"))),
+  fluidRow(textOutput("testText1")))
+
+qtri &lt;- function(p){
+  x &lt;- vector(mode='numeric',length=length(p))
+  x[p&lt;0.5] &lt;- 55 + sqrt(p[p&lt;0.5]*90*45)
+  x[p&gt;=0.5] &lt;- 145 - sqrt((1-p)[p&gt;=0.5]*90*45)
+  return(x)}
+
+server &lt;- function(input, output){
+  x &lt;- reactive({qtri(p=runif(input$nsamp))})
+  yseq &lt;- c((seq(55,100,0.5)-55)^2/(90*45),
+            1-(145-seq(100.5,145,0.5))^2/(90*45))
+  pval &lt;- reactive({ks.test(x(),punif,min=min(x()),max=max(x()))$p.value})
+  output$distPlot1 &lt;- renderPlot({
+    hist(x(),xlab='Values',ylab='Frequency',main='Histogram of Sample')})
+  output$distPlot2 &lt;- renderPlot({
+    plot(ecdf(x()),xlab='x',ylab='F(x)',main='ECDF of Sample',pch=NA)
+    lines(x=seq(55,145,0.5),y=punif(seq(55,145,0.5),min(x()),max(x())),col='#0000ff')
+    lines(x=seq(55,145,0.5),y=yseq,col='green')
+    legend(x='topleft',legend=c('Best Uniform fit','Actual distribution'),lty=1,col=c('blue','green'))})
+  output$testText1 &lt;- renderText({c('Could sample be Uniform?',ifelse(pval()&gt;0.05,'Likely so: p = ','Likely not: p = '),round(pval(),4))})
+  }
+
+shinyApp(ui = ui, server = server)</code></pre>
 
 
 </section>
 <section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
 <hr>
 <ol>
-<li id="fn1"><p>Since I generated the data, I will tell you: they are not from that distribution! They are from another!<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1"><p>Keep in mind that California has 80x more residents than Wyoming.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>Since I generated the data, I will tell you: they are not from that distribution! They are from another!<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p>I am adding the ‘prime’ mark next to them to distinguish these log-normal parameters from the normal parameters above.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4"><p><em>E.g.</em> interpretability, ease of communication, simplicity in cumulating stopping distance with other braking factors, etc.<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 
@@ -1003,25 +1134,64 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         }
       };
     }
-      // Attach click handler to the DT
-      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
-      for (const annoteDlNode of annoteDls) {
-        annoteDlNode.addEventListener('click', (event) => {
-          const clickedEl = event.target;
-          if (clickedEl !== selectedAnnoteEl) {
-            unselectCodeLines();
-            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
-            if (activeEl) {
-              activeEl.classList.remove('code-annotation-active');
-            }
-            selectCodeLines(clickedEl);
-            clickedEl.classList.add('code-annotation-active');
-          } else {
-            // Unselect the line
-            unselectCodeLines();
-            clickedEl.classList.remove('code-annotation-active');
+      const annoteTargets = window.document.querySelectorAll('.code-annotation-anchor');
+      for (let i=0; i<annoteTargets.length; i++) {
+        const annoteTarget = annoteTargets[i];
+        const targetCell = annoteTarget.getAttribute("data-target-cell");
+        const targetAnnotation = annoteTarget.getAttribute("data-target-annotation");
+        const contentFn = () => {
+          const content = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          if (content) {
+            const tipContent = content.cloneNode(true);
+            tipContent.classList.add("code-annotation-tip-content");
+            return tipContent.outerHTML;
           }
-        });
+        }
+        const config = {
+          allowHTML: true,
+          content: contentFn,
+          onShow: (instance) => {
+            selectCodeLines(instance.reference);
+            instance.reference.classList.add('code-annotation-active');
+            window.tippy.hideAll();
+          },
+          onHide: (instance) => {
+            unselectCodeLines();
+            instance.reference.classList.remove('code-annotation-active');
+          },
+          maxWidth: 300,
+          delay: [50, 0],
+          duration: [200, 0],
+          offset: [5, 10],
+          arrow: true,
+          appendTo: function(el) {
+            return el.parentElement.parentElement.parentElement;
+          },
+          interactive: true,
+          interactiveBorder: 10,
+          theme: 'quarto',
+          placement: 'right',
+          popperOptions: {
+            modifiers: [
+            {
+              name: 'flip',
+              options: {
+                flipVariations: false, // true by default
+                allowedAutoPlacements: ['right'],
+                fallbackPlacements: ['right', 'top', 'top-start', 'top-end', 'bottom', 'bottom-start', 'bottom-end', 'left'],
+              },
+            },
+            {
+              name: 'preventOverflow',
+              options: {
+                mainAxis: false,
+                altAxis: false
+              }
+            }
+            ]        
+          }      
+        };
+        window.tippy(annoteTarget, config); 
       }
   const findCites = (el) => {
     const parentEl = el.parentElement;
@@ -1069,8 +1239,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./newton.html" class="pagination-link" aria-label="newton.html">
-        <span class="nav-page-text"><span class="chapter-title">newton.html</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./newton.html" class="pagination-link" aria-label="The Newton-Raphson method">
+        <span class="nav-page-text"><span class="chapter-title">The Newton-Raphson method</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

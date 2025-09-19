@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>gradientdescent – Statistical Analysis Using R: Online Notes</title>
+<title>Gradient descent – Statistical Analysis Using R: Online Notes</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,6 +19,40 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -70,6 +104,35 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -82,7 +145,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./newton.html">2. Useful Approximations</a></li><li class="breadcrumb-item"><a href="./gradientdescent.html"><span class="chapter-title">gradientdescent.html</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./newton.html">2. Useful Approximations</a></li><li class="breadcrumb-item"><a href="./gradientdescent.html"><span class="chapter-title">Gradient descent</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -140,7 +203,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./biasvariance.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Estimator bias and variance</span></a>
+  <a href="./biasvariance.html" class="sidebar-item-text sidebar-link"><span class="chapter-title"><em>Estimator bias and variance</em></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -151,6 +214,11 @@ ul.task-list li input[type="checkbox"] {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./identification.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Identifying distributions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./howtounivariate.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Coding it up in R</span></a>
   </div>
 </li>
       </ul>
@@ -166,27 +234,32 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./newton.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">newton.html</span></a>
+  <a href="./newton.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The Newton-Raphson method</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./gradientdescent.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">gradientdescent.html</span></a>
+  <a href="./gradientdescent.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Gradient descent</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./clt.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">clt.html</span></a>
+  <a href="./clt.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The Central Limit Theorem</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./ttests.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">ttests.html</span></a>
+  <a href="./ttests.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The Student’s <em>t</em> distribution</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./rulesofthumb.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">rulesofthumb.html</span></a>
+  <a href="./rulesofthumb.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Handy rules of thumb</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./howtoapproximate.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Coding it up in R</span></a>
   </div>
 </li>
       </ul>
@@ -202,32 +275,17 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./simpleregression.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">simpleregression.html</span></a>
+  <a href="./simpleregression.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Simple regression</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./simplels.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">simplels.html</span></a>
+  <a href="./multiplemle.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Multiple regression</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./simplemle.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">simplemle.html</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./multiplemle.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">multiplemle.html</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./olsproperties.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">olsproperties.html</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./variancedecomposition.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">variancedecomposition.html</span></a>
+  <a href="./variancedecomposition.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The ANOVA ‘Triangle’</span></a>
   </div>
 </li>
       </ul>
@@ -440,17 +498,213 @@ ul.task-list li input[type="checkbox"] {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#motivation" id="toc-motivation" class="nav-link active" data-scroll-target="#motivation">Motivation</a></li>
+  <li><a href="#concept-and-definition" id="toc-concept-and-definition" class="nav-link" data-scroll-target="#concept-and-definition">Concept and definition</a></li>
+  <li><a href="#programming-example-height-data" id="toc-programming-example-height-data" class="nav-link" data-scroll-target="#programming-example-height-data">Programming example: height data</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
-<main class="content column-page-right" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./newton.html">2. Useful Approximations</a></li><li class="breadcrumb-item"><a href="./gradientdescent.html"><span class="chapter-title">gradientdescent.html</span></a></li></ol></nav></header>
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./newton.html">2. Useful Approximations</a></li><li class="breadcrumb-item"><a href="./gradientdescent.html"><span class="chapter-title">Gradient descent</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span id="sec-gradient" class="quarto-section-identifier"><span class="chapter-title">Gradient descent</span></span></h1>
+</div>
 
 
 
+<div class="quarto-title-meta column-body">
+
+    
+  
+    
+  </div>
+  
 
 
+</header>
 
+
+<section id="motivation" class="level2">
+<h2 class="anchored" data-anchor-id="motivation">Motivation</h2>
+<p>In <a href="newton.html" class="quarto-xref"><span>The Newton-Raphson method</span></a>, we learned a simple algorithm for finding the root of functions of a single variable. Although we can (and do) use the Newton-Raphson method to perform maximum likelihood estimation, it suffers from some drawbacks:</p>
+<ul>
+<li><p>It does not easily extend to functions of multiple variables, and so we cannot use it to fit distributions with two or more parameters, such as the Normal distribution (<span class="math inline">\(\mu\)</span> and <span class="math inline">\(\sigma^2\)</span>).</p></li>
+<li><p>It requires us to compute or estimate the first <em>and</em> second derivative of the likelihood (or log-likelihood) function, which may prove a mild inconvenience or in rare cases a mathematical impossibility.</p></li>
+<li><p>Its searches <em>inefficiently</em>, since it picks a starting point, determines the direction of the slope, and “races ahead” toward what it expects will be the finish line. Only when it hits the <em>x</em>-axis does it stop to check how far off-course the original tangent line has led it.</p></li>
+</ul>
+<p>Let us introduce a new algorithm which might solve these problems, called <em>gradient descent</em>.</p>
+</section>
+<section id="concept-and-definition" class="level2">
+<h2 class="anchored" data-anchor-id="concept-and-definition">Concept and definition</h2>
+<p>Suppose we are walking on the surface of a multi-dimensional log-likelihood function, trying to find the joint set of parameters which form the MLEs. Given a starting point (an initial guess for all parameters), we will use calculus to determine the slope of the “hill” under our feet and then take only a few short steps up or down the steepest slope of the hill. At this new waypoint, we will measure the slope again, to see if it has changed much, and walk in whichever direction now seems steepest. In real life this method would work well to find a hilltop or valley bottom, and in mathematics it works well to find maxima and minima.</p>
+<p>Up until now, I have shown you ways to maximize the likelihood function, and if we were to use the principles above to find a hilltop, we would call this technique “gradient ascent”. However, when we work with computers to implement this algorithm, it is often easier to minimize the negative of the log-likelihood function, that is, to find the valley bottom.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> For this rather trivial reason, the technique is more often called “gradient descent”.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Let <span class="math inline">\(f\)</span> be a scalar-valued continuous and differentiable function of a vector of parameters <span class="math inline">\(\vec{x}=(x_1, \ldots, x_p) \in \mathbb{R}^p\)</span>. Define the gradient of <span class="math inline">\(f\)</span> to be the vector-valued function which gives the direction and rate at which <span class="math inline">\(f\)</span> increases most quickly:</p>
+<p><span class="math display">\[\nabla f(\vec{x})=\left[\begin{array}{c}\frac{\partial f}{\partial x_1} \\ \vdots \\ \frac{\partial f}{\partial x_p}\end{array}\right]\]</span></p>
+<p>Starting from an initial guess <span class="math inline">\(\vec{x}_0\)</span>, the method of gradient ascent allows us to iteratively approximate a nearby local maximum or minimum through the following series:</p>
+<p><span class="math display">\[\vec{x}_n = \vec{x}_{n-1} - \gamma_n \cdot \nabla f(\vec{x}_{n-1})\]</span></p>
+<p>Where each new step size <span class="math inline">\(\gamma_n\)</span> may be chosen according to several considerations.</p>
+</div>
+</div>
+<p>This new method doesn’t find a root of the derivative, like the Newton-Raphson method, but rather directly solves for a local minimum. In practice there are important and very finicky considerations of <em>(a)</em> how big the step sizes should be and <em>(b)</em> whether you should necessarily proceed in the <em>steepest</em> possible direction, or if it might be smarter to approach the minimum obliquely.</p>
+<p>I will show one method of choosing a step size, called <strong>backtracking line search</strong>. The following algorithm chooses the step size <span class="math inline">\(\gamma_n\)</span> for a single iteration of the main gradient descent algorithm (iteration <span class="math inline">\(n\)</span>):</p>
+<p>In essence, a backtracking line search takes large steps when the function is being steadily minimized, meaning that all is going well, but shrinks the step size if the algorithm would overshoot or otherwise yield unexpectedly poor results.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Let <span class="math inline">\(f\)</span>, <span class="math inline">\(\vec{x}\)</span>, and <span class="math inline">\(\nabla f(\vec{x})\)</span> be defined as above, and let <span class="math inline">\(\vec{x}_{n-1}\)</span> be the previous guess for the value of <span class="math inline">\(\vec{x}\)</span> which maximizes <span class="math inline">\(f\)</span>. A backtracking line search will set the next step size, <span class="math inline">\(\gamma_n\)</span>, as follows. First, choose a fixed <span class="math inline">\(\beta \in (0,1)\)</span>. Then, iterating over the subscript <span class="math inline">\(i\)</span>,</p>
+<p><span class="math display">\[\begin{aligned} \gamma_{n,0} &amp;= 1 \\
+\gamma_{n,i} &amp;= \left\{\begin{array}{ll}\beta \cdot \gamma_{n,i-1} &amp; \textrm{if }  f(\vec{x}_{n-1} - \gamma_{n,i-1} \cdot \nabla f(\vec{x}_{n-1})) &gt; f(\vec{x}_{n-1}) \\ \gamma_{n,i-1} &amp; \textrm{otherwise} \end{array}\right\} \end{aligned}\]</span></p>
+<p>Stop this search when <span class="math inline">\(\gamma_{n,i} = \gamma_{n,i-1}\)</span>, and define that to be <span class="math inline">\(\gamma_n\)</span>, the step size for the next iteration of the gradient ascent algorithm.</p>
+</div>
+</div>
+</section>
+<section id="programming-example-height-data" class="level2">
+<h2 class="anchored" data-anchor-id="programming-example-height-data">Programming example: height data</h2>
+<p>Consider the height data from ten women discussed earlier. If we assume these heights are drawn from a Normal distribution, then we need estimates for the mean <span class="math inline">\(\mu\)</span> and the variance <span class="math inline">\(\sigma^2\)</span>. We can solve for the MLEs exactly using algebra and calculus, but we can also recover the best estimates using gradient descent.</p>
+<p>First let’s code up a generalized gradient descent algorithm, with a backtracking line search. This code would work to solve many cases, but it’s not perfect and doesn’t handle every edge case: treat this as illustrative and not production-ready:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="annotated-cell-1"><pre class="sourceCode r code-annotation-code code-with-copy code-annotated"><code class="sourceCode r"><span id="annotated-cell-1-1"><a href="#annotated-cell-1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># gradient descent function with backtracking line search</span></span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-1" data-target-annotation="1">1</button><span id="annotated-cell-1-2" class="code-annotation-target"><a href="#annotated-cell-1-2" aria-hidden="true" tabindex="-1"></a>graddesc <span class="ot">&lt;-</span> <span class="cf">function</span>(f, g, x0, <span class="at">b=</span><span class="fl">0.8</span>, <span class="at">tol=</span><span class="fl">1e-2</span>, <span class="at">max.iter=</span><span class="dv">40</span>){</span>
+<span id="annotated-cell-1-3"><a href="#annotated-cell-1-3" aria-hidden="true" tabindex="-1"></a>  i <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="annotated-cell-1-4"><a href="#annotated-cell-1-4" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> x0</span>
+<span id="annotated-cell-1-5"><a href="#annotated-cell-1-5" aria-hidden="true" tabindex="-1"></a>  results <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">c</span>(<span class="dv">0</span>,x,<span class="sc">-</span><span class="fu">f</span>(x)))</span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-1" data-target-annotation="2">2</button><span id="annotated-cell-1-6" class="code-annotation-target"><a href="#annotated-cell-1-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">while</span> (<span class="fu">sqrt</span>(<span class="fu">g</span>(x)<span class="sc">%*%</span><span class="fu">g</span>(x))<span class="sc">&gt;</span>tol <span class="sc">&amp;</span> i<span class="sc">&lt;</span>max.iter) {</span>
+<span id="annotated-cell-1-7"><a href="#annotated-cell-1-7" aria-hidden="true" tabindex="-1"></a>    i <span class="ot">&lt;-</span> i <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="annotated-cell-1-8"><a href="#annotated-cell-1-8" aria-hidden="true" tabindex="-1"></a>    t <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-1" data-target-annotation="3">3</button><span id="annotated-cell-1-9" class="code-annotation-target"><a href="#annotated-cell-1-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span> ((<span class="fu">f</span>(x<span class="sc">+</span>t<span class="sc">*</span><span class="fu">g</span>(x))<span class="sc">&lt;</span><span class="fu">f</span>(x)) <span class="sc">&amp;</span> t<span class="sc">&gt;</span>tol) {</span>
+<span id="annotated-cell-1-10"><a href="#annotated-cell-1-10" aria-hidden="true" tabindex="-1"></a>      t <span class="ot">&lt;-</span> t<span class="sc">*</span>b}</span>
+<span id="annotated-cell-1-11"><a href="#annotated-cell-1-11" aria-hidden="true" tabindex="-1"></a>    x <span class="ot">&lt;-</span> x <span class="sc">+</span> t<span class="sc">*</span><span class="fu">g</span>(x)                                           </span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-1" data-target-annotation="4">4</button><span id="annotated-cell-1-12" class="code-annotation-target"><a href="#annotated-cell-1-12" aria-hidden="true" tabindex="-1"></a>    results <span class="ot">&lt;-</span> <span class="fu">rbind</span>(results,<span class="fu">t</span>(<span class="fu">c</span>(i,x,<span class="sc">-</span><span class="fu">f</span>(x))))}</span>
+<span id="annotated-cell-1-13"><a href="#annotated-cell-1-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">colnames</span>(results) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">'iter'</span>,<span class="fu">paste0</span>(<span class="st">'x'</span>,<span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(x)),<span class="st">'f'</span>)</span>
+<span id="annotated-cell-1-14"><a href="#annotated-cell-1-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(results)}</span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-annotation">
+<dl class="code-annotation-container-hidden code-annotation-container-grid">
+<dt data-target-cell="annotated-cell-1" data-target-annotation="1">1</dt>
+<dd>
+<span data-code-cell="annotated-cell-1" data-code-lines="2" data-code-annotation="1">Inputs are <span class="math inline">\(f\)</span> (the likelihood function), <span class="math inline">\(g\)</span> (the gradient of <span class="math inline">\(f\)</span>), <span class="math inline">\(x_0\)</span> (a starting guess), b/<span class="math inline">\(\beta\)</span> (the backtracking constant), tol (a convergence tolerance, also used to create a minimum step size), and a maximum iteration count.</span>
+</dd>
+<dt data-target-cell="annotated-cell-1" data-target-annotation="2">2</dt>
+<dd>
+<span data-code-cell="annotated-cell-1" data-code-lines="6" data-code-annotation="2">The outer loop completes each iteration of gradient descent algorithm.</span>
+</dd>
+<dt data-target-cell="annotated-cell-1" data-target-annotation="3">3</dt>
+<dd>
+<span data-code-cell="annotated-cell-1" data-code-lines="9,10" data-code-annotation="3">The inner loop completes each choice of step size for the outer loop, using the backtracking line search algorithm.</span>
+</dd>
+<dt data-target-cell="annotated-cell-1" data-target-annotation="4">4</dt>
+<dd>
+<span data-code-cell="annotated-cell-1" data-code-lines="12,13" data-code-annotation="4">Results are output to a table, including each iteration’s location in parameter space and the negative of the log-likelihood at that location.</span>
+</dd>
+</dl>
+</div>
+</div>
+<p>Now we can add the height data, the likelihood function, and the gradient function:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="annotated-cell-2"><pre class="sourceCode r code-annotation-code code-with-copy code-annotated"><code class="sourceCode r"><span id="annotated-cell-2-1"><a href="#annotated-cell-2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#generate height data</span></span>
+<span id="annotated-cell-2-2"><a href="#annotated-cell-2-2" aria-hidden="true" tabindex="-1"></a>heights <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">170.1</span>,<span class="fl">161.6</span>,<span class="fl">175.2</span>,<span class="fl">166.3</span>,<span class="fl">165.6</span>,<span class="fl">165.8</span>,<span class="fl">152.0</span>,<span class="fl">155.8</span>,<span class="fl">168.6</span>,<span class="fl">154.3</span>)</span>
+<span id="annotated-cell-2-3"><a href="#annotated-cell-2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="annotated-cell-2-4"><a href="#annotated-cell-2-4" aria-hidden="true" tabindex="-1"></a><span class="co">#height log-likelihood for any parameter choice</span></span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-2" data-target-annotation="1">1</button><span id="annotated-cell-2-5" class="code-annotation-target"><a href="#annotated-cell-2-5" aria-hidden="true" tabindex="-1"></a>height.ll <span class="ot">&lt;-</span> <span class="cf">function</span>(x){</span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-2" data-target-annotation="2">2</button><span id="annotated-cell-2-6" class="code-annotation-target"><a href="#annotated-cell-2-6" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span><span class="dv">1</span><span class="sc">*</span><span class="fu">length</span>(heights)<span class="sc">*</span><span class="fu">log</span>(<span class="dv">2</span><span class="sc">*</span>pi<span class="sc">*</span>x[<span class="dv">2</span>])<span class="sc">/</span><span class="dv">2</span> <span class="sc">-</span></span>
+<span id="annotated-cell-2-7"><a href="#annotated-cell-2-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sum</span>((heights<span class="sc">-</span>x[<span class="dv">1</span>])<span class="sc">^</span><span class="dv">2</span>)<span class="sc">/</span>(<span class="dv">2</span><span class="sc">*</span>x[<span class="dv">2</span>])}</span>
+<span id="annotated-cell-2-8"><a href="#annotated-cell-2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="annotated-cell-2-9"><a href="#annotated-cell-2-9" aria-hidden="true" tabindex="-1"></a><span class="co">#gradient of height log-likelihood for any parameter choice</span></span>
+<span id="annotated-cell-2-10"><a href="#annotated-cell-2-10" aria-hidden="true" tabindex="-1"></a>height.grad <span class="ot">&lt;-</span> <span class="cf">function</span>(x){</span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-2" data-target-annotation="3">3</button><span id="annotated-cell-2-11" class="code-annotation-target"><a href="#annotated-cell-2-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="fu">sum</span>(heights<span class="sc">-</span>x[<span class="dv">1</span>])<span class="sc">/</span>x[<span class="dv">2</span>],</span>
+<span id="annotated-cell-2-12"><a href="#annotated-cell-2-12" aria-hidden="true" tabindex="-1"></a>    <span class="sc">-</span><span class="dv">1</span><span class="sc">*</span><span class="fu">length</span>(heights)<span class="sc">/</span>(<span class="dv">2</span><span class="sc">*</span>x[<span class="dv">2</span>]) <span class="sc">+</span></span>
+<span id="annotated-cell-2-13"><a href="#annotated-cell-2-13" aria-hidden="true" tabindex="-1"></a>      <span class="fu">sum</span>((heights<span class="sc">-</span>x[<span class="dv">1</span>])<span class="sc">^</span><span class="dv">2</span>)<span class="sc">/</span>(<span class="dv">2</span><span class="sc">*</span>x[<span class="dv">2</span>]<span class="sc">^</span><span class="dv">2</span>))}</span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-annotation">
+<dl class="code-annotation-container-hidden code-annotation-container-grid">
+<dt data-target-cell="annotated-cell-2" data-target-annotation="1">1</dt>
+<dd>
+<span data-code-cell="annotated-cell-2" data-code-lines="5,10" data-code-annotation="1">In both functions, <span class="math inline">\(\vec{x} = (\hat{\mu},\hat{\sigma}^2)\)</span> is a vector of normal parameters.</span>
+</dd>
+<dt data-target-cell="annotated-cell-2" data-target-annotation="2">2</dt>
+<dd>
+<span data-code-cell="annotated-cell-2" data-code-lines="6" data-code-annotation="2"><span class="math inline">\(\partial \ell/\partial \mu\)</span></span>
+</dd>
+<dt data-target-cell="annotated-cell-2" data-target-annotation="3">3</dt>
+<dd>
+<span data-code-cell="annotated-cell-2" data-code-lines="11" data-code-annotation="3"><span class="math inline">\(\partial \ell/\partial \sigma^2\)</span></span>
+</dd>
+</dl>
+</div>
+</div>
+<p>With these in hand, we are ready to solve. Starting from a poor initial guess, the backtracking line search eventually finds the normal distribution MLEs of our data, reaching stability at around 40 iterations. In practice, the data, the distribution, your tuning parameters, and the initial guess will all affect the convergence speed of this algorithm.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>gd <span class="ot">&lt;-</span> <span class="fu">graddesc</span>(<span class="at">f=</span>height.ll,<span class="at">g=</span>height.grad,<span class="at">x0=</span><span class="fu">c</span>(<span class="dv">150</span>,<span class="dv">40</span>))</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>gd[<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>,<span class="dv">41</span>),]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     iter       x1       x2        f
+[1,]    0 150.0000 40.00000 56.81366
+[2,]    1 153.3825 40.60450 46.59214
+[3,]    2 155.8816 40.94641 41.04564
+[4,]    3 157.7495 41.14899 37.95694
+[5,]    4 159.1543 41.27492 36.21285
+[6,]   40 163.5298 42.28546 33.86851</code></pre>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>xgrid <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">140</span>,<span class="dv">180</span>,<span class="fl">0.1</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>ygrid <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">25</span>,<span class="dv">80</span>,<span class="fl">0.1</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>zgrid <span class="ot">&lt;-</span> <span class="sc">-</span><span class="dv">1</span><span class="sc">*</span><span class="fu">matrix</span>(<span class="fu">apply</span>(<span class="fu">cbind</span>(<span class="fu">rep</span>(xgrid,<span class="at">times=</span><span class="fu">length</span>(ygrid)),<span class="fu">rep</span>(ygrid,<span class="at">each=</span><span class="fu">length</span>(xgrid))),<span class="dv">1</span>,height.ll),<span class="at">ncol=</span><span class="fu">length</span>(ygrid))</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">contour</span>(xgrid,ygrid,zgrid,<span class="at">levels=</span><span class="fu">c</span>(<span class="dv">120</span>,<span class="dv">100</span>,<span class="dv">80</span>,<span class="dv">70</span>,<span class="dv">60</span>,<span class="dv">50</span>,<span class="dv">40</span>,<span class="dv">35</span>,<span class="dv">34</span>,<span class="fl">33.8</span>,<span class="fl">33.7</span>),</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>               <span class="at">col=</span><span class="fu">paste0</span>(<span class="st">'#0000ff'</span>,<span class="fu">c</span>(<span class="st">'00'</span>,<span class="st">'20'</span>,<span class="st">'40'</span>,<span class="st">'60'</span>,<span class="st">'80'</span>,<span class="st">'9f'</span>,<span class="st">'af'</span>,<span class="st">'cf'</span>,<span class="st">'ef'</span>,<span class="st">'ff'</span>)),</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>               <span class="at">main=</span><span class="st">'Gradient Descent Solution for Height Parameters'</span>,</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>               <span class="at">xlab=</span><span class="st">'Mu (mean height, in cm)'</span>,<span class="at">ylab=</span><span class="st">'Sigma^2 (variance)'</span>)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(gd[,<span class="dv">2</span>],gd[,<span class="dv">3</span>])</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(gd[<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>,<span class="dv">40</span>),<span class="dv">2</span><span class="sc">:</span><span class="dv">3</span>],<span class="at">pch=</span><span class="dv">1</span>)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(gd[<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>,<span class="dv">40</span>),<span class="dv">2</span><span class="sc">:</span><span class="dv">3</span>],<span class="fu">paste0</span>(<span class="st">'x'</span>,<span class="fu">c</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">4</span>,<span class="dv">40</span>)),<span class="at">pos=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">4</span>),<span class="at">cex=</span><span class="fl">0.8</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-gradient" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-gradient-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="gradientdescent_files/figure-html/fig-gradient-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-gradient-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;8.1: Gradient descent approximation of height MLEs
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+
+
+</section>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1"><p>Of course, the same parameters which maximize the likelihood will minimize the negative of the likelihood, so we will recover the same MLEs either way.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -811,25 +1065,64 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         }
       };
     }
-      // Attach click handler to the DT
-      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
-      for (const annoteDlNode of annoteDls) {
-        annoteDlNode.addEventListener('click', (event) => {
-          const clickedEl = event.target;
-          if (clickedEl !== selectedAnnoteEl) {
-            unselectCodeLines();
-            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
-            if (activeEl) {
-              activeEl.classList.remove('code-annotation-active');
-            }
-            selectCodeLines(clickedEl);
-            clickedEl.classList.add('code-annotation-active');
-          } else {
-            // Unselect the line
-            unselectCodeLines();
-            clickedEl.classList.remove('code-annotation-active');
+      const annoteTargets = window.document.querySelectorAll('.code-annotation-anchor');
+      for (let i=0; i<annoteTargets.length; i++) {
+        const annoteTarget = annoteTargets[i];
+        const targetCell = annoteTarget.getAttribute("data-target-cell");
+        const targetAnnotation = annoteTarget.getAttribute("data-target-annotation");
+        const contentFn = () => {
+          const content = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          if (content) {
+            const tipContent = content.cloneNode(true);
+            tipContent.classList.add("code-annotation-tip-content");
+            return tipContent.outerHTML;
           }
-        });
+        }
+        const config = {
+          allowHTML: true,
+          content: contentFn,
+          onShow: (instance) => {
+            selectCodeLines(instance.reference);
+            instance.reference.classList.add('code-annotation-active');
+            window.tippy.hideAll();
+          },
+          onHide: (instance) => {
+            unselectCodeLines();
+            instance.reference.classList.remove('code-annotation-active');
+          },
+          maxWidth: 300,
+          delay: [50, 0],
+          duration: [200, 0],
+          offset: [5, 10],
+          arrow: true,
+          appendTo: function(el) {
+            return el.parentElement.parentElement.parentElement;
+          },
+          interactive: true,
+          interactiveBorder: 10,
+          theme: 'quarto',
+          placement: 'right',
+          popperOptions: {
+            modifiers: [
+            {
+              name: 'flip',
+              options: {
+                flipVariations: false, // true by default
+                allowedAutoPlacements: ['right'],
+                fallbackPlacements: ['right', 'top', 'top-start', 'top-end', 'bottom', 'bottom-start', 'bottom-end', 'left'],
+              },
+            },
+            {
+              name: 'preventOverflow',
+              options: {
+                mainAxis: false,
+                altAxis: false
+              }
+            }
+            ]        
+          }      
+        };
+        window.tippy(annoteTarget, config); 
       }
   const findCites = (el) => {
     const parentEl = el.parentElement;
@@ -870,15 +1163,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script>
-<nav class="page-navigation column-page-right">
+<nav class="page-navigation column-body">
   <div class="nav-page nav-page-previous">
-      <a href="./newton.html" class="pagination-link" aria-label="newton.html">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">newton.html</span></span>
+      <a href="./newton.html" class="pagination-link" aria-label="The Newton-Raphson method">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">The Newton-Raphson method</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./clt.html" class="pagination-link" aria-label="clt.html">
-        <span class="nav-page-text"><span class="chapter-title">clt.html</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./clt.html" class="pagination-link" aria-label="The Central Limit Theorem">
+        <span class="nav-page-text"><span class="chapter-title">The Central Limit Theorem</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

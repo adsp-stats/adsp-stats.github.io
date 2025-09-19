@@ -1,0 +1,239 @@
+# Coding it up in R {#sec-howtounivariate}
+
+## How to compute and optimize a simple likelihood function
+
+### Using a completely automated routine
+
+In simple cases, where you know the distribution name and only need to estimate the parameters, existing R functions will perform all the math for you. The two most common functions are:
+
+- `MASS::fitdistr` --- comes pre-installed (but not loaded) in all base distributions of R, handles many basic cases
+- `fitdistrplus::fitdist` --- requires installation of the 'fitdistr' package, handles more edge cases and estimation methods
+
+For simplicity we will use `MASS::fitdistr`; however, the same outputs can be reached with either function.^[If using `fitdistrplus::fitdist` you should be sure to specify `method='mle'` or else you may not match the results of `MASS::fitdistr`.]
+
+The code below generates some exponential data with true parameter $\lambda=5$, gives you the documentation for the `MASS::fitdistr` function, and then uses that function to estimate the parameter:
+
+```{r}
+library(MASS)                                           
+set.seed(1138)                                          
+expsample <- rexp(n=5000,rate=5)                        
+help(fitdistr) #for your reference
+auto.sol <- fitdistr(x=expsample,densfun='exponential')           
+man.sol <- 1/mean(expsample)                                     
+c(auto.solution=auto.sol$estimate,
+  manual.solution=man.sol)
+```
+
+Things to notice about this output:
+
+* The MLE guess of $\hat{\lambda} \approx 4.893$ is close to the true value of 5, but not exactly right. In general, we will *always* be wrong with our estimates, and that's fine!
+
+* Of course, in the real world, we would not know the true value of 5, and we would only see the guess of 4.893, and have no idea how close or far we are from the truth.
+
+* The estimate returned by the `fitdistr()` function is exactly equal to $1/\bar{x}$.^[Any printed difference in the code output is simply a matter of significant digits.] You could solve this by hand and arrive at the same conclusion! For more complicated distributions, the function will instead approximate the MLE with iterative algorithms.
+
+```{r}
+xticks <- seq(1,9,0.01)
+loglik <- sapply(xticks,function(z) sum(dexp(expsample,z,log=TRUE)))
+plot(xticks,loglik,type='l',xlab='lambda-hat',ylab='log-lik',main=NA)
+abline(v=c(man.sol,5),col=c('#000000','#0000ff'),lty=2,lwd=2)
+text(x=c(man.sol,5),y=1000,pos=c(2,4),labels=c('MLE','Truth'),
+     col=c('#000000','#0000ff'))
+```
+
+### Optimizing custom log-likelihood functions
+
+Sometimes your work will suggest a distribution not handled by basic R functions. You can still use R to help you maximize a custom likelihood function using `stats::optim`, which comes pre-loaded in all R versions.
+
+Let's consider a *truncated Poisson distribution* of speeding tickets. Perhaps you have records of all the speeding tickets issued to drivers in one locality. Some drivers have multiple speeding tickets. Presumably, some drivers have no speeding tickets, but these drivers don't leave a record in the ticket database. If all drivers recieve tickets through a Poisson process, and we only observe the positive counts (not the zeroes), can we reconstruct the original rate?
+
+First we will make a set of data for 50,000 drivers using a rate of $\lambda = 0.07$ tickets per driver, then we'll censor the zeroes to mimic a real dataset. Next we'll create a custom likelihood function to represent such data (essentially just re-weighting the original Poisson PMF), and finally we'll optimize this function using `optim()`:
+
+```{r}
+#| results: markup
+set.seed(1139)                                          
+hidden.data <- rpois(n=50000,lambda=.07)
+table(hidden.data)                                     
+observed.data <- hidden.data[hidden.data!=0]
+table(observed.data)                                   
+
+ll.trunc.pois <- function(lambda,x){                   
+  sum(x)*log(lambda) - lambda*sum(1/factorial(x)) -    
+    length(x)*log(1-exp(-1*lambda))}                   
+
+help(optim) # for your reference
+opt.sol <- optim(par=0.1,fn=ll.trunc.pois,             
+  x=observed.data, control=list(fnscale=-1),           
+  method='L-BFGS-B', lower=0.01,upper=0.5)             
+opt.sol$par
+```
+
+This call to `optim()` gives a starting value for lambda, specifies the function being maximized, passes data to the likelihood function, re-scales the algorithm to maximize (rather than minimize), chooses an optimization method, and puts bounds on the values of lambda. The `optim()` algorithm converges on the MLE of 0.084, which is near the true value of 0.07:
+
+```{r}
+xticks <- seq(0.01,0.15,0.001)
+loglik <- sapply(xticks,ll.trunc.pois,x=observed.data)
+plot(xticks,loglik,type='l',xlab='lambda-hat',ylab='log-lik',main=NA)
+abline(v=c(opt.sol$par,0.07),col=c('#000000','#0000ff'),lty=2,lwd=2)
+text(x=c(opt.sol$par,0.07),y=-575,pos=c(4,2),labels=c('MLE','Truth'),
+     col=c('#000000','#0000ff'))
+```
+
+## How to perform a hypothesis test
+
+Almost all parametric inference includes hypothesis tests of some kind, so this is a broad category. We'll start from basics and in future chapters we will add on more bells and whistles. I present several scenarios below and you should be able to work your way through many more once you master these building blocks.
+
+### Scenario 1: Two-sided binomial distribution test
+
+John Edmund Kerrich (1903--1985) was a British statistician who became a prisoner of war during WWII. During his internment he flipped a coin 10,000 times and recorded 5067 heads, 4933 tails. Using a two-sided test at a 10% significance threshold, was his coin fair?
+
+```{r}
+help(pbinom) # for your reference
+(p.value <- 2*pbinom(q=4933,size=10000,prob=0.5))
+p.value <= 0.1
+```
+
+With a *p*-value of 18% we cannot reject the null hypothesis, and continue to assume that the coin is fair.
+
+This simple calculation took advantage of the fact that the binomial distribution is symmetric, so that the left tail region (0--4933 heads) and the right tail region (5067--10000 heads) would have the same probability.  We could have done this many ways:
+
+```{r}
+2*pbinom(4933,10000,0.5)
+pbinom(4933,10000,0.5) + pbinom(5066,10000,0.5,lower.tail=FALSE)
+pbinom(4933,10000,0.5) + (1 - pbinom(5066,10000,0.5))
+2*sum(dbinom(0:4933,10000,0.5))
+1 - sum(dbinom(4934:5066,10000,0.5))
+```
+
+### Scenario 2: One-sided exponential distribution test
+
+The bus stop sign outside your house claims that buses arrive, on average, every 12 minutes, but the first time you waited, it took 18 minutes, and the next time, 30 minutes. Assume bus arrival times are exponentially distributed --- using a one-sided test at a 5% significance threshold, do you still believe the sign?
+
+```{r}
+help(pexp) # for your reference
+(p.value <- (1-pexp(18/12))*(1-pexp(30/12)))
+p.value <= 0.05
+```
+
+With a *p*-value of 1.8% we reject the null hypothesis, and believe that buses arrive less often than the sign says.
+
+This calculation took advantage of the fact that the exponential distribution is memoryless and self-similar (displays fractal properties). We could have also used the Poisson distribution to calculate the probability that no buses would arrive during our waiting periods. The idea of "equally extreme or more extreme" outcomes from our two bus waiting periods can be calculated in a number of ways, all of which are numerically equal:
+
+```{r}
+(1-pexp(q=18/12,rate=1))*(1-pexp(q=30/12,rate=1))
+1-pexp(q=48/12)
+1-pexp(q=48,rate=1/12)
+dpois(0,18/12)*dpois(0,30/12)
+dpois(0,48/12)
+```
+
+### Scenario 3: One-sided permutation test
+
+In 1919 the phycologist Muriel Bristol worked alongside the statistician Ronald Fisher and one day told him that she preferred her tea poured first and then milk added, rather than the other way around. Fisher, skeptical, resolved to test her. He prepared eight cups of tea: four with the milk added first, four with the milk added second. He told Bristol to guess the four cups with milk added first, *and she did*, without any errors. At a 5% significance level, can we conclude that Bristol indeed could tell the cups apart?
+
+```{r}
+help(choose) # for your reference
+(p.value <- 1/choose(8,4))
+p.value <= 0.05
+```
+
+With a *p*-value of 1.4% we reject the null hypothesis, and believe that Muriel Bristol could truly taste a difference between the two methods.
+
+This calculation was a simple combinatoric --- under the null hypothesis that Bristol was guessing by blind luck, she would have chosen any of the $8_C4=70$ distinct sets of four teacups at random. So under the null, there was only a $1/70 \approx 1.4\%$ chance that she would pick the right four cups, which she did. 
+
+## How to compute 'exact' confidence intervals for distributional parameters
+
+### For binomial probabilities *p*
+
+Statisticians debate the merits of several different "exact" solutions for this problem.^[Spoiler: *none* of them offer exact $1 - \alpha$ coverage of the true parameter in all situations.] In this document we'll outline the Clopper-Pearson interval, which is very conservative (meaning that it is *more* likely to contain the true parameter than its nominal confidence level.)
+
+Let's say that 1000 likely United States voters are polled and 65 of them claim they will vote for a third-party candidate in the upcoming presidential election. What would be a 90% "exact" two-sided confidence interval for the true proportion of voters supporting the third-party candidate?^[This scenario assumes that the sample is representative of the electorate and that the respondents are honest about their preferences.]
+
+The good news: this is a simple one-line calculation using `stats::binom.test`!
+
+The better news: you could replicate this using the theory you were taught, and the root-finding helper function `stats::uniroot`!
+
+```{r}
+help(binom.test)
+binom.test(x=65,n=1000,alternative='two.sided',conf.level=0.90)
+
+help(uniroot)
+uniroot(function(z){pbinom(64,1000,z)-0.95},c(0.0,0.065),tol=1e-8)$root
+uniroot(function(z){pbinom(65,1000,z)-0.05},c(0.065,0.1),tol=1e-8)$root
+```
+
+Both methods would also work for one-sided intervals. For example, say that you sample 500 "penny stocks" (companies with very low share prices; typically very speculative or risky investments) and find that 89 of those companies file for bankruptcy within six months. What's a one-sided 80% confidence *upper* bound on the proportion of penny stocks which quickly go bankrupt?
+
+```{r}
+binom.test(x=89,n=500,alternative='less',conf.level=0.80)
+
+uniroot(function(z){pbinom(89,500,z)-0.20},c(0.178,0.3),tol=1e-8)$root
+```
+
+### For other parameters
+
+This scenario does not often happen. Exact confidence intervals are rarely seen by working data scientists outside of binomial proportions. With modern sample sizes, the approximate methods discussed in @sec-thumbs, @sec-clt, and especially @sec-ttests are much more common.
+
+## How to identify a distribution and its likely parameter values
+
+### Testing whether a sample could come from a specific distribution with known parameters
+
+This is a canonical use of the Kolmogorov-Smirnov test. The function `stats::ks.test` comes pre-loaded with every distribution of R. Although a version of the test exists for discrete-valued samples (where "ties" may occur within the ranks of $\boldsymbol{x}$), the base R implementation does not perform this correction. Still, for large sample sizes, you may ignore the warnings in peace.
+
+Suppose we sell "25 pound" bags of dog food which historically have had a mean weight of 25.6 pounds and a standard deviation of 0.3 pounds (we don't want to shortchange the customer.) After a change to the assembly line, the most recent ten bag weights were:
+
+$$\boldsymbol{x}=\{25.3, 25.1, 25.1, 25.5, 25.2, 24.7, 24.8, 24.9, 24.8, 25.5\}$$
+Does the new assembly line preserve our old bag weights?
+
+```{r}
+help(ks.test)
+x <- c(25.3, 25.1, 25.1, 25.5, 25.2,
+       24.7, 24.8, 24.9, 24.8, 25.5)
+ks.test(x,pnorm,mean=25.8,sd=0.4)
+```
+
+No, with $p \approx 0.05\%$, we reject the null at any conventional significance level and conclude that our bags no longer fit the historical distribution. Notice that we have not made a specific claim that the bags weight more or less, or that their spread is wider or narrower, simply that they do not belong to the Normal(25.6,0.3^2^) distribution.
+
+### Testing whether two samples could have come from the same distribution
+
+This is the second canonical use of the Kolmogorov-Smirnov test. We don't even need to know the distribution of either sample. We can still very easily run a test to see if it's possible they share the same CDF.
+
+Let's say we tweak the assembly line again and get a new sample of ten bags.
+
+$$\boldsymbol{y}=\{25.4, 25.7, 26.2, 25.8, 25.6, 26.4, 25.4, 24.9, 26.0, 26.0\}$$
+
+We can ask *(i)* if the new sample is different from the old sample, and *(ii)* whether the new sample conforms to the historical standards:
+
+```{r}
+y <- c(25.4, 25.7, 26.2, 25.8, 25.6, 
+       26.4, 25.4, 24.9, 26.0, 26.0)
+ks.test(x,y)
+ks.test(y,pnorm,mean=25.6,sd=0.3)
+```
+
+Using a 5% significance threshold, we may say that the latest tweak has changed our assembly line from the first sample, and that we have no evidence against the idea that we have returned to the old standards of Normal(25.6,0.3^2^).^[I generated the first sample from a Normal(25.2,0.3^2^) distribution and the second sample from a Normal(25.7,0.5^2^) distribution... you may draw your own conclusions.]
+
+### Identifying and estimating an unknown sample
+
+This is *not* a canonical use of the Kolmogorov-Smirnov test. Above, we tested whether a sample of data belonged to a *known*, *fully-specified* distribution. If we instead are estimating the distribution parameters from the data itself, the test is no longer fully accurate.
+
+However... this remains common in exploratory data analysis (EDA). WE don't need to convince an outside audience, we just need to convince ourselves.  For example, let's take the second sample of dog food bag weights:
+
+$$\boldsymbol{y}=\{25.4, 25.7, 26.2, 25.8, 25.6, 26.4, 25.4, 24.9, 26.0, 26.0\}$$
+
+Say we had no prior idea which distribution these came from, and we wanted a guess. The data seem continuous and don't seem to have natural bounds. Two candidate distributions might be the Cauchy and the Normal. We'll find the best parameters for both (using `MASS::fitdistr`) and see if they're any good:
+
+```{r}
+#| warning: FALSE
+library(MASS)
+y <- c(25.4, 25.7, 26.2, 25.8, 25.6, 
+       26.4, 25.4, 24.9, 26.0, 26.0)
+
+(cauchy.pars <- fitdistr(y,dcauchy,start=list(location=25,scale=0.5))$estimate)
+ks.test(y,pcauchy,location=cauchy.pars[1],scale=cauchy.pars[2])
+
+(normal.pars <- fitdistr(y,dnorm,start=list(mean=25,sd=0.5))$estimate)
+ks.test(y,pnorm,mean=normal.pars[1],sd=normal.pars[2])
+```
+
+From this we conclude that the small sample of ten dog food weights could easily be from a Cauchy distribution *or* from a Normal distribution. More observations would help us to determine whether one of these distributions is a better fit to the dog food bag weights.

@@ -1,1 +1,61 @@
-# Geometric distribution {.unnumbered}
+# Geometric distribution {#dist-geometric}
+
+The Geometric distribution counts the number of trials needed before the first success (or alternatively the number of successes needed before the first failure).
+
+Different textbooks will use one of two conventions: either *(i)* the Geometric distribution counts the number of *failures* before the first success, or *(ii)* the Geometric distribution counts the number of *total trials* including both the failures and the last trial ending in success. You should always be sure to stay consistent and not to mix these two cases in your work or when searching for reference material!
+
+We will use the first definition on this page, counting only the *failures*, which is the convention used by R. So if the very first trial ends in success, then we would write $X=0$ failures.
+
+## Assumptions
+
+Let $B_1, \ldots, B_n$ be a series of $n$ Bernoulli variables each identically and independently distributed with parameter $p$. Let $X$ denote the index of the last failure before the first success, *i.e.*
+
+$$B_{X+1} = 1; \;B_i = 0 \; \forall i \le X$$
+
+Then $X \sim \mathrm{Geometric}(p)$.
+
+Two key premises of the Geometric distribution are that *(i)* $n$, the number of trials, is allowed to vary until it reaches a natural stopping point,^[Unlike, say, the Binomial distribution in which the number of trials are fixed ahead of time] and *(ii)* the probability of success never changes over time or in response to the previous trials.
+
+## Definition
+
+$$\begin{array}{ll}
+  \text{Support:} & \{0,1,2,\ldots,n\} \\
+  \text{Parameter(s):} & p,\text{ the probability of success }(p \in [0,1]) \\
+  \text{PMF:} & P(X=k) = p(1 - p)^k \\
+  \text{CDF:} & F_X(x) = \left\{\begin{array}{cl} 0, & \quad x \lt 0 \\ 1 - (1-p)^{\lfloor x \rfloor + 1}, & \quad x \ge 0 \end{array}\right\} \\
+  \text{Mean:} & \mathbb{E}[X] = \frac{1-p}{p} \\
+  \text{Variance:} & \mathbb{V}[X] = \frac{1-p}{p^2} \\
+\end{array}$$
+
+
+## Visualizer
+```{shinylive-r}
+#| standalone: true
+#| viewerHeight: 650
+
+library(shiny)
+library(bslib)
+
+ui <- page_fluid(
+      tags$head(tags$style(HTML("body {overflow-x: hidden;}"))),
+  title = "Geometric distribution PMF",
+  fluidRow(plotOutput("distPlot")),
+  fluidRow(sliderInput("p", "Probability (p)", min=0.01, max=0.99, step=0.01, value=0.5)))
+
+server <- function(input, output) {
+  output$distPlot <- renderPlot({
+    plot(x=0:20,y=dgeom(x=0:20,input$p),main=NULL,
+         xlab='x (Prior failures)',ylab='Probability',type='h',lwd=3)})
+}
+
+shinyApp(ui = ui, server = server)
+```
+ 
+## Relations to other distributions
+    
+ * The Geometric distribution (specifically type *(ii)* mentioned above which also counts the last success) forms a discrete approximation to the Exponential distribution with $\lambda = p$, and the quality of this approximation grows for $p$ near 0. For example, compare:
+ 
+```{r}
+pgeom(q=20,prob=0.05)
+pexp(q=21,rate=0.05)
+```

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>rulesofthumb – Statistical Analysis Using R: Online Notes</title>
+<title>Handy rules of thumb – Statistical Analysis Using R: Online Notes</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -30,7 +30,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./simpleregression.html" rel="next">
+<link href="./howtoapproximate.html" rel="next">
 <link href="./ttests.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -70,6 +70,35 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -82,7 +111,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./newton.html">2. Useful Approximations</a></li><li class="breadcrumb-item"><a href="./rulesofthumb.html"><span class="chapter-title">rulesofthumb.html</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./newton.html">2. Useful Approximations</a></li><li class="breadcrumb-item"><a href="./rulesofthumb.html"><span class="chapter-title">Handy rules of thumb</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -140,7 +169,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./biasvariance.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Estimator bias and variance</span></a>
+  <a href="./biasvariance.html" class="sidebar-item-text sidebar-link"><span class="chapter-title"><em>Estimator bias and variance</em></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -151,6 +180,11 @@ ul.task-list li input[type="checkbox"] {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./identification.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Identifying distributions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./howtounivariate.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Coding it up in R</span></a>
   </div>
 </li>
       </ul>
@@ -166,27 +200,32 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./newton.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">newton.html</span></a>
+  <a href="./newton.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The Newton-Raphson method</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./gradientdescent.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">gradientdescent.html</span></a>
+  <a href="./gradientdescent.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Gradient descent</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./clt.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">clt.html</span></a>
+  <a href="./clt.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The Central Limit Theorem</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./ttests.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">ttests.html</span></a>
+  <a href="./ttests.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The Student’s <em>t</em> distribution</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./rulesofthumb.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">rulesofthumb.html</span></a>
+  <a href="./rulesofthumb.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Handy rules of thumb</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./howtoapproximate.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Coding it up in R</span></a>
   </div>
 </li>
       </ul>
@@ -202,32 +241,17 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./simpleregression.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">simpleregression.html</span></a>
+  <a href="./simpleregression.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Simple regression</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./simplels.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">simplels.html</span></a>
+  <a href="./multiplemle.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Multiple regression</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./simplemle.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">simplemle.html</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./multiplemle.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">multiplemle.html</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./olsproperties.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">olsproperties.html</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./variancedecomposition.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">variancedecomposition.html</span></a>
+  <a href="./variancedecomposition.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The ANOVA ‘Triangle’</span></a>
   </div>
 </li>
       </ul>
@@ -440,17 +464,220 @@ ul.task-list li input[type="checkbox"] {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#whats-this-all-about" id="toc-whats-this-all-about" class="nav-link active" data-scroll-target="#whats-this-all-about">What’s this all about?</a></li>
+  <li><a href="#chebychevs-inequality" id="toc-chebychevs-inequality" class="nav-link" data-scroll-target="#chebychevs-inequality">Chebychev’s Inequality</a></li>
+  <li><a href="#common-quantiles-of-the-normal-distribution" id="toc-common-quantiles-of-the-normal-distribution" class="nav-link" data-scroll-target="#common-quantiles-of-the-normal-distribution">Common quantiles of the Normal distribution</a></li>
+  <li><a href="#extremely-quick-and-dirty-tests-and-intervals" id="toc-extremely-quick-and-dirty-tests-and-intervals" class="nav-link" data-scroll-target="#extremely-quick-and-dirty-tests-and-intervals"><em>Extremely</em> quick and dirty tests and intervals</a></li>
+  <li><a href="#the-rule-of-three" id="toc-the-rule-of-three" class="nav-link" data-scroll-target="#the-rule-of-three">The Rule of Three</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
-<main class="content column-page-right" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./newton.html">2. Useful Approximations</a></li><li class="breadcrumb-item"><a href="./rulesofthumb.html"><span class="chapter-title">rulesofthumb.html</span></a></li></ol></nav></header>
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./newton.html">2. Useful Approximations</a></li><li class="breadcrumb-item"><a href="./rulesofthumb.html"><span class="chapter-title">Handy rules of thumb</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span id="sec-thumbs" class="quarto-section-identifier"><span class="chapter-title">Handy rules of thumb</span></span></h1>
+</div>
 
 
 
+<div class="quarto-title-meta column-body">
+
+    
+  
+    
+  </div>
+  
 
 
+</header>
 
+
+<section id="whats-this-all-about" class="level2">
+<h2 class="anchored" data-anchor-id="whats-this-all-about">What’s this all about?</h2>
+<p>In your professional career, you will sometimes be asked for an opinion “on the spot”, with little to no time for preparation or programming. At other times, you will need to identify mistakes in calculations that <em>seemed</em> correct, and produced no programming errors, but which a trained eye would spot as clearly wrong. For these occasions, it helps to have a few “party tricks”, rules of thumb which put you in the ballpark of the correct answer.</p>
+<p>These four rules are not essential to your understanding of parametric inference. But they might be helpful to you on your personal and professional data science journey.</p>
+</section>
+<section id="chebychevs-inequality" class="level2">
+<h2 class="anchored" data-anchor-id="chebychevs-inequality">Chebychev’s Inequality</h2>
+<p>The first such rule is called Chebychev’s Inequality. It helps us to identify how much of a given distribution can be found within a certain distance of its mean:</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong><em>Chebychev’s Inequality:</em></strong> Let <span class="math inline">\(X\)</span> be a random variable with mean <span class="math inline">\(\mu\)</span> and finite, nonzero variance <span class="math inline">\(\sigma^2\)</span>. Then,</p>
+<p><span class="math display">\[P(|X-\mu| &gt; k\sigma) \le \frac{1}{k^2}\]</span></p>
+</div>
+</div>
+<p>Put in plainer (though less precise) terms, no more than <span class="math inline">\(1⁄k^2\)</span> of a distribution’s mass or density can be more than <span class="math inline">\(k\)</span> standard deviations from its mean. For example,</p>
+<ul>
+<li><p>At least 75% of a random variable’s values will be observed within 2 standard deviations of the mean (at most 1⁄4=25% of observations will be farther away).</p></li>
+<li><p>At least 96% of a random variable’s values will be observed within 5 standard deviations of the mean (at most 1⁄25=4% of observations will be farther away).</p></li>
+</ul>
+<p>This inequality can be very conservative. For example, you have probably heard that in the Normal distribution, more than 95% of values are within 2 standard deviations of the mean, much more than the 75% guaranteed above. But Chebychev’s Inequality will always be true, for any random variable with finite variance, and it can be useful to have an easily-remembered bound which works in every situation.</p>
+</section>
+<section id="common-quantiles-of-the-normal-distribution" class="level2">
+<h2 class="anchored" data-anchor-id="common-quantiles-of-the-normal-distribution">Common quantiles of the Normal distribution</h2>
+<p>You probably already know the second rule I will share: the relative spread of the Normal distribution:</p>
+<ul>
+<li>Approximately 68% of the data falls within 1 standard deviation of the mean</li>
+<li>Approximately 95% of the data falls within 2 standard deviations of the mean</li>
+<li>Approximately 99.7% of the data falls within 3 standard deviations of the mean</li>
+</ul>
+<p>These numbers are only meant for Normally distributed populations. However, they are useful approximations in many other contexts, including:</p>
+<ul>
+<li>The chi-squared distribution with large degrees of freedom<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></li>
+<li>The <em>t</em> distribution with moderate or large degrees of freedom<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></li>
+<li>The binomial distribution, with large sample sizes and probabilities of success that are neither very large nor very small<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a></li>
+<li>The Poisson distribution, with large intensities<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a></li>
+</ul>
+<p>In time, you will build a comfort for when this approximation is useful and when it could mislead you or your colleagues/stakeholders/audience. For now, I will illustrate its relative degree of accuracy by comparing several distributional choices.</p>
+<div id="tbl-thumbrule" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-thumbrule-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;11.1: Normal rule-of-thumb applied to other distributions
+</figcaption>
+<div aria-describedby="tbl-thumbrule-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Distribution name</th>
+<th style="text-align: left;">Parameter choice</th>
+<th style="text-align: left;">Proportion w/in 2 sd of mean</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Normal</td>
+<td style="text-align: left;"><em>(any)</em></td>
+<td style="text-align: left;">95.4%</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Student’s <em>t</em></td>
+<td style="text-align: left;">df=10</td>
+<td style="text-align: left;">92.7%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">df=100</td>
+<td style="text-align: left;">95.2%</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Binomial</td>
+<td style="text-align: left;">N=10, p=0.1</td>
+<td style="text-align: left;">93.0%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">N=100, p=0.01</td>
+<td style="text-align: left;">92.1%</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">N=100, p=0.1</td>
+<td style="text-align: left;">95.9%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Chi-square</td>
+<td style="text-align: left;">df=10</td>
+<td style="text-align: left;">95.9%</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">df=100</td>
+<td style="text-align: left;">95.6%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Poisson</td>
+<td style="text-align: left;"><span class="math inline">\(\lambda\)</span>=10</td>
+<td style="text-align: left;">96.3%</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="math inline">\(\lambda\)</span>=100</td>
+<td style="text-align: left;">95.5%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Exponential</td>
+<td style="text-align: left;"><em>(any)</em></td>
+<td style="text-align: left;">95.0%</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Uniform</td>
+<td style="text-align: left;"><em>(any)</em></td>
+<td style="text-align: left;">100.0%</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>Most statistics textbooks will warn you that the statement “95% of values fall within 2 standard deviations of the mean” is only true for the Normal distribution. Those books fail to mention that the rule is actually <em>more</em> true for some <em>other</em> distributions than it is for the Normal distribution itself!</p>
+</section>
+<section id="extremely-quick-and-dirty-tests-and-intervals" class="level2">
+<h2 class="anchored" data-anchor-id="extremely-quick-and-dirty-tests-and-intervals"><em>Extremely</em> quick and dirty tests and intervals</h2>
+<p>Building off the above tip, I want to give you a mental math tool that would never be rigorous enough for a formal result, but which can help you make decisions during EDA and answer some stakeholder questions in real time.</p>
+<p><strong>Under the null hypothesis, sample statistics will be observed within two standard errors of the hypothesized mean roughly 95% of the time</strong>.</p>
+<p>This basic concept allows us to approximate some basic hypothesis tests and create some rough confidence intervals very quickly. The results are not always very accurate, but most results in life are not borderline cases: they point pretty clearly in one direction or another. So to speed our work, we can rely upon this rule to move forward and follow up with more precise calculations when needed.</p>
+<p>Let’s apply this rule to several different distributions. No R code or calculators were needed for these examples!</p>
+<ol type="1">
+<li><p>When estimating a proportion from a sample, what sample size would you need for the estimate to likely be within 5 percentage points of the truth?</p>
+<ul>
+<li>The mean of a Bernoulli variable is <span class="math inline">\(\mu=p\)</span></li>
+<li>The variance of a Bernoulli variable is <span class="math inline">\(p(1-p)\)</span></li>
+<li>The standard error of its mean would be <span class="math inline">\(s.e.\!(\hat{\mu})=\sqrt{p(1-p)/n}\)</span></li>
+<li>This error is at its maximum when <span class="math inline">\(p=0.5\)</span> and <span class="math inline">\(s.e.\!(\hat{\mu})=0.5/\sqrt{n}\)</span></li>
+<li>Two standard errors would be a radius of <span class="math inline">\(1/\sqrt{n}\)</span></li>
+<li><span class="math inline">\(1/\sqrt{n}=10\%\)</span> when <span class="math inline">\(n=100\)</span> and <span class="math inline">\(1/\sqrt{n}=5\%\)</span> when <span class="math inline">\(n=400\)</span></li>
+<li>Therefore we need a sample of 400 if we want our sample proportion to likely be within 5 percentage points of the mean. If we’re okay with a possible 10pp error, then our sample size could be 100.</li>
+</ul></li>
+<li><p>A hospital in a rural area sees 100 births over a four-year period. If births are Poisson-distributed, what’s a 95% confidence interval for the yearly rate parameter <span class="math inline">\(\lambda\)</span>?</p>
+<ul>
+<li>In the Poisson distribution, <span class="math inline">\(\lambda\)</span> is both the mean and the variance</li>
+<li>So we estimate <span class="math inline">\(\hat{\lambda}=\hat{\mu}=\hat{\sigma}^2=\bar{x}=25\)</span></li>
+<li>The standard error would be <span class="math inline">\(\hat{\sigma}/\sqrt{n}=5/2=2.5\)</span></li>
+<li>Two standard errors would be 5</li>
+<li>Our confidence interval for <span class="math inline">\(\lambda\)</span> is <span class="math inline">\(25 \pm 5 = [20,30]\)</span></li>
+</ul></li>
+<li><p>We conduct a test producing a <span class="math inline">\(\chi^2\)</span> (chi-squared) statistic of 118 with 72 degrees of freedom. Can we reject the null at the 5% significance level?</p>
+<ul>
+<li>In the <span class="math inline">\(\chi^2\)</span> distribution, the mean is <span class="math inline">\(df\)</span> and the variance is <span class="math inline">\(2\cdot df\)</span></li>
+<li>Under the null, sample statistics will mostly be observed with the range <span class="math inline">\(\mu \pm 2\sigma\)</span></li>
+<li><span class="math inline">\(\mu = df = 72\)</span></li>
+<li><span class="math inline">\(\sigma = \sqrt{2 df} = \sqrt{144} = 12\)</span></li>
+<li>We would only expect to observe statistics as high as <span class="math inline">\(72 + 2 \cdot 12 = 96\)</span></li>
+<li>A sample statistic of 118 therefore gives us enough evidence to reject the null hypothesis.</li>
+</ul></li>
+</ol>
+</section>
+<section id="the-rule-of-three" class="level2">
+<h2 class="anchored" data-anchor-id="the-rule-of-three">The Rule of Three</h2>
+<p>The last rule of thumb I wish to present is sometimes called <strong><em>The Rule of Three</em></strong>. If you observe a sample, looking for some event to occur (such as inspecting parts from an assembly line for possible defects), and the event has <em>never</em> occurred in your sample, then a very accurate 95% confidence interval for the event’s true proportion is <span class="math inline">\([0,3/n]\)</span> where <span class="math inline">\(n\)</span> is the sample size.</p>
+<p>So, for example, if you are auditing voting ballots, looking for instances of ballot fraud, and you audit 300 ballots without finding a single case of fraud, then you can say that while we do not know the true incidence rate of fraud, we may be 95% confident that the rate is less than 3⁄300=1%.</p>
+
+
+</section>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1"><p>Where <span class="math inline">\(\sigma = \sqrt{2df}\)</span>.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>Where <span class="math inline">\(\sigma \approx 1\)</span>.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p>Where <span class="math inline">\(\sigma = \sqrt{Np(1-p)}\)</span>.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4"><p>Where <span class="math inline">\(\sigma = \sqrt{\lambda}\)</span>.<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -811,25 +1038,64 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         }
       };
     }
-      // Attach click handler to the DT
-      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
-      for (const annoteDlNode of annoteDls) {
-        annoteDlNode.addEventListener('click', (event) => {
-          const clickedEl = event.target;
-          if (clickedEl !== selectedAnnoteEl) {
-            unselectCodeLines();
-            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
-            if (activeEl) {
-              activeEl.classList.remove('code-annotation-active');
-            }
-            selectCodeLines(clickedEl);
-            clickedEl.classList.add('code-annotation-active');
-          } else {
-            // Unselect the line
-            unselectCodeLines();
-            clickedEl.classList.remove('code-annotation-active');
+      const annoteTargets = window.document.querySelectorAll('.code-annotation-anchor');
+      for (let i=0; i<annoteTargets.length; i++) {
+        const annoteTarget = annoteTargets[i];
+        const targetCell = annoteTarget.getAttribute("data-target-cell");
+        const targetAnnotation = annoteTarget.getAttribute("data-target-annotation");
+        const contentFn = () => {
+          const content = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          if (content) {
+            const tipContent = content.cloneNode(true);
+            tipContent.classList.add("code-annotation-tip-content");
+            return tipContent.outerHTML;
           }
-        });
+        }
+        const config = {
+          allowHTML: true,
+          content: contentFn,
+          onShow: (instance) => {
+            selectCodeLines(instance.reference);
+            instance.reference.classList.add('code-annotation-active');
+            window.tippy.hideAll();
+          },
+          onHide: (instance) => {
+            unselectCodeLines();
+            instance.reference.classList.remove('code-annotation-active');
+          },
+          maxWidth: 300,
+          delay: [50, 0],
+          duration: [200, 0],
+          offset: [5, 10],
+          arrow: true,
+          appendTo: function(el) {
+            return el.parentElement.parentElement.parentElement;
+          },
+          interactive: true,
+          interactiveBorder: 10,
+          theme: 'quarto',
+          placement: 'right',
+          popperOptions: {
+            modifiers: [
+            {
+              name: 'flip',
+              options: {
+                flipVariations: false, // true by default
+                allowedAutoPlacements: ['right'],
+                fallbackPlacements: ['right', 'top', 'top-start', 'top-end', 'bottom', 'bottom-start', 'bottom-end', 'left'],
+              },
+            },
+            {
+              name: 'preventOverflow',
+              options: {
+                mainAxis: false,
+                altAxis: false
+              }
+            }
+            ]        
+          }      
+        };
+        window.tippy(annoteTarget, config); 
       }
   const findCites = (el) => {
     const parentEl = el.parentElement;
@@ -870,15 +1136,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script>
-<nav class="page-navigation column-page-right">
+<nav class="page-navigation column-body">
   <div class="nav-page nav-page-previous">
-      <a href="./ttests.html" class="pagination-link" aria-label="ttests.html">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">ttests.html</span></span>
+      <a href="./ttests.html" class="pagination-link" aria-label="The Student's *t* distribution">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">The Student’s <em>t</em> distribution</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./simpleregression.html" class="pagination-link" aria-label="simpleregression.html">
-        <span class="nav-page-text"><span class="chapter-title">simpleregression.html</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./howtoapproximate.html" class="pagination-link" aria-label="Coding it up in R">
+        <span class="nav-page-text"><span class="chapter-title">Coding it up in R</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

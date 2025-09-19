@@ -1,4 +1,4 @@
-# Estimator bias and variance {#sec-biasvariance}
+# *Estimator bias and variance* {#sec-biasvariance}
 
 Not all estimators are created equal. Some estimators are worse than others, and they can be better or worse in different ways. Let's pretend we have a normally distributed population (such as people's heights, or stock returns), and we would like to estimate the true mean of the population $\mu$ from a sample of 100 observations, $\boldsymbol{x}$. We have already learned that the maximum likelihood estimator for the true mean is $\bar{x}$, the sample mean. What if I forced you to pick one of two alternative estimators: 
 

@@ -190,5 +190,17 @@
   },
   "selectionalgorithms.qmd": {
     "selectionalgorithms.html": "1b538fb8"
+  },
+  "howtounivariate.qmd": {
+    "howtounivariate.html": "788edde4"
+  },
+  "howtoapproximate.qmd": {
+    "howtoapproximate.html": "95280a73"
+  },
+  "howtoregress.qmd": {
+    "howtoregress.html": "00de40d9"
+  },
+  "nonlinearity.qmd": {
+    "nonlinearity.html": "d7c991be"
   }
 }

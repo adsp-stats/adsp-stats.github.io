@@ -14,6 +14,7 @@ book:
         - biasvariance.qmd
         - confidenceintervals.qmd
         - identification.qmd
+        - howtounivariate.qmd
     - part: "2. Useful Approximations"
       chapters:
         - newton.qmd
@@ -21,21 +22,20 @@ book:
         - clt.qmd
         - ttests.qmd
         - rulesofthumb.qmd
+        - howtoapproximate.qmd
     - part: "3. Linear Regression"
       chapters:
         - simpleregression.qmd
-        - simplels.qmd
-        - simplemle.qmd
         - multiplemle.qmd
-        - olsproperties.qmd
         - variancedecomposition.qmd
+        - howtoregress.qmd
     - part: "4. Regression Robustness"
       chapters:
+        - robustness.qmd
         - heteroskedasticity.qmd
         - autocorrelation.qmd
         - nonnormality.qmd
-        - outliers.qmd
-        - multicollinearity.qmd
+        - nonlinearity.qmd
     - part: "5. Feature Engineering"
       chapters:
         - categoricalpredictors.qmd
@@ -75,6 +75,7 @@ format:
     code-overflow: wrap
     page-layout: full
     smooth-scroll: true
+    code-annotations: hover
     
 filters:
   - shinylive

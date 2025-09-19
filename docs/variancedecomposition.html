@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>variancedecomposition – Statistical Analysis Using R: Online Notes</title>
+<title>Variance decomposition – Statistical Analysis Using R: Online Notes</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -30,8 +64,8 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./heteroskedasticity.html" rel="next">
-<link href="./olsproperties.html" rel="prev">
+<link href="./howtoregress.html" rel="next">
+<link href="./multiplemle.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -70,6 +104,35 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -82,7 +145,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./simpleregression.html">3. Linear Regression</a></li><li class="breadcrumb-item"><a href="./variancedecomposition.html"><span class="chapter-title">variancedecomposition.html</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./simpleregression.html">3. Linear Regression</a></li><li class="breadcrumb-item"><a href="./variancedecomposition.html"><span class="chapter-title">Variance decomposition</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -140,7 +203,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./biasvariance.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Estimator bias and variance</span></a>
+  <a href="./biasvariance.html" class="sidebar-item-text sidebar-link"><span class="chapter-title"><em>Estimator bias and variance</em></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -151,6 +214,11 @@ ul.task-list li input[type="checkbox"] {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./identification.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Identifying distributions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./howtounivariate.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Coding it up in R</span></a>
   </div>
 </li>
       </ul>
@@ -166,27 +234,32 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./newton.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">newton.html</span></a>
+  <a href="./newton.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The Newton-Raphson method</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./gradientdescent.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">gradientdescent.html</span></a>
+  <a href="./gradientdescent.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Gradient descent</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./clt.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">clt.html</span></a>
+  <a href="./clt.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The Central Limit Theorem</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./ttests.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">ttests.html</span></a>
+  <a href="./ttests.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The Student’s <em>t</em> distribution</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./rulesofthumb.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">rulesofthumb.html</span></a>
+  <a href="./rulesofthumb.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Handy rules of thumb</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./howtoapproximate.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Coding it up in R</span></a>
   </div>
 </li>
       </ul>
@@ -202,32 +275,22 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./simpleregression.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">simpleregression.html</span></a>
+  <a href="./simpleregression.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Simple regression</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./simplels.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">simplels.html</span></a>
+  <a href="./multiplemle.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Multiple regression</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./simplemle.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">simplemle.html</span></a>
+  <a href="./variancedecomposition.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Variance decomposition</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./multiplemle.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">multiplemle.html</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./olsproperties.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">olsproperties.html</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./variancedecomposition.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">variancedecomposition.html</span></a>
+  <a href="./howtoregress.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Coding it up in R</span></a>
   </div>
 </li>
       </ul>
@@ -243,7 +306,7 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./heteroskedasticity.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">heteroskedasticity.html</span></a>
+  <a href="./heteroskedasticity.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Heteroskedasticity</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -423,14 +486,12 @@ ul.task-list li input[type="checkbox"] {
   </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./proofs.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Proofs</span></a>
+  <a href="./proofs.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Proofs</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./listofsymbols.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">List of Symbols</span></a>
+  <a href="./listofsymbols.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">List of Symbols</span></a>
   </div>
 </li>
       </ul>
@@ -440,17 +501,176 @@ ul.task-list li input[type="checkbox"] {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#motivating-the-problem" id="toc-motivating-the-problem" class="nav-link active" data-scroll-target="#motivating-the-problem">Motivating the problem</a></li>
+  <li><a href="#the-anova-triangle" id="toc-the-anova-triangle" class="nav-link" data-scroll-target="#the-anova-triangle">The ANOVA ‘Triangle’</a></li>
+  <li><a href="#visualizer" id="toc-visualizer" class="nav-link" data-scroll-target="#visualizer">Visualizer</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
-<main class="content column-page-right" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./simpleregression.html">3. Linear Regression</a></li><li class="breadcrumb-item"><a href="./variancedecomposition.html"><span class="chapter-title">variancedecomposition.html</span></a></li></ol></nav></header>
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./simpleregression.html">3. Linear Regression</a></li><li class="breadcrumb-item"><a href="./variancedecomposition.html"><span class="chapter-title">Variance decomposition</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span id="sec-variancedecomposition" class="quarto-section-identifier"><span class="chapter-title">Variance decomposition</span></span></h1>
+</div>
 
 
 
+<div class="quarto-title-meta column-body">
+
+    
+  
+    
+  </div>
+  
 
 
+</header>
 
+
+<section id="motivating-the-problem" class="level2">
+<h2 class="anchored" data-anchor-id="motivating-the-problem">Motivating the problem</h2>
+<p>Most of these notes concern Maximum Likelihood theory, but I’d like to briefly return to the Least Squares interpretation. We saw previously that the Least Squares method identifies the line-of-best-fit by minimizing the residual sum of squares (RSS), which is also sometimes called the sum of squared errors (SSE).<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<p>Just as the Maximum Likelihood approach allowed us to construct <span class="math inline">\(t\)</span>-tests and confidence intervals, the Least Squares interpretation suggests a powerful tool of its own, which I will call <em>variance decomposition</em>. Before I explain this tool, let me explain the problem that it will solve.</p>
+<p>Likelihood theory allows us to say whether one set of estimates for <span class="math inline">\(\boldsymbol{\beta}\)</span> is <em>better</em> or <em>worse</em> than another. It even allows us to find the <em>best</em> estimates for <span class="math inline">\(\boldsymbol{\beta}\)</span>. But these are all <em>relative</em> measures: likelihood theory cannot tell us if the best fitting line is actually any good, in an <em>absolute</em> sense. What use is the <em>best</em> model if it’s still a bad model? How can we measure model performance on an absolute scale?</p>
+<p>In the sections above, I’ve already shown metrics of predictive accuracy such as mean absolute error (MAE) and root mean squared error (RMSE):</p>
+<p><span class="math display">\[\mathrm{MAE} = \frac{1}{n} \sum_i |y_i - \hat{y}_i|\]</span></p>
+<p><span class="math display">\[\mathrm{RMSE} = \frac{1}{n} \sum_i (y_i - \hat{y}_i)^2\]</span></p>
+<p>These metrics are very dependent on the scale of the data and the natural variance of the response variable <span class="math inline">\(Y\)</span>. If I compute a model RMSE of 5, or a model MAE of 6000, I still don’t know whether these numbers are impressive or useful until I better understand the data and the modeling context. It would be helpful to construct a regression model metric with the following properties:</p>
+<ul>
+<li>Unitless</li>
+<li>Not affected by the scale of the response or the predictors</li>
+<li>Measures how “good” a model is <em>independent of other models</em>, that is, the metric should mean something even when applied to a single model</li>
+</ul>
+</section>
+<section id="the-anova-triangle" class="level2">
+<h2 class="anchored" data-anchor-id="the-anova-triangle">The ANOVA ‘Triangle’</h2>
+<p>The idea we will follow is to use the variance of our response vector <span class="math inline">\(\boldsymbol{y}\)</span> as a predictive benchmark. If our model can “explain” 100% of the variance of <span class="math inline">\(\boldsymbol{y}\)</span>, that is the best any model can do.<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> If the model can “explain” 0% of the variance of <span class="math inline">\(\boldsymbol{y}\)</span>, then it is the worst (or at least simplest) model we can build, and we should continue to look for better models.</p>
+<p>What does it mean for a model to “explain” the variance of <span class="math inline">\(\boldsymbol{y}\)</span>? The math below shows that we can always take the variance of <span class="math inline">\(\boldsymbol{y}\)</span> and split it into two parts: one part of the variance which is matched by the model predictions <span class="math inline">\(\hat{\boldsymbol{y}}\)</span>, and another part which is matched by the residuals <span class="math inline">\(\boldsymbol{e}\)</span>.</p>
+<p>This method is sometimes referred to as a decomposition of variance, or simply an <strong>analysis of variance</strong>, which in turn is shortened to <strong>ANOVA</strong>.</p>
+<p>Recall the basic framework of the linear model. We believe that our response vector is the sum of <em>(i)</em> an unknown linear combination of the predictors, and <em>(ii)</em> an unknown set of errors:</p>
+<p><span class="math display">\[\boldsymbol{y} = \mathbf{X}\boldsymbol{\beta} + \boldsymbol{\varepsilon}\]</span></p>
+<p>We observe <span class="math inline">\(\boldsymbol{y}\)</span> and <span class="math inline">\(\mathbf{X}\)</span>, but there are an infinite number of interdependent solutions for <span class="math inline">\(\boldsymbol{\beta}\)</span> and <span class="math inline">\(\boldsymbol{\varepsilon}\)</span>. Using some method (least squares, maximum likelihood, blind guesses, etc.) we estimate <span class="math inline">\(\boldsymbol{\beta}\)</span> which also creates an estimate for the errors <span class="math inline">\(\boldsymbol{\varepsilon}\)</span>. We call the estimated errors the “residuals”, and sometimes write them as <span class="math inline">\(\boldsymbol{e}\)</span>:</p>
+<p><span class="math display">\[\begin{aligned} \hat{\boldsymbol{y}} &amp;= \mathbf{X}\hat{\boldsymbol{\beta}} \\ \boldsymbol{y} - \hat{\boldsymbol{y}} &amp;= \boldsymbol{e} \end{aligned}\]</span></p>
+<p>Let me start by asserting two preliminary results. (The proofs for these statements can be found in the appendices.)</p>
+<ul>
+<li><p>The average of the residuals of OLS regression is always zero:</p>
+<p><span class="math display">\[\bar{\boldsymbol{e}} = \frac{1}{n}\sum_i e_i = 0\]</span></p></li>
+<li><p>The average of the fitted values <span class="math inline">\(\hat{\boldsymbol{y}}\)</span> is the same as the average of the sample <span class="math inline">\(\boldsymbol{y}\)</span>:</p>
+<p><span class="math display">\[\bar{\hat{\boldsymbol{y}}} = \frac{1}{n}\sum_i \hat{y}_i = \frac{1}{n}\sum_i y_i = \bar{\boldsymbol{y}}\]</span></p></li>
+</ul>
+<p>Next, consider the following arithmetic equality:<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a></p>
+<p><span class="math display">\[(y_i - \bar{y}) = (\hat{y}_i - \bar{y}) + (y_i - \hat{y}_i)\]</span></p>
+<p>If we prefer, we can represent this equality geometrically, using vectors. I will use the notation <span class="math inline">\(\tilde{\boldsymbol{y}} = 1\!\!1 \cdot \bar{y}\)</span> to stay as precise as possible as we move from scalars to vectors, so you can think of <span class="math inline">\(\tilde{\boldsymbol{y}}\)</span> as “the vectorized mean of y”:</p>
+<p><span class="math display">\[(\boldsymbol{y} - \tilde{\boldsymbol{y}}) = (\hat{\boldsymbol{y}} - \tilde{\boldsymbol{y}}) + (\boldsymbol{y} - \hat{\boldsymbol{y}})\]</span></p>
+<p>If we draw these vectors on a coördinate plane, we should recall the assumption that the residuals are independent of the predictors <span class="math inline">\(\mathbf{X}\)</span>, which means they are also independent of any linear combination of those predictors, such as <span class="math inline">\(\hat{\boldsymbol{y}}\)</span>. This orthogonality creates a right triangle out of the arithmetic equality above:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>X <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>Y <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">6</span>,<span class="dv">8</span>,<span class="dv">6</span>,<span class="dv">2</span>,<span class="dv">3</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>Yhat <span class="ot">&lt;-</span> <span class="fu">lm</span>(Y<span class="sc">~</span>X)<span class="sc">$</span>fitted.values</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>e <span class="ot">&lt;-</span> <span class="fu">lm</span>(Y<span class="sc">~</span>X)<span class="sc">$</span>residuals</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>vec.length <span class="ot">&lt;-</span> <span class="cf">function</span>(z) <span class="fu">sqrt</span>(<span class="fu">c</span>(z<span class="sc">%*%</span>z))</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="at">x=</span><span class="cn">NA</span>,<span class="at">y=</span><span class="cn">NA</span>,<span class="at">xlim=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">5</span>),<span class="at">ylim=</span><span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.5</span>,<span class="dv">4</span>),<span class="at">xlab=</span><span class="st">'Model space'</span>,<span class="at">ylab=</span><span class="st">'Error space'</span>,</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>     <span class="at">axes=</span><span class="cn">FALSE</span>,<span class="at">main=</span><span class="st">'Arithmetic of ANOVA Triangle'</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(<span class="at">x=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="fu">vec.length</span>(Yhat<span class="sc">-</span><span class="fu">mean</span>(Y)),<span class="fu">vec.length</span>(Yhat<span class="sc">-</span><span class="fu">mean</span>(Y)),<span class="dv">0</span>),</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">y=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="fu">vec.length</span>(e),<span class="dv">0</span>))</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="at">x=</span><span class="fl">1.75</span>,<span class="at">y=</span><span class="dv">2</span>,<span class="at">labels=</span><span class="fu">expression</span>(Y<span class="sc">-</span><span class="fu">tilde</span>(Y)))</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="at">x=</span><span class="fl">2.5</span>,<span class="at">y=</span><span class="sc">-</span><span class="fl">0.25</span>,<span class="at">labels=</span><span class="fu">expression</span>(<span class="fu">hat</span>(Y)<span class="sc">-</span><span class="fu">tilde</span>(Y)))</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="at">x=</span><span class="fl">4.25</span>,<span class="at">y=</span><span class="fl">1.5</span>,<span class="at">labels=</span><span class="fu">expression</span>(Y<span class="sc">-</span><span class="fu">hat</span>(Y)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-anovatriangle1" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-anovatriangle1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="variancedecomposition_files/figure-html/fig-anovatriangle1-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-anovatriangle1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;15.1: Introduction to the ANOVA ‘Triangle’
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>From here we can use the Pythagorean Theorem to create a new equality, linking the squares of each of the sides. Define the areas as follows:</p>
+<ul>
+<li><p>The total sum of squares: <span class="math inline">\(\mathrm{SST} = \sum_i (y_i - \bar{y})^2\)</span></p></li>
+<li><p>The model sum of squares: <span class="math inline">\(\mathrm{SSM} = \sum_i (\hat{y}_i - \bar{y})^2\)</span></p></li>
+<li><p>The sum of squared errors:<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a> <span class="math inline">\(\mathrm{SSE} = \sum_i (y_i - \hat{y})^2\)</span></p></li>
+</ul>
+<p>Recall the small regression example in previous sections, with <span class="math inline">\(\boldsymbol{x}=\{1,2,3,4,5\}\)</span> and <span class="math inline">\(\boldsymbol{y}=\{6,8,6,2,3\}\)</span>, and <span class="math inline">\(\hat{\beta}_0=8.6\)</span> and <span class="math inline">\(\hat{\beta}_1=-1.2\)</span>. In that case, we could draw the sums of squares as follows:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="at">x=</span><span class="cn">NA</span>,<span class="at">y=</span><span class="cn">NA</span>,<span class="at">xlim=</span><span class="fu">c</span>(<span class="sc">-</span><span class="dv">3</span>,<span class="dv">8</span>),<span class="at">ylim=</span><span class="fu">c</span>(<span class="sc">-</span><span class="dv">4</span>,<span class="dv">7</span>),<span class="at">xlab=</span><span class="st">'Model space'</span>,<span class="at">ylab=</span><span class="st">'Error space'</span>,</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">axes=</span><span class="cn">FALSE</span>,<span class="at">main=</span><span class="st">'Geometry of ANOVA Sum of Squares'</span>,<span class="at">asp=</span><span class="dv">1</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">polygon</span>(<span class="at">x=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="fu">vec.length</span>(Yhat<span class="sc">-</span><span class="fu">mean</span>(Y)),<span class="fu">vec.length</span>(Yhat<span class="sc">-</span><span class="fu">mean</span>(Y))<span class="sc">-</span><span class="fu">vec.length</span>(e),<span class="sc">-</span><span class="fu">vec.length</span>(e)),</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">y=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="fu">vec.length</span>(e),<span class="fu">vec.length</span>(e)<span class="sc">+</span><span class="fu">vec.length</span>(Yhat<span class="sc">-</span><span class="fu">mean</span>(Y)),<span class="fu">vec.length</span>(Yhat<span class="sc">-</span><span class="fu">mean</span>(Y))))</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">polygon</span>(<span class="at">x=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="fu">vec.length</span>(Yhat<span class="sc">-</span><span class="fu">mean</span>(Y)),<span class="fu">vec.length</span>(Yhat<span class="sc">-</span><span class="fu">mean</span>(Y)),<span class="dv">0</span>),</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">y=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="sc">-</span><span class="fu">vec.length</span>(Yhat<span class="sc">-</span><span class="fu">mean</span>(Y)),<span class="sc">-</span><span class="fu">vec.length</span>(Yhat<span class="sc">-</span><span class="fu">mean</span>(Y))),</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">col=</span><span class="st">'#0000003f'</span>)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="fu">polygon</span>(<span class="at">x=</span><span class="fu">c</span>(<span class="fu">vec.length</span>(Yhat<span class="sc">-</span><span class="fu">mean</span>(Y)),<span class="fu">vec.length</span>(Yhat<span class="sc">-</span><span class="fu">mean</span>(Y)),<span class="fu">vec.length</span>(Yhat<span class="sc">-</span><span class="fu">mean</span>(Y))<span class="sc">+</span><span class="fu">vec.length</span>(e),<span class="fu">vec.length</span>(Yhat<span class="sc">-</span><span class="fu">mean</span>(Y))<span class="sc">+</span><span class="fu">vec.length</span>(e)),</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">y=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="fu">vec.length</span>(e),<span class="fu">vec.length</span>(e),<span class="dv">0</span>),</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>        <span class="at">col=</span><span class="st">'#0000ff3f'</span>)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="at">x=</span><span class="fl">1.5</span>,<span class="at">y=</span><span class="dv">2</span>,<span class="at">labels=</span><span class="fu">expression</span>(Y<span class="sc">-</span><span class="fu">tilde</span>(Y)),<span class="at">cex=</span><span class="fl">0.7</span>)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="at">x=</span><span class="fl">2.5</span>,<span class="at">y=</span><span class="sc">-</span><span class="fl">0.5</span>,<span class="at">labels=</span><span class="fu">expression</span>(<span class="fu">hat</span>(Y)<span class="sc">-</span><span class="fu">tilde</span>(Y)),<span class="at">cex=</span><span class="fl">0.7</span>)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="at">x=</span><span class="fl">4.5</span>,<span class="at">y=</span><span class="fl">1.5</span>,<span class="at">labels=</span><span class="fu">expression</span>(Y<span class="sc">-</span><span class="fu">hat</span>(Y)),<span class="at">cex=</span><span class="fl">0.7</span>)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="at">x=</span><span class="fl">0.2</span>,<span class="at">y=</span><span class="fl">3.5</span>,<span class="at">labels=</span><span class="st">'SST=SSM+SSE=24'</span>)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="at">x=</span><span class="dv">2</span>,<span class="at">y=</span><span class="sc">-</span><span class="fl">2.5</span>,<span class="at">labels=</span><span class="st">'SSM=14.4'</span>,<span class="at">col=</span><span class="st">'#3f3f3f'</span>)</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="at">x=</span><span class="fl">5.2</span>,<span class="at">y=</span><span class="fl">2.5</span>,<span class="at">labels=</span><span class="st">'SSE=9.6'</span>,<span class="at">col=</span><span class="st">'#0000ff'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-anovatriangle2" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-anovatriangle2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="variancedecomposition_files/figure-html/fig-anovatriangle2-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-anovatriangle2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;15.2: Completed ANOVA ‘Triangle’
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>I want you to notice two different equivalencies in the diagram. Consider the sides of the right triangle to be ‘A’ and ‘B’ and the hypotenuse ‘C’.</p>
+<ul>
+<li><p>First, notice that the <em>vectors</em> A and B sum to C, using vector addition.</p>
+<p><span class="math display">\[ \begin{array}{ccccc} (\boldsymbol{y} - \tilde{\boldsymbol{y}}) &amp; = &amp; (\hat{\boldsymbol{y}} - \tilde{\boldsymbol{y}}) &amp; + &amp; (\boldsymbol{y} - \hat{\boldsymbol{y}}) \\ \mathcal{C} &amp; = &amp; \mathcal{A} &amp; + &amp; \mathcal{B} \end{array}\]</span></p></li>
+<li><p>Next, notice that by the Pythagorean Theorem, the <em>areas</em> A<sup>2</sup> and B<sup>2</sup> sum to C<sup>2</sup>.</p>
+<p><span class="math display">\[\begin{array}{ccccc} \mathcal{C}^2 &amp; = &amp; \mathcal{A}^2 &amp; + &amp; \mathcal{B}^2 \\ \mathrm{SST} &amp; = &amp; \mathrm{SSM} &amp; + &amp; \mathrm{SSE} \\ \sum_i(y_i - \bar{y})^2 &amp; = &amp; \sum_i(\hat{y}_i - \bar{y})^2 &amp; + &amp; \sum_i(y_i - \hat{y}_i)^2 \\ \mathbb{V}[\boldsymbol{y}] &amp; = &amp; \mathbb{V}[\hat{\boldsymbol{y}}] &amp; + &amp;\mathbb{V}[\boldsymbol{e}]\end{array}\]</span></p></li>
+</ul>
+<p>We are showing that the total variance of <span class="math inline">\(\boldsymbol{y}\)</span> can be split into two parts: an amount of variance explained by the model (<em>i.e.</em> the variance of the fitted values), and an amount of variance that is unexplained by the model. Left over variance. <em>Residual</em> variance — hence the name ‘residual’.</p>
+<p>From this result we can now construct a metric which measures what proportion of the variance of <span class="math inline">\(\boldsymbol{y}\)</span> is captured by our model:</p>
+<p><span class="math display">\[R^2=\frac{\mathrm{SSM}}{\mathrm{SST}}=1-\frac{\mathrm{SSE}}{\mathrm{SST}}\]</span></p>
+<p>This measure R<sup>2</sup> is also known as <strong>the coefficient of determination</strong> for a regression model, though in practice we almost always refer to it simply as “R-squared”. R<sup>2</sup> will always be between 0 and 1, and in the case of simple regression, <em>R<sup>2</sup> really is the square of</em> <span class="math inline">\(r\)</span>, the correlation between <span class="math inline">\(\boldsymbol{x}\)</span> and <span class="math inline">\(\boldsymbol{y}\)</span>.</p>
+<p>While it is true that we usually prefer larger R<sup>2</sup> to smaller R<sup>2</sup>, we must consider a few nuances:</p>
+<ul>
+<li><p>An R<sup>2</sup> of exactly 1 is not the sign of a good model, it is the sign of an <em>overdetermined</em> model, where there is no uncertainty or randomness in the outcome. Typically this happens when the complete information of <span class="math inline">\(Y\)</span> is found within some of the predictors, such as if I attempted to predict students’ height in inches from their height in centimeters. It can also happen when there are at least as many predictors as observations (that is, when <span class="math inline">\(k \ge n\)</span>).</p></li>
+<li><p>As we add more and more predictors to our model, R<sup>2</sup> will generally increase (mathematically, it cannot decrease, though if we add completely uninformative predictors, it can stay the same). These additional predictors may not capture real connections between the predictors and the response variable, but instead might simply highlight a chance correlation in the random noise of our data.</p></li>
+<li><p>In some domains or fields, higher R<sup>2</sup> values are much easier to obtain. In the physical sciences, researchers often hypothesize that hard physical laws connect the predictors to the response variable, and R<sup>2</sup> values of 0.99 are very common. By contrast, in the social sciences, researchers studying human behavior might be proud to publish even with an R<sup>2</sup> of only 0.10. Humans are so complex and idiosyncratic that explaining even 10% of their variation along many metrics represents an important understanding.</p></li>
+</ul>
+</section>
+<section id="visualizer" class="level2">
+<h2 class="anchored" data-anchor-id="visualizer">Visualizer</h2>
+
+
+</section>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1"><p>Of course, we can find the same line by maximizing the likelihood function.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>Though it also means that something has probably gone wrong…<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p>If it’s not already obvious, notice that we can cancel out the two <span class="math inline">\(\hat{y}_i\)</span> terms on the right hand side.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4"><p>Also called the residual sum of squares, RSS.<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -811,25 +1031,64 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         }
       };
     }
-      // Attach click handler to the DT
-      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
-      for (const annoteDlNode of annoteDls) {
-        annoteDlNode.addEventListener('click', (event) => {
-          const clickedEl = event.target;
-          if (clickedEl !== selectedAnnoteEl) {
-            unselectCodeLines();
-            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
-            if (activeEl) {
-              activeEl.classList.remove('code-annotation-active');
-            }
-            selectCodeLines(clickedEl);
-            clickedEl.classList.add('code-annotation-active');
-          } else {
-            // Unselect the line
-            unselectCodeLines();
-            clickedEl.classList.remove('code-annotation-active');
+      const annoteTargets = window.document.querySelectorAll('.code-annotation-anchor');
+      for (let i=0; i<annoteTargets.length; i++) {
+        const annoteTarget = annoteTargets[i];
+        const targetCell = annoteTarget.getAttribute("data-target-cell");
+        const targetAnnotation = annoteTarget.getAttribute("data-target-annotation");
+        const contentFn = () => {
+          const content = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          if (content) {
+            const tipContent = content.cloneNode(true);
+            tipContent.classList.add("code-annotation-tip-content");
+            return tipContent.outerHTML;
           }
-        });
+        }
+        const config = {
+          allowHTML: true,
+          content: contentFn,
+          onShow: (instance) => {
+            selectCodeLines(instance.reference);
+            instance.reference.classList.add('code-annotation-active');
+            window.tippy.hideAll();
+          },
+          onHide: (instance) => {
+            unselectCodeLines();
+            instance.reference.classList.remove('code-annotation-active');
+          },
+          maxWidth: 300,
+          delay: [50, 0],
+          duration: [200, 0],
+          offset: [5, 10],
+          arrow: true,
+          appendTo: function(el) {
+            return el.parentElement.parentElement.parentElement;
+          },
+          interactive: true,
+          interactiveBorder: 10,
+          theme: 'quarto',
+          placement: 'right',
+          popperOptions: {
+            modifiers: [
+            {
+              name: 'flip',
+              options: {
+                flipVariations: false, // true by default
+                allowedAutoPlacements: ['right'],
+                fallbackPlacements: ['right', 'top', 'top-start', 'top-end', 'bottom', 'bottom-start', 'bottom-end', 'left'],
+              },
+            },
+            {
+              name: 'preventOverflow',
+              options: {
+                mainAxis: false,
+                altAxis: false
+              }
+            }
+            ]        
+          }      
+        };
+        window.tippy(annoteTarget, config); 
       }
   const findCites = (el) => {
     const parentEl = el.parentElement;
@@ -870,15 +1129,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script>
-<nav class="page-navigation column-page-right">
+<nav class="page-navigation column-body">
   <div class="nav-page nav-page-previous">
-      <a href="./olsproperties.html" class="pagination-link" aria-label="olsproperties.html">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">olsproperties.html</span></span>
+      <a href="./multiplemle.html" class="pagination-link" aria-label="Multiple regression">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Multiple regression</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./heteroskedasticity.html" class="pagination-link" aria-label="heteroskedasticity.html">
-        <span class="nav-page-text"><span class="chapter-title">heteroskedasticity.html</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./howtoregress.html" class="pagination-link" aria-label="Coding it up in R">
+        <span class="nav-page-text"><span class="chapter-title">Coding it up in R</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

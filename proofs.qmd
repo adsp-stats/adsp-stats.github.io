@@ -1,1 +1,79 @@
-# Proofs {.unnumbered}
+# Proofs {#sec-proofs}
+
+## Arithmetic solution for simple OLS regression
+
+We can readily find the values of $\hat{\beta}_0$ and $\hat{\beta}_1$ which minimize the residual sum of squares by writing out the RSS function, taking its first partial derivatives, setting them equal to zero, and solving. We require two preliminary results which are purely arithmetic and not a matter of statistical theory:
+
+  * **Finding 1**
+  
+  Note that,
+  
+  $$\begin{aligned} \sum_i(x_i - \bar{x}) x_i &= \sum_i(x_i^2 - \bar{x} x_i) = \sum_i x_i^2 - \bar{x}\sum_i x_i \\ &= \sum_i x_i^2 - n\bar{x}^2\end{aligned}$$
+  
+  And also that,
+  
+  $$\begin{aligned} \sum_i(x_i - \bar{x})^2 &= \sum_i(x_i^2 - 2x_i\bar{x}  + \bar{x}^2) = \sum_i x_i^2 - 2\bar{x}\sum_i x_i + n\bar{x}^2 \\ &= \sum_i x_i^2 - n\bar{x}^2 \end{aligned}$$
+  And so by transitivity,
+    
+  $$(1) \quad \sum_i(x_i - \bar{x}) x_i = \sum_i(x_i - \bar{x})^2$$
+    
+  * **Finding 2**
+  
+  Likewise note that,
+  
+  $$\begin{aligned} \sum_i(y_i - \bar{y}) x_i &= \sum_i(y_i x_i - \bar{y} x_i) = \sum_i y_i x_i - \bar{y}\sum_i x_i \\ &= \sum_i y_i x_i - n\bar{y}\bar{x} \end{aligned}$$
+  
+  And also that,
+  
+  $$\begin{aligned} \sum_i(y_i - \bar{y})(x_i - \bar{x}) &= \sum_i(y_i x_i - y_i\bar{x} - \bar{y}x_i + \bar{y}\bar{x}) = \sum_i y_i x_i - \bar{x}\sum_i y_i - \bar{y}\sum_i x_i + \bar{y}\bar{x} \\ &= \sum_i y_i x_i - n\bar{y}\bar{x} \end{aligned}$$
+  And so by transitivity,
+    
+  $$(2) \quad \sum_i(y_i - \bar{y}) x_i = \sum_i(y_i - \bar{y})(x_i - \bar{x})$$
+  
+Now for the actual Least Squares solution. First, we write out the RSS function which we need to minimize:
+
+$$\mathrm{RSS} = \sum_i e_i^2 = \sum_i (y_i - \hat{y}_i)^2 = \sum_i (y_i - \hat{\beta}_0 - \hat{\beta}_1x_i)^2$$
+ 
+Next we take the derivative with respect to $\hat{\beta}_0$, set it equal to zero, and solve:
+
+$$\begin{aligned} \frac{\delta\mathrm{RSS}}{\delta\hat{\beta}_0} = 2 \sum_i (y_i - \hat{\beta}_0 - \hat{\beta}_1x_i)(-1) &= 0 \\ \longrightarrow  \sum_i (y_i - \hat{\beta}_0 - \hat{\beta}_1x_i) &= 0 \\ \longrightarrow \sum_i y_i - n\hat{\beta}_0 - \hat{\beta}_1 \sum_i x_i &= 0 \\ \longrightarrow n\bar{y} - n\hat{\beta}_0 - n\hat{\beta}_1 \bar{x} &= 0 \\ \longrightarrow n\hat{\beta}_0 &= n\bar{y} - n\hat{\beta}_1 \bar{x} \\ \longrightarrow \hat{\beta}_0 &= \bar{y} - \hat{\beta}_1 \bar{x} \end{aligned}$$
+̅
+Last we take the derivative with respect to $\hat{\beta}_1$, set it equal to zero, and solve as well. Notice that we use the substitution for $\hat{\beta}_0$ derived above, and that the final lines rely upon preliminary results (1) and (2):
+
+$$\begin{aligned} \frac{\delta\mathrm{RSS}}{\delta\hat{\beta}_1} = 2 \sum_i (y_i - \hat{\beta}_0 - \hat{\beta}_1x_i)(-x_i) &= 0 \\ \longrightarrow \sum_i (y_i - \bar{y} + \hat{\beta}_1\bar{x} - \hat{\beta}_1x_i)(-x_i) &= 0 \\ \longrightarrow \sum_i (y_i - \bar{y})x_i - \hat{\beta}_1 \sum_i (x_i - \bar{x}) x_i &= 0 \\ \longrightarrow \hat{\beta}_1 &= \frac{\sum_i (y_i - \bar{y})x_i}{\sum_i (x_i - \bar{x}) x_i} \\ \longrightarrow \hat{\beta}_1 &= \frac{\sum_i (y_i - \bar{y})(x_i - \bar{x})}{\sum_i (x_i - \bar{x})^2} \\ \longrightarrow \hat{\beta}_1 &= \frac{\mathrm{Cov}(\boldsymbol{y},\boldsymbol{x})}{\mathbb{V}[\boldsymbol{x}]} \end{aligned}$$
+
+## Linear algebraic solution for multiple OLS regression
+
+The simple linear regression case above conveys the concept of the least squares solution, but readers may wish to see a full solution for the more general case with multiple predictors. This proof will require you to know (or feel your way through) some linear algebra and vector calculus. Let us begin with two findings which help set up the main finding:
+
+  * **Finding 1**
+  
+  $$(1) \quad (\boldsymbol{a} - \boldsymbol{b}) \circ (\boldsymbol{a} - \boldsymbol{b}) = \boldsymbol{a} \circ \boldsymbol{a} + \boldsymbol{b} \circ \boldsymbol{b} - 2\boldsymbol{a} \circ \boldsymbol{b}$$
+  
+  The finding above is really just algebra, but we shall be glad of it soon.  Take note that the bolded letters are vectors, not scalars, though the result matches our scalar expectations.
+  
+  * **Finding 2**
+  
+  $$\begin{aligned} \mathrm{RSS}(\hat{\boldsymbol{\beta}}) &= \sum_i e_i^2 = \boldsymbol{e} \circ \boldsymbol{e} = (\boldsymbol{y} - \mathbf{X}\hat{\boldsymbol{\beta}}) \circ (\boldsymbol{y} - \mathbf{X}\hat{\boldsymbol{\beta}}) \\ (2) \quad &= \boldsymbol{y} \circ \boldsymbol{y} + \hat{\boldsymbol{\beta}}^T(\mathbf{X}^T\mathbf{X}) \hat{\boldsymbol{\beta}} - 2\boldsymbol{y}^T \mathbf{X}\hat{\boldsymbol{\beta}} \end{aligned}$$
+  
+  This second finding relies on the first, and it establishes that the residual sum of squares for a given choice of betas can be condensed into three summary statistics of the data: $\boldsymbol{y} \circ \boldsymbol{y}$, $\mathbf{X}^T\mathbf{X}$, and $\boldsymbol{y}^T \mathbf{X}$. You can think of these in turn as functions of the means and variances of $\boldsymbol{y}$ and $\mathbf{X}$ along with the covariance of $\boldsymbol{y}$ and $\mathbf{X}$, which matches the simple regression case above.
+  
+With these findings, we proceed to the main event: finding the vector $\hat{\boldsymbol{\beta}}$ which minimizes the residual sum of squares. We take the gradient vector of RSS with respect to $\hat{\boldsymbol{\beta}}$, set equal to zero, and solve:
+
+$$\begin{aligned} \nabla \mathrm{RSS}(\hat{\boldsymbol{\beta}}) = \frac{\delta}{\delta\hat{\boldsymbol{\beta}}}\left( \boldsymbol{y} \circ \boldsymbol{y} + \hat{\boldsymbol{\beta}}^T(\mathbf{X}^T\mathbf{X}) \hat{\boldsymbol{\beta}} - 2\boldsymbol{y}^T \mathbf{X}\hat{\boldsymbol{\beta}}\right) & \\ = 2(\mathbf{X}^T\mathbf{X}) \hat{\boldsymbol{\beta}} - 2\boldsymbol{y}^T \mathbf{X} &= 0 \\ \longrightarrow (\mathbf{X}^T\mathbf{X}) \hat{\boldsymbol{\beta}} &= \boldsymbol{y}^T \mathbf{X} \\ \longrightarrow \hat{\boldsymbol{\beta}} &= (\mathbf{X}^T \mathbf{X})^{-1} \mathbf{X}^T \boldsymbol{y} \end{aligned}$$
+
+Because $\hat{\boldsymbol{y}} = \mathbf{X}\hat{\boldsymbol{\beta}}=\mathbf{X}(\mathbf{X}^T \mathbf{X})^{-1} \mathbf{X}^T \boldsymbol{y}$, we can think of the fitted values $\hat{\boldsymbol{y}}$ as a projection of the original values $\boldsymbol{y}$ onto the model space of $\mathbf{X}$. The projection matrix for this transformation (sometimes also called the “hat matrix”) would be $\mathbf{X}(\mathbf{X}^T \mathbf{X})^{-1} \mathbf{X}^T$.
+
+## Proofs about the average fitted value and the average residual
+
+These proofs were referenced in @sec-variancedecomposition, and rely upon the findings above. The case for simple regression is easily proven; the multiple regression version requires some familiarity with linear algebra.
+
+* **Simple regression case**: To claim that the average fitted value $\hat{\boldsymbol{y}}$ is equal to the average response value $\boldsymbol{y}$ we can note that:
+
+$$\begin{aligned} \frac{1}{n}\sum_i \hat{y}_i &= \frac{1}{n}\sum_i (\hat{\beta}_0 + \hat{\beta}_1x_i) \\ &= \hat{\beta}_0 + \hat{\beta}_1 \frac{1}{n}\sum_i x_i \\ &= \hat{\beta}_0 + \hat{\beta}_1 \bar{x}_i \\ &= (\bar{y} - \hat{\beta}_1 \bar{x}) + \hat{\beta}_1 \bar{x}_i = \bar{y}\end{aligned}$$
+
+And since $e_i = y_i - \hat{y}_i$, we can show that the average residual must be 0:
+
+$$\frac{1}{n}\sum_i e_i = \frac{1}{n}\sum_i (y_i - \hat{y}_i) = \bar{y} - \frac{1}{n}\sum_i \hat{y}_i = \bar{y} - \bar{y} = 0$$
+
+I would be happy to supply a proof for the more general multiple regression case upon student request.

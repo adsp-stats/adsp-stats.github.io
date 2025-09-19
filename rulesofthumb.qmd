@@ -1,0 +1,104 @@
+# Handy rules of thumb {#sec-thumbs}
+
+## What's this all about?
+
+In your professional career, you will sometimes be asked for an opinion "on the spot", with little to no time for preparation or programming. At other times, you will need to identify mistakes in calculations that *seemed* correct, and produced no programming errors, but which a trained eye would spot as clearly wrong. For these occasions, it helps to have a few "party tricks", rules of thumb which put you in the ballpark of the correct answer.
+
+These four rules are not essential to your understanding of parametric inference. But they might be helpful to you on your personal and professional data science journey.
+
+## Chebychev's Inequality
+
+The first such rule is called Chebychev’s Inequality. It helps us to identify how much of a given distribution can be found within a certain distance of its mean:
+
+:::{.callout-note}
+***Chebychev’s Inequality:*** Let $X$ be a random variable with mean $\mu$ and finite, nonzero variance $\sigma^2$. Then,
+
+$$P(|X-\mu| > k\sigma) \le \frac{1}{k^2}$$
+:::
+
+Put in plainer (though less precise) terms, no more than $1⁄k^2$ of a distribution's mass or density can be more than $k$ standard deviations from its mean. For example,
+
+* At least 75% of a random variable's values will be observed within 2 standard deviations of the mean (at most 1⁄4=25% of observations will be farther away).
+
+* At least 96% of a random variable's values will be observed within 5 standard deviations of the mean (at most 1⁄25=4% of observations will be farther away).
+
+This inequality can be very conservative. For example, you have probably heard that in the Normal distribution, more than 95% of values are within 2 standard deviations of the mean, much more than the 75% guaranteed above. But Chebychev’s Inequality will always be true, for any random variable with finite variance, and it can be useful to have an easily-remembered bound which works in every situation.
+
+## Common quantiles of the Normal distribution
+
+You probably already know the second rule I will share: the relative spread of the Normal distribution:
+
+* Approximately 68% of the data falls within 1 standard deviation of the mean
+* Approximately 95% of the data falls within 2 standard deviations of the mean 
+* Approximately 99.7% of the data falls within 3 standard deviations of the mean
+
+These numbers are only meant for Normally distributed populations.  However, they are useful approximations in many other contexts, including:
+
+* The chi-squared distribution with large degrees of freedom^[Where $\sigma = \sqrt{2df}$.]
+* The *t* distribution with moderate or large degrees of freedom^[Where $\sigma \approx 1$.]
+* The binomial distribution, with large sample sizes and probabilities of success that are neither very large nor very small^[Where $\sigma = \sqrt{Np(1-p)}$.]
+* The Poisson distribution, with large intensities^[Where $\sigma = \sqrt{\lambda}$.]
+
+In time, you will build a comfort for when this approximation is useful and when it could mislead you or your colleagues/stakeholders/audience.  For now, I will illustrate its relative degree of accuracy by comparing several distributional choices.
+
+| Distribution name | Parameter choice | Proportion w/in 2 sd of mean |
+|:------------------|:-----------------|:-----------------------------|
+| Normal            | *(any)*          |95.4%                         |
+| Student's *t*     | df=10            |92.7%                         |
+|                   | df=100           |95.2%                         |
+| Binomial          | N=10, p=0.1      |93.0%                         |
+|                   | N=100, p=0.01    |92.1%                         |
+|                   | N=100, p=0.1     |95.9%                         |
+| Chi-square        | df=10            |95.9%                         |
+|                   | df=100           |95.6%                         |
+| Poisson           | $\lambda$=10     |96.3%                         |
+|                   | $\lambda$=100    |95.5%                         |
+| Exponential       | *(any)*          |95.0%                         |
+| Uniform           | *(any)*          |100.0%                        |
+
+: Normal rule-of-thumb applied to other distributions {#tbl-thumbrule}
+
+Most statistics textbooks will warn you that the statement "95% of values fall within 2 standard deviations of the mean" is only true for the Normal distribution. Those books fail to mention that the rule is actually *more* true for some *other* distributions than it is for the Normal distribution itself!
+
+## *Extremely* quick and dirty tests and intervals
+
+Building off the above tip, I want to give you a mental math tool that would never be rigorous enough for a formal result, but which can help you make decisions during EDA and answer some stakeholder questions in real time.
+
+**Under the null hypothesis, sample statistics will be observed within two standard errors of the hypothesized mean roughly 95% of the time**.
+
+This basic concept allows us to approximate some basic hypothesis tests and create some rough confidence intervals very quickly. The results are not always very accurate, but most results in life are not borderline cases: they point pretty clearly in one direction or another. So to speed our work, we can rely upon this rule to move forward and follow up with more precise calculations when needed.
+
+Let's apply this rule to several different distributions. No R code or calculators were needed for these examples!
+
+ 1. When estimating a proportion from a sample, what sample size would you need for the estimate to likely be within 5 percentage points of the truth?
+ 
+    - The mean of a Bernoulli variable is $\mu=p$
+    - The variance of a Bernoulli variable is $p(1-p)$
+    - The standard error of its mean would be $s.e.\!(\hat{\mu})=\sqrt{p(1-p)/n}$
+    - This error is at its maximum when $p=0.5$ and $s.e.\!(\hat{\mu})=0.5/\sqrt{n}$
+    - Two standard errors would be a radius of $1/\sqrt{n}$
+    - $1/\sqrt{n}=10\%$ when $n=100$ and $1/\sqrt{n}=5\%$ when $n=400$
+    - Therefore we need a sample of 400 if we want our sample proportion to likely be within 5 percentage points of the mean. If we're okay with a possible 10pp error, then our sample size could be 100.
+   
+ 2. A hospital in a rural area sees 100 births over a four-year period. If births are Poisson-distributed, what's a 95% confidence interval for the yearly rate parameter $\lambda$?
+ 
+    - In the Poisson distribution, $\lambda$ is both the mean and the variance
+    - So we estimate $\hat{\lambda}=\hat{\mu}=\hat{\sigma}^2=\bar{x}=25$
+    - The standard error would be $\hat{\sigma}/\sqrt{n}=5/2=2.5$
+    - Two standard errors would be 5
+    - Our confidence interval for $\lambda$ is $25 \pm 5 = [20,30]$
+    
+ 3. We conduct a test producing a $\chi^2$ (chi-squared) statistic of 118 with 72 degrees of freedom. Can we reject the null at the 5% significance level?
+ 
+    - In the $\chi^2$ distribution, the mean is $df$ and the variance is $2\cdot df$
+    - Under the null, sample statistics will mostly be observed with the range $\mu \pm 2\sigma$
+    - $\mu = df = 72$
+    - $\sigma = \sqrt{2 df} = \sqrt{144} = 12$ 
+    - We would only expect to observe statistics as high as $72 + 2 \cdot 12 = 96$
+    - A sample statistic of 118 therefore gives us enough evidence to reject the null hypothesis.
+
+## The Rule of Three
+
+The last rule of thumb I wish to present is sometimes called ***The Rule of Three***. If you observe a sample, looking for some event to occur (such as inspecting parts from an assembly line for possible defects), and the event has *never* occurred in your sample, then a very accurate 95% confidence interval for the event’s true proportion is $[0,3/n]$ where $n$ is the sample size.
+
+So, for example, if you are auditing voting ballots, looking for instances of ballot fraud, and you audit 300 ballots without finding a single case of fraud, then you can say that while we do not know the true incidence rate of fraud, we may be 95% confident that the rate is less than 3⁄300=1%.

@@ -1,1 +1,74 @@
-# Poisson distribution {.unnumbered}
+# Poisson distribution {#dist-exponential}
+
+The Poisson distribution describes the number of events that occur during a fixed observation window of a Poisson process. These processes often occur when there are many independent chances of an event happening, yet the probability of any one is very low:
+
+- The number defective parts on an assembly line
+
+- The number of days each year a warm-weather city like Atlanta sees snow
+
+- The number of calls placed over a landline occuring *right now* in Chicago, IL
+
+## Assumptions
+
+A **Poisson process** is a type of number-generating process in which "events" of some kind happen irregularly, but with a long-term average rate.
+
+Poisson processes are most often observed over *time* (such as the number of large meteor strikes observed over 500 years), but they can also be observed over *space* (such as the number of craters observed across 500 square kilometers of the moon's surface), or combinations of the two, or even more exotic concepts (such as observations across the electromagnetic spectrum). In these notes, we will continue to assume the observation windows are time-based.
+
+The formal definition of a Poisson process requires some time to unpack.  For now, let's say the following:
+
+* Let $N(t)$ be a *counting process*, that is, a non-negative, integer-valued, non-decreasing function with the property that for all $t \ge s$ we can say that $N(t) - N(s)$ represents the number of events which happen in the window $[s,t]$
+
+* Let $\lambda$ represent the long-term average rate of events which occur per unit of observation: $\mathbb{E}[N(1)] = \lambda$ and $\mathbb{E}[N(t)] = t\lambda$
+
+  - As a corollary, notice that $N(0) = 0$, meaning that events must always arrive one at a time, and never two or more simultaneously
+
+* Let the event counts in mutually exclusive observation windows be independent of each other, which we could write several ways, *e.g.* for all $t \ge s$, then $N(t - s) \perp N(s)$
+
+Then we say that $N$ is a Poisson process, that $P(N(t) \le k)$ has a Poisson CDF with rate $\lambda$, and that if $T$ is the arrival time of the next event (*i.e.*, $T = \min(t: \,N(t)=1)$) then $P(T \le t)$ has an exponential distribtuion with rate $\lambda$.
+
+A key concept to the Poisson and the Exponential distributions is that they describe *the same counting process*. The Poisson (discrete) counts the number of events for a fixed window of time, and the Exponential (continuous) counts the time elapsed until the next event.
+
+## Definition
+
+$$\begin{array}{ll}
+  \text{Support:} & \mathbb{R}^+ \\
+  \text{Parameter(s):} & \lambda,\text{ the rate in events per unit of time }(\lambda \gt 0) \\
+  \text{PMF:} & f_X(x) = \lambda e^{-\lambda x} \\
+  \text{CDF:} & F_X(x) = \left\{\begin{array}{cl} 0, & \quad x \lt 0 \\ 1 - \lambda e^{-\lambda x}, & \quad x \ge 0 \end{array}\right\} \\
+  \text{Mean:} & \mathbb{E}[X] = \frac{1}{\lambda} \\
+  \text{Variance:} & \mathbb{V}[X] = \frac{1}{\lambda^2} \\
+\end{array}$$
+
+## Visualizer
+```{shinylive-r}
+#| standalone: true
+#| viewerHeight: 650
+
+library(shiny)
+library(bslib)
+
+ui <- page_fluid(
+      tags$head(tags$style(HTML("body {overflow-x: hidden;}"))),
+  title = "Poisson distribution PMF",
+  fluidRow(plotOutput("distPlot")),
+  fluidRow(sliderInput("lambda", "Arrival rate (lambda)", min=0.2, max=10, step=0.2,value=2))))
+
+server <- function(input, output) {
+  output$distPlot <- renderPlot({
+    plot(x=0:input$n,y=dpois(x=0:(4*input$lambda),input$lambda),main=NULL,
+         xlab='x (Count of events)',ylab='Probability',type='h',lwd=3)})
+}
+
+shinyApp(ui = ui, server = server)
+```
+ 
+## Relations to other distributions
+
+  * The Poisson distribution can be seen as a limit case of the Binomial distribution, as $n$ grows toward infinity and $p$ shrinks to zero, with $\lambda = np$.  When the usual counts are *nowhere near* the theoretical upper bound, we can often use the Poisson instead of the Binomial.
+  
+    For example, say that a town has 20,000 homes, and that any home has a 0.1% chance to have a termite infestation. The current number of termite infestations is technically a Binomial(20000,0.001) variable, but well-approximated by a Poisson(20) variable:
+    
+```{r}
+dbinom(x=6:10,size=20000,prob=0.001)
+dpois(x=6:10,lambda=20)
+```
